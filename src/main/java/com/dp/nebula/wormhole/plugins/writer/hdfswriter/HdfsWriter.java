@@ -70,12 +70,14 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 		dataTransformParams = getParam().getValue(ParamKey.dataTransformParams, "");
 
 		try {
-			fs = DFSUtils.createFileSystem(new URI(dir),
+            logger.info("dir :=" +dir);
+            fs = DFSUtils.createFileSystem(new URI(dir),
 					DFSUtils.getConf(dir, null));
 		} catch (Exception e) {
 			logger.error(String.format(
 					"HdfsWriter Initialize file system failed:%s,%s",
 					e.getMessage(), e.getCause()));
+            logger.error(e.getMessage(),e);
 			closeAll();
 		}
 	
@@ -218,7 +220,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 							encoding), bufferSize);
 				}
 			} catch (Exception e) {
-				logger.error(e.toString());
+				logger.error(e.toString(),e);
 			}
 		}
 
@@ -258,7 +260,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 	 * @param str
 	 *            source string
 	 * 
-	 * @param fieldSplit   
+	 * @param   fieldSplit
 	 *   		  fieldSplit
 	 * @return replaced character array.
 	 * */

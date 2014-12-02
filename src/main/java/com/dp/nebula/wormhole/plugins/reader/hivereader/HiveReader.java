@@ -70,6 +70,8 @@ public class HiveReader extends AbstractPlugin implements IReader {
 		}
 	}
 
+
+
 	private void readFromHdfs(ILineSender lineSender) {
 		FSDataInputStream in = null;
 		CompressionCodecFactory factory;

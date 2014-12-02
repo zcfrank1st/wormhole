@@ -2,6 +2,7 @@ package com.dp.nebula.wormhole.plugins.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -70,6 +71,22 @@ public final class DFSUtils {
 	// store configurations for per FileSystem schema
 	private static Hashtable<String, Configuration> confs = new Hashtable<String, Configuration>();
 
+    public static Configuration getClassPathConfiguration(String conf){
+        LOGGER.info("starts load configuration from classpath");
+        Configuration cfg = new Configuration();
+        cfg.setClassLoader(DFSUtils.class.getClassLoader());
+        LOGGER.info(cfg.getClassLoader().getResource(""));
+        LOGGER.info(ClassLoader.getSystemResource(""));
+        if (!StringUtils.isBlank(conf) && new File(conf).exists()) {
+            LOGGER.info(String.format(
+                    "HdfsReader use %s for hadoop configuration .", conf));
+            cfg.addResource(new Path(conf));
+        }
+        return cfg;
+        // System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+        // "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+    }
+
 	/**
 	 * Get {@link Configuration}.
 	 * 
@@ -91,12 +108,13 @@ public final class DFSUtils {
 			throw new IOException(
 					"HDFS Path missing scheme, check path begin with hdfs://ip:port/ .");
 		}
-
 		Configuration cfg = confs.get(scheme);
-		if (cfg == null) {
-			cfg = new Configuration();
+        if (cfg == null) {
+            LOGGER.info("starts load configuration from classpath");
+            cfg = new Configuration();
 			cfg.setClassLoader(DFSUtils.class.getClassLoader());
-
+            LOGGER.info(cfg.getClassLoader().getResource(""));
+            LOGGER.info(ClassLoader.getSystemResource(""));
 			if (!StringUtils.isBlank(conf) && new File(conf).exists()) {
 				LOGGER.info(String.format(
 						"HdfsReader use %s for hadoop configuration .", conf));
@@ -122,6 +140,7 @@ public final class DFSUtils {
 
 			cfg.set("fs." + scheme + ".impl.disable.cache", "true");
 			cfg.set("hadoop.security.authentication", "kerberos");
+            LOGGER.info("hadoop/" + uri.getHost() + "@DIANPING.COM");
 			cfg.set("dfs.namenode.kerberos.principal",
 					"hadoop/" + uri.getHost() + "@DIANPING.COM");
 
@@ -328,6 +347,9 @@ public final class DFSUtils {
 
 	public static FileSystem createFileSystem(URI uri, Configuration conf)
 			throws IOException {
+        LOGGER.info("fs." + uri.getScheme() + ".impl :=" +conf.get("fs." + uri.getScheme() + ".impl"));
+        LOGGER.info("hadoop.security.authentication :=" +conf.get("hadoop.security.authentication"));
+        LOGGER.info("dfs.socket.timeout:=" +conf.get("dfs.socket.timeout"));
 		Class<?> clazz = conf.getClass("fs." + uri.getScheme() + ".impl", null);
 		if (clazz == null) {
 			throw new IOException("No FileSystem for scheme: "

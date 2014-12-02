@@ -38,7 +38,7 @@ public class HdfsDirSplitter extends AbstractSplitter {
 		if (dir.endsWith("*")) {
 			dir = dir.substring(0, dir.lastIndexOf("*"));
 		}
-		
+		logger.info("dir :=" +dir);
 		p = new Path(dir);
 		
 		try {
