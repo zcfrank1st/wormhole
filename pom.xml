@@ -10,9 +10,21 @@
     </parent>
 
     <artifactId>nebula-wormhole</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>arch-nebula-wormhole</name>
 
+    <distributionManagement>
+        <repository>
+            <id>dianping.repo</id>
+            <name>internal corporate repository</name>
+            <url>${repo.internal.releases.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>dianping.repo.snapshots</id>
+            <name>internal corporate snapshots repository</name>
+            <url>${repo.internal.snapshots.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <repositories>
         <repository>
@@ -182,19 +194,17 @@
             <version>2.4.1</version>
         </dependency>
 
-        <!--
-        <dependency>
-            <groupId>com.dp.cosmos</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <version>0.20.203.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>hsqldb</artifactId>
-                    <groupId>hsqldb</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        -->
+        <!--<dependency>-->
+            <!--<groupId>com.dp.cosmos</groupId>-->
+            <!--<artifactId>hadoop-core</artifactId>-->
+            <!--<version>0.20.203.0</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>hsqldb</artifactId>-->
+                    <!--<groupId>hsqldb</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-lzo</artifactId>
@@ -206,16 +216,22 @@
             <version>0.4.5</version>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>com.dp.cosmos</groupId>-->
+            <!--<artifactId>hive-jdbc</artifactId>-->
+            <!--<version>0.8.1</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.dp.cosmos</groupId>-->
+                    <!--<artifactId>hadoop-core</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>com.dp.cosmos</groupId>
+            <groupId>org.apache.hive</groupId>
             <artifactId>hive-jdbc</artifactId>
-            <version>0.8.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.dp.cosmos</groupId>
-                    <artifactId>hadoop-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>0.11.0-dp-5</version>
         </dependency>
 
         <dependency>
@@ -223,11 +239,11 @@
             <artifactId>jsch</artifactId>
             <version>0.1.46</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>11.0.2</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.guava</groupId>-->
+            <!--<artifactId>guava</artifactId>-->
+            <!--<version>11.0.2</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
@@ -254,6 +270,11 @@
             <version>27.0.0</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>ACLLdapGroupsMapping</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
             <version>0.94.13-dp-hadoop2</version>
@@ -261,6 +282,10 @@
                 <exclusion>
                     <groupId>com.google.protobuf</groupId>
                     <artifactId>protobuf-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.thrift</groupId>
+                    <artifactId>libthrift</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -469,9 +494,9 @@
                                     <fileset dir="${lib.dir}" includes="**/xercesImpl-2.6.2.jar" />
                                 </delete>
 
-                                <mkdir dir="${hive.security.conf.dir}" />
-                                <copy todir="${hive.security.conf.dir}" file="${conf.dir}/hive-site.xml" />
-                                <copy todir="${hive.security.conf.dir}" file="${conf.dir}/core-site.xml" />
+                                <!--<mkdir dir="${hive.security.conf.dir}" />-->
+                                <!--<copy todir="${hive.security.conf.dir}" file="${conf.dir}/hive-site.xml" />-->
+                                <!--<copy todir="${hive.security.conf.dir}" file="${conf.dir}/core-site.xml" />-->
 
                                 <mkdir dir="${release.dir}" />
                                 <tar destfile="${release.dir}/nebula-wormhole.tar" basedir="${build.base.dir}" />

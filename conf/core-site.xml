@@ -25,5 +25,19 @@
         <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
         <description>The FileSystem for hdfs: uris.</description>
     </property>
+    <property>
+        <name>hadoop.security.group.mapping</name>
+        <value>org.apache.hadoop.security.ACLLdapGroupsMapping</value>
+    </property>
+
+    <property>
+        <name>hadoop.security.group.mapping.ldap.url</name>
+        <value>ldap://10.2.6.103:389 ldap://10.2.6.152:389</value>
+    </property>
+
+    <property>
+        <name>hadoop.security.group.mapping.ldap.base</name>
+        <value>ou=hadoop,ou=auth,dc=dianping,dc=com</value>
+    </property>
 
 </configuration>
