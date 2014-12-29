@@ -165,8 +165,8 @@ public class HiveReader extends AbstractPlugin implements IReader {
 		LineIterator itr = null;
 		String cmd = "hive -e ";
 		Runtime runtime =  Runtime.getRuntime();
-		LOG.info("start to hive -e : sql => " + this.sql);
-		Process proc = runtime.exec(cmd + "\"" + this.sql + "\"");
+		LOG.info("start to hive -e : sql => " + sql);
+		Process proc = runtime.exec(cmd + "\"" + sql + "\"");
 		InputStream stdin = proc.getInputStream(); // 结果标准输出
 		// InputStream stderr = proc.getErrorStream(); // 执行日志
 		int retCode = proc.waitFor();
