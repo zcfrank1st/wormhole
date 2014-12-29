@@ -1,11 +1,12 @@
 package com.dp.nebula.wormhole.plugins.reader.hivereader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.sql.SQLException;
-
+import com.dp.nebula.wormhole.common.AbstractPlugin;
+import com.dp.nebula.wormhole.common.JobStatus;
+import com.dp.nebula.wormhole.common.WormholeException;
+import com.dp.nebula.wormhole.common.interfaces.ILine;
+import com.dp.nebula.wormhole.common.interfaces.ILineSender;
+import com.dp.nebula.wormhole.common.interfaces.IReader;
+import com.dp.nebula.wormhole.plugins.common.DFSUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -17,13 +18,12 @@ import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.io.compress.CompressionInputStream;
 import org.apache.log4j.Logger;
 
-import com.dp.nebula.wormhole.common.AbstractPlugin;
-import com.dp.nebula.wormhole.common.JobStatus;
-import com.dp.nebula.wormhole.common.WormholeException;
-import com.dp.nebula.wormhole.common.interfaces.ILine;
-import com.dp.nebula.wormhole.common.interfaces.ILineSender;
-import com.dp.nebula.wormhole.common.interfaces.IReader;
-import com.dp.nebula.wormhole.plugins.common.DFSUtils;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.sql.SQLException;
 
 public class HiveReader extends AbstractPlugin implements IReader {
 	private static final Logger LOG = Logger.getLogger(HiveReader.class);
@@ -67,6 +67,15 @@ public class HiveReader extends AbstractPlugin implements IReader {
 		} else if (mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode())) {
 			LOG.info("start to read " + filePath);
 			readFromHdfs(lineSender);
+		} else if (mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode())) {
+			try {
+				readFromLocal(lineSender);
+			} catch (InterruptedException e) {
+				LOG.error("hive -e interrupted exception");
+			} catch (IOException e) {
+				LOG.error("hive -e io exception");
+			}
+
 		}
 	}
 
@@ -148,6 +157,48 @@ public class HiveReader extends AbstractPlugin implements IReader {
 		} catch (SQLException e) {
 			throw new WormholeException(e,
 					JobStatus.READ_DATA_EXCEPTION.getStatus());
+		}
+	}
+
+	private void readFromLocal(ILineSender lineSender) throws InterruptedException, IOException {
+		// TODO hive 权限登录?
+		LineIterator itr = null;
+		String cmd = "hive -e ";
+		Runtime runtime =  Runtime.getRuntime();
+		LOG.info("start to hive -e : sql => " + this.sql);
+		Process proc = runtime.exec(cmd + "\"" + this.sql + "\"");
+		InputStream stdin = proc.getInputStream(); // 结果标准输出
+		// InputStream stderr = proc.getErrorStream(); // 执行日志
+		int retCode = proc.waitFor();
+
+		if (retCode == 0) {
+			LOG.info("hive -e exec successed");
+			itr = new LineIterator(new BufferedReader(
+					new InputStreamReader(stdin)));
+			while (itr.hasNext()) {
+				ILine oneLine = lineSender.createNewLine();
+				String line = itr.nextLine();
+				String[] parts = StringUtils
+						.splitByWholeSeparatorPreserveAllTokens(line,
+								FIELD_SEPARATOR);
+				for (int i = 0; i < parts.length; i++) {
+					if (HIVE_COLUMN_NULL_VALUE.equals(parts[i])) {
+						oneLine.addField(null, i);
+					} else {
+						oneLine.addField(parts[i], i);
+					}
+				}
+				boolean flag = lineSender.send(oneLine);
+				if (flag) {
+					getMonitor().increaseSuccessLines();
+				} else {
+					getMonitor().increaseFailedLines();
+					LOG.debug("failed to send line: " + oneLine.toString('\t'));
+				}
+			}
+			lineSender.flush();
+		} else {
+			LOG.error("hive -e exec failed");
 		}
 	}
 

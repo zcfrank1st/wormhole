@@ -1,15 +1,5 @@
 package com.dp.nebula.wormhole.plugins.reader.hivereader;
 
-import java.io.IOException;
-import java.net.URI;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Logger;
-
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
@@ -18,6 +8,15 @@ import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.plugins.common.DFSUtils;
 import com.google.common.base.Preconditions;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URI;
 
 public class HiveReaderPeriphery implements IReaderPeriphery {
 	private static final Logger LOG = Logger
@@ -44,8 +43,8 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 				.checkArgument(
 						mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode())
 								|| mode.equals(HiveReaderMode.READ_FROM_HIVESERVER
-										.getMode()),
-						"hive reader mode should be READ_FROM_HDFS or READ_FROM_HIVESERVER");
+										.getMode()) || mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode()),
+						"hive reader mode should be READ_FROM_HDFS or READ_FROM_HIVESERVER or READ_FROM_LOCAL)");
 		if (mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode())) {
 			path = param.getValue(ParamKey.path, path);
 			username = param.getValue(ParamKey.username, username);
