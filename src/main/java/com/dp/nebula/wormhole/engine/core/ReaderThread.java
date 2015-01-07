@@ -1,10 +1,5 @@
 package com.dp.nebula.wormhole.engine.core;
 
-import java.util.concurrent.Callable;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.ILineSender;
@@ -13,6 +8,10 @@ import com.dp.nebula.wormhole.common.interfaces.IPluginMonitor;
 import com.dp.nebula.wormhole.common.interfaces.IReader;
 import com.dp.nebula.wormhole.engine.utils.JarLoader;
 import com.dp.nebula.wormhole.engine.utils.ReflectionUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.concurrent.Callable;
 
 final class ReaderThread implements Callable<Integer>{
 	
@@ -49,6 +48,7 @@ final class ReaderThread implements Callable<Integer>{
 	 * any exception occurs is thrown to upper classes (Thread Pool)
 	 */
 	public Integer call() throws Exception {
+		s_logger.info("starting read thread");
 		try{
 			reader.init();
 			reader.connection();

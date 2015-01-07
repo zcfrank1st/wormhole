@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HiveReader extends AbstractPlugin implements IReader {
 	private static final Logger LOG = Logger.getLogger(HiveReader.class);
@@ -62,12 +64,14 @@ public class HiveReader extends AbstractPlugin implements IReader {
 
 	@Override
 	public void read(ILineSender lineSender) {
+		LOG.info("current mode => " + mode);
 		if (mode.equals(HiveReaderMode.READ_FROM_HIVESERVER.getMode())) {
 			readFromHiveServer(lineSender);
 		} else if (mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode())) {
 			LOG.info("start to read " + filePath);
 			readFromHdfs(lineSender);
 		} else if (mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode())) {
+			LOG.info("starting read from local mode");
 			try {
 				readFromLocal(lineSender);
 			} catch (InterruptedException e) {
@@ -161,12 +165,17 @@ public class HiveReader extends AbstractPlugin implements IReader {
 	}
 
 	private void readFromLocal(ILineSender lineSender) throws InterruptedException, IOException {
-		// TODO hive 权限登录?
 		LineIterator itr = null;
-		String cmd = "hive -e ";
-		Runtime runtime =  Runtime.getRuntime();
 		LOG.info("start to hive -e : sql => " + sql);
-		Process proc = runtime.exec(cmd + "\"" + sql + "\"");
+
+		List<String> command = new ArrayList<String>();
+		command.add("hive");
+		command.add("-e");
+		command.add(sql);
+
+		ProcessBuilder hiveProcessBuilder = new ProcessBuilder(command);
+		Process proc = hiveProcessBuilder.start();
+
 		InputStream stdin = proc.getInputStream(); // 结果标准输出
 		// InputStream stderr = proc.getErrorStream(); // 执行日志
 		int retCode = proc.waitFor();
@@ -180,9 +189,10 @@ public class HiveReader extends AbstractPlugin implements IReader {
 				String line = itr.nextLine();
 				String[] parts = StringUtils
 						.splitByWholeSeparatorPreserveAllTokens(line,
-								FIELD_SEPARATOR);
+								"\t");
+				LOG.info("result line => " + line + "\t line parts number => " + parts.length);
 				for (int i = 0; i < parts.length; i++) {
-					if (HIVE_COLUMN_NULL_VALUE.equals(parts[i])) {
+					if ("NULL".equals(parts[i])) {
 						oneLine.addField(null, i);
 					} else {
 						oneLine.addField(parts[i], i);

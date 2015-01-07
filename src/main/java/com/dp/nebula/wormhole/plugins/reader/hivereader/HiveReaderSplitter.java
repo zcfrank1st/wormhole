@@ -1,21 +1,20 @@
 package com.dp.nebula.wormhole.plugins.reader.hivereader;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.dp.nebula.wormhole.common.AbstractSplitter;
+import com.dp.nebula.wormhole.common.JobStatus;
+import com.dp.nebula.wormhole.common.WormholeException;
+import com.dp.nebula.wormhole.common.interfaces.IParam;
+import com.dp.nebula.wormhole.plugins.common.DFSUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 
-import com.dp.nebula.wormhole.common.AbstractSplitter;
-import com.dp.nebula.wormhole.common.JobStatus;
-import com.dp.nebula.wormhole.common.WormholeException;
-import com.dp.nebula.wormhole.common.interfaces.IParam;
-import com.dp.nebula.wormhole.plugins.common.DFSUtils;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HiveReaderSplitter extends AbstractSplitter {
 	private static final Logger LOG = Logger
@@ -37,6 +36,9 @@ public class HiveReaderSplitter extends AbstractSplitter {
 		HiveReaderMode readerMode = HiveReaderMode.valueOf(mode);
 
 		switch (readerMode) {
+		case READ_FROM_LOCAL:
+			result.add(param);
+			break;
 		case READ_FROM_HIVESERVER:
 			result.add(param);
 			break;
