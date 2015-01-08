@@ -20,12 +20,9 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HiveReader extends AbstractPlugin implements IReader {
 	private static final Logger LOG = Logger.getLogger(HiveReader.class);
@@ -67,19 +64,9 @@ public class HiveReader extends AbstractPlugin implements IReader {
 		LOG.info("current mode => " + mode);
 		if (mode.equals(HiveReaderMode.READ_FROM_HIVESERVER.getMode())) {
 			readFromHiveServer(lineSender);
-		} else if (mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode())) {
+		} else if (mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode()) || mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode())) {
 			LOG.info("start to read " + filePath);
 			readFromHdfs(lineSender);
-		} else if (mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode())) {
-			LOG.info("starting read from local mode");
-			try {
-				readFromLocal(lineSender);
-			} catch (InterruptedException e) {
-				LOG.error("hive -e interrupted exception");
-			} catch (IOException e) {
-				LOG.error("hive -e io exception");
-			}
-
 		}
 	}
 
@@ -164,53 +151,53 @@ public class HiveReader extends AbstractPlugin implements IReader {
 		}
 	}
 
-	private void readFromLocal(ILineSender lineSender) throws InterruptedException, IOException {
-		LineIterator itr = null;
-		LOG.info("start to hive -e : sql => " + sql);
-
-		List<String> command = new ArrayList<String>();
-		command.add("hive");
-		command.add("-e");
-		command.add(sql);
-
-		ProcessBuilder hiveProcessBuilder = new ProcessBuilder(command);
-		Process proc = hiveProcessBuilder.start();
-
-		InputStream stdin = proc.getInputStream(); // 结果标准输出
-		// InputStream stderr = proc.getErrorStream(); // 执行日志
-		int retCode = proc.waitFor();
-
-		if (retCode == 0) {
-			LOG.info("hive -e exec successed");
-			itr = new LineIterator(new BufferedReader(
-					new InputStreamReader(stdin)));
-			while (itr.hasNext()) {
-				ILine oneLine = lineSender.createNewLine();
-				String line = itr.nextLine();
-				String[] parts = StringUtils
-						.splitByWholeSeparatorPreserveAllTokens(line,
-								"\t");
-				LOG.info("result line => " + line + "\t line parts number => " + parts.length);
-				for (int i = 0; i < parts.length; i++) {
-					if ("NULL".equals(parts[i])) {
-						oneLine.addField(null, i);
-					} else {
-						oneLine.addField(parts[i], i);
-					}
-				}
-				boolean flag = lineSender.send(oneLine);
-				if (flag) {
-					getMonitor().increaseSuccessLines();
-				} else {
-					getMonitor().increaseFailedLines();
-					LOG.debug("failed to send line: " + oneLine.toString('\t'));
-				}
-			}
-			lineSender.flush();
-		} else {
-			LOG.error("hive -e exec failed");
-		}
-	}
+//	private void readFromLocal(ILineSender lineSender) throws InterruptedException, IOException {
+//		LineIterator itr = null;
+//		LOG.info("start to hive -e : sql => " + sql);
+//
+//		List<String> command = new ArrayList<String>();
+//		command.add("hive");
+//		command.add("-e");
+//		command.add(sql);
+//
+//		ProcessBuilder hiveProcessBuilder = new ProcessBuilder(command);
+//		Process proc = hiveProcessBuilder.start();
+//
+//		InputStream stdin = proc.getInputStream(); // 结果标准输出
+//		// InputStream stderr = proc.getErrorStream(); // 执行日志
+//		int retCode = proc.waitFor();
+//
+//		if (retCode == 0) {
+//			LOG.info("hive -e exec successed");
+//			itr = new LineIterator(new BufferedReader(
+//					new InputStreamReader(stdin)));
+//			while (itr.hasNext()) {
+//				ILine oneLine = lineSender.createNewLine();
+//				String line = itr.nextLine();
+//				String[] parts = StringUtils
+//						.splitByWholeSeparatorPreserveAllTokens(line,
+//								"\t");
+//				LOG.info("result line => " + line + "\t line parts number => " + parts.length);
+//				for (int i = 0; i < parts.length; i++) {
+//					if ("NULL".equals(parts[i])) {
+//						oneLine.addField(null, i);
+//					} else {
+//						oneLine.addField(parts[i], i);
+//					}
+//				}
+//				boolean flag = lineSender.send(oneLine);
+//				if (flag) {
+//					getMonitor().increaseSuccessLines();
+//				} else {
+//					getMonitor().increaseFailedLines();
+//					LOG.debug("failed to send line: " + oneLine.toString('\t'));
+//				}
+//			}
+//			lineSender.flush();
+//		} else {
+//			LOG.error("hive -e exec failed");
+//		}
+//	}
 
 	@Override
 	public void finish() {

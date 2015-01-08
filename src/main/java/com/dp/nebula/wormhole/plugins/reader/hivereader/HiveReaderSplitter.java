@@ -37,11 +37,6 @@ public class HiveReaderSplitter extends AbstractSplitter {
 
 		switch (readerMode) {
 		case READ_FROM_LOCAL:
-			result.add(param);
-			break;
-		case READ_FROM_HIVESERVER:
-			result.add(param);
-			break;
 		case READ_FROM_HDFS:
 			FileSystem fs = null;
 			try {
@@ -66,7 +61,9 @@ public class HiveReaderSplitter extends AbstractSplitter {
 				}
 			}
 			break;
-
+			case READ_FROM_HIVESERVER:
+				result.add(param);
+				break;
 		}
 		LOG.info("splitted files num:" + result.size());
 

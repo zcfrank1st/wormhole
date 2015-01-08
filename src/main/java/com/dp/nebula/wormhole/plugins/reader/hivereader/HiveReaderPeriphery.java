@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HiveReaderPeriphery implements IReaderPeriphery {
 	private static final Logger LOG = Logger
@@ -73,6 +75,36 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 					client.close();
 				}
 			}
+		} else if (mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode())) {
+			sql = param.getValue(ParamKey.sql, sql).trim();
+			if (sql.endsWith(";")) {
+				sql = StringUtils.substring(sql, 0, sql.length() - 1);
+			}
+			dataDir = param.getValue(ParamKey.dataDir, dataDir);
+			try {
+				createTempDir();
+				param.putValue(ParamKey.dataDir, absolutePath.toString());
+				sql = String.format(INSERT_SQL_PATTERN,
+						absolutePath.toString(), sql);
+				sql = sql.replaceAll("`","");
+				List<String> command = new ArrayList<String>();
+				command.add("hive");
+				command.add("-e");
+				command.add(sql);
+
+				LOG.info("starting hive -e => " + sql);
+				ProcessBuilder hiveProcessBuilder = new ProcessBuilder(command);
+				Process proc = hiveProcessBuilder.start();
+
+				if (proc.waitFor() == 0){
+					LOG.info("hive -e tmp success");
+				} else {
+					throw new Exception("hive -e tmp failed");
+				}
+			} catch (Exception e) {
+				throw new WormholeException(e,
+						JobStatus.READ_FAILED.getStatus());
+			}
 		}
 	}
 
@@ -97,7 +129,7 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 
 	@Override
 	public void doPost(IParam param, ITargetCounter counter) {
-		if (mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode())
+		if ((mode.equals(HiveReaderMode.READ_FROM_HDFS.getMode()) || mode.equals(HiveReaderMode.READ_FROM_LOCAL.getMode()))
 				&& absolutePath != null) {
 			try {
 				if (fs.exists(absolutePath)) {
