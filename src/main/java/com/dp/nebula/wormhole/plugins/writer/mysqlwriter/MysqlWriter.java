@@ -96,6 +96,7 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 		this.encoding = getParam().getValue(ParamKey.ENCODING, "UTF8")
 				.toLowerCase();
 		this.operation = getParam().getValue(ParamKey.OPERATION, "").trim();
+		logger.info("current logger => " + this.operation);
 		if (!"insert".equalsIgnoreCase(operation)
 				&& !"replace".equalsIgnoreCase(operation)
 				&& !"update".equalsIgnoreCase(operation)) {

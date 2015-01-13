@@ -1,18 +1,5 @@
 package com.dp.nebula.wormhole.plugins.writer.hdfswriter;
 
-import java.io.IOException;
-import java.net.URI;
-import java.text.MessageFormat;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
-import org.apache.hadoop.util.Shell.ShellCommandExecutor;
-import org.apache.log4j.Logger;
-
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
@@ -20,7 +7,19 @@ import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
 import com.dp.nebula.wormhole.plugins.common.DFSUtils;
-import com.hadoop.compression.lzo.LzoIndexer;
+import com.hadoop.compression.lzo.DistributedLzoIndexer;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.util.Shell.ShellCommandExecutor;
+import org.apache.hadoop.util.ToolRunner;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URI;
+import java.text.MessageFormat;
 
 public class HdfsWriterPeriphery implements IWriterPeriphery {
 
@@ -45,7 +44,6 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	private final String ADD_PARTITION_SQL = "alter table {0} add if not exists partition({1}) location ''{2}'';";
 
 	private FileSystem fs;
-	private LzoIndexer lzoIndexer;
 
 	@Override
 	public void rollback(IParam param) {
@@ -195,55 +193,45 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	// }
 	// }
 
-	private void createLzoIndex(String directory) {
-		try {
-			Configuration cfg = DFSUtils.getConf(directory, null);
-			lzoIndexer = new LzoIndexer(cfg);
+	private void createLzoIndex(final String directory) {
+		int times = 1;
+		boolean idxCreated = false;
+		do {
+            logger.info("start to create lzo index file on " + directory
+                    + " times: " + times);
+            try {
+                logger.info("lzo index directory => " + directory);
+				ToolRunner.run(new DistributedLzoIndexer(), new String[]{directory});
+				idxCreated = true;
+            } catch (Throwable t) {
+                logger.error(String
+                        .format("HdfsWriter doPost stage create index %s failed, start to sleep %d millis sec, %s,%s",
+								directory,
+								LZO_CREATION_TRY_INTERVAL_IN_MILLIS,
+								t.getMessage(), t.getCause()));
+                try {
+                    Thread.sleep(LZO_CREATION_TRY_INTERVAL_IN_MILLIS);
+                } catch (InterruptedException ite) {
+                    ite.printStackTrace(System.err);
+                }
+            }
+        } while (!idxCreated && times++ <= MAX_LZO_CREATION_TRY_TIMES);
 
-			int times = 1;
-			boolean idxCreated = false;
-			do {
-				logger.info("start to create lzo index file on " + directory
-						+ " times: " + times);
-				try {
-					lzoIndexer.index(new Path(directory));
-					idxCreated = true;
-				} catch (Throwable t) {
-					logger.error(String
-							.format("HdfsWriter doPost stage create index %s failed, start to sleep %d millis sec, %s,%s",
-									directory,
-									LZO_CREATION_TRY_INTERVAL_IN_MILLIS,
-									t.getMessage(), t.getCause()));
-					try {
-						Thread.sleep(LZO_CREATION_TRY_INTERVAL_IN_MILLIS);
-					} catch (InterruptedException ite) {
-						ite.printStackTrace(System.err);
-					}
-				}
-			} while (!idxCreated && times++ <= MAX_LZO_CREATION_TRY_TIMES);
+		if (!idxCreated) {
+            throw new WormholeException(
+                    "lzo index creation failed after try "
+                            + MAX_LZO_CREATION_TRY_TIMES + " times",
+                    JobStatus.POST_WRITE_FAILED.getStatus());
+        }
 
-			if (!idxCreated) {
-				throw new WormholeException(
-						"lzo index creation failed after try "
-								+ MAX_LZO_CREATION_TRY_TIMES + " times",
-						JobStatus.POST_WRITE_FAILED.getStatus());
-			}
-
-			if (existIncompleteFile(dir)) {
-				logger.error(String.format(
-						"HdfsWriter doPost stage create index %s failed:",
-						directory));
-				throw new WormholeException(
-						"dfsWriter doPost stage create index failed",
-						JobStatus.POST_WRITE_FAILED.getStatus());
-			}
-		} catch (IOException e) {
-			logger.error(String.format(
-					"HdfsWriter doPost stage get configuration failed:%s,%s",
-					e.getMessage(), e.getCause()));
-			throw new WormholeException(e,
-					JobStatus.POST_WRITE_FAILED.getStatus());
-		}
+		if (existIncompleteFile(dir)) {
+            logger.error(String.format(
+                    "HdfsWriter doPost stage create index %s failed:",
+                    directory));
+            throw new WormholeException(
+                    "dfsWriter doPost stage create index failed",
+                    JobStatus.POST_WRITE_FAILED.getStatus());
+        }
 	}
 
 	@Override

@@ -1,11 +1,12 @@
 package com.dp.nebula.wormhole.plugins.writer.hdfswriter;
 
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.dp.nebula.wormhole.common.AbstractPlugin;
+import com.dp.nebula.wormhole.common.interfaces.ILine;
+import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
+import com.dp.nebula.wormhole.common.interfaces.ITransformer;
+import com.dp.nebula.wormhole.common.interfaces.IWriter;
+import com.dp.nebula.wormhole.plugins.common.DFSUtils;
+import com.dp.nebula.wormhole.transform.common.TransformerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -17,13 +18,11 @@ import org.apache.hadoop.io.compress.CompressionOutputStream;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.log4j.Logger;
 
-import com.dp.nebula.wormhole.common.AbstractPlugin;
-import com.dp.nebula.wormhole.common.interfaces.ILine;
-import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
-import com.dp.nebula.wormhole.common.interfaces.ITransformer;
-import com.dp.nebula.wormhole.common.interfaces.IWriter;
-import com.dp.nebula.wormhole.plugins.common.DFSUtils;
-import com.dp.nebula.wormhole.transform.common.TransformerFactory;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HdfsWriter extends AbstractPlugin implements IWriter {
 	private static final Logger logger = Logger.getLogger(HdfsWriter.class);
@@ -295,7 +294,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 	
 	private void closeAll() {
 		try {
-			IOUtils.closeStream(fs);
+			fs.close();
 		} catch (Exception e) {
 			logger.error(String.format(
 					"HdfsWriter closing filesystem failed: %s,%s",
