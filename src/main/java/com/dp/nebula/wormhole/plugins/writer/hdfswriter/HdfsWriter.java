@@ -223,6 +223,44 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 			}
 		}
 
+		// retry
+		private void safeWriteCharArray(char[] c){
+			int times = 0;
+			boolean isWrited = false;
+			do {
+				try {
+					bw.write(c);
+					isWrited = true;
+				} catch (Exception e) {
+					logger.error("safe write fail retry "+times,e);
+					try {
+						Thread.sleep(10000L);
+					} catch (InterruptedException ite) {
+						ite.printStackTrace(System.err);
+					}
+				}
+			}while(times++<10 && !isWrited);
+		}
+
+		// retry
+		private void safeWriteChar(char c){
+			int times = 0;
+			boolean isWrited = false;
+			do {
+				try {
+					bw.write(c);
+					isWrited = true;
+				} catch (Exception e) {
+					logger.error("safe write fail retry "+times,e);
+					try {
+						Thread.sleep(10000L);
+					} catch (InterruptedException ite) {
+						ite.printStackTrace(System.err);
+					}
+				}
+			}while(times++<10 && !isWrited);
+		}
+
 		@Override
 		public void write(ILineReceiver receiver,ITransformer transformer, String transformerParams) {
 			ILine line;
@@ -238,11 +276,14 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					int len = line.getFieldNum();
 					
 					for (int i = 0; i < len; i++) {
-						bw.write(replaceChars(line.getField(i), replaceCharMap));
+//						bw.write(replaceChars(line.getField(i), replaceCharMap));
+						safeWriteCharArray(replaceChars(line.getField(i), replaceCharMap));
 						if (i < len - 1)
-							bw.write(fieldSplit);
+							//bw.write(fieldSplit);
+							safeWriteChar(fieldSplit);
 					}
-					bw.write(lineSplit);
+					//bw.write(lineSplit);
+					safeWriteChar(fieldSplit);
 					
 					getMonitor().increaseSuccessLines();
 				}
@@ -259,7 +300,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 	 * @param str
 	 *            source string
 	 * 
-	 * @param   fieldSplit
+	 * @param   replaceCharMap
 	 *   		  fieldSplit
 	 * @return replaced character array.
 	 * */

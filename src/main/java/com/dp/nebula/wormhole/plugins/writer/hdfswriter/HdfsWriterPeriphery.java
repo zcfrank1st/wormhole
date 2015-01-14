@@ -47,12 +47,12 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 	@Override
 	public void rollback(IParam param) {
-		deleteFilesOnHdfs(this.dir, this.prefixname, suffix);
+		deleteFilesOnHdfs(this.dir, this.prefixname);
 	}
 
 	@Override
 	public void doPost(IParam param, ITargetCounter counter) {
-		deleteFilesOnHdfs(this.dir, this.prefixname, suffix);
+		deleteFilesOnHdfs(this.dir, this.prefixname);
 		// rename temp files, make them visible to hdfs
 		renameFiles();
 
@@ -259,8 +259,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 		if (suffix.equalsIgnoreCase("lzo")) {
 			lzoCompressed = true;
 		}
-		deleteFilesOnHdfs(this.dir, HIDDEN_FILE_PREFIX + this.prefixname,
-				suffix);
+		deleteFilesOnHdfs(this.dir, HIDDEN_FILE_PREFIX + this.prefixname);
 	}
 
 	private void closeAll() {
@@ -292,29 +291,12 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 		return false;
 	}
 
-	private void deleteFilesOnHdfs(String dir, String prefix, String suffix) {
+	private void deleteFilesOnHdfs(String dir, String prefix) {
 		try {
 			fs = DFSUtils.createFileSystem(new URI(dir),
 					DFSUtils.getConf(dir, null));
-
-			if (concurrency == 1) {
-				String file = dir + "/" + prefix;
-
-				if (!StringUtils.isEmpty(suffix))
-					file = file + "." + suffix;
-
-				DFSUtils.deleteFile(fs, new Path(file), true);
-
-				if (lzoCompressed) {
-					file = file + ".index";
-					if (fs.exists(new Path(file))) {
-						DFSUtils.deleteFile(fs, new Path(file), true);
-					}
-				}
-			} else {
-				DFSUtils.deleteFiles(fs, new Path(dir + "/" + prefix + "-*"),
+			DFSUtils.deleteFiles(fs, new Path(dir + "/" + prefix + "*"),
 						true, true);
-			}
 		} catch (Exception e) {
 			logger.error(String.format(
 					"HdfsWriter Init file system failed:%s,%s", e.getMessage(),
