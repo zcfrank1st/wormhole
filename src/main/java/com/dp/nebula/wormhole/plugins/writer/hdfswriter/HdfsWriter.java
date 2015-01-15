@@ -27,6 +27,9 @@ import java.util.Map;
 public class HdfsWriter extends AbstractPlugin implements IWriter {
 	private static final Logger logger = Logger.getLogger(HdfsWriter.class);
 	private static volatile boolean compressionTypePrintVirgin = true;
+
+	private static final int WRITE_TRY_TIMES = 10;
+	private static final long WRITE_SLEEP_TIME = 10000L;
 	
 	private FileSystem fs;
 	private Path p = null;
@@ -234,12 +237,12 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				} catch (Exception e) {
 					logger.error("safe write fail retry "+times,e);
 					try {
-						Thread.sleep(10000L);
+						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
 						ite.printStackTrace(System.err);
 					}
 				}
-			}while(times++<10 && !isWrited);
+			}while(times++ < WRITE_TRY_TIMES && !isWrited);
 		}
 
 		// retry
@@ -253,12 +256,12 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				} catch (Exception e) {
 					logger.error("safe write fail retry "+times,e);
 					try {
-						Thread.sleep(10000L);
+						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
 						ite.printStackTrace(System.err);
 					}
 				}
-			}while(times++<10 && !isWrited);
+			}while(times++<WRITE_TRY_TIMES && !isWrited);
 		}
 
 		@Override
@@ -283,7 +286,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 							safeWriteChar(fieldSplit);
 					}
 					//bw.write(lineSplit);
-					safeWriteChar(fieldSplit);
+					safeWriteChar(lineSplit);
 					
 					getMonitor().increaseSuccessLines();
 				}

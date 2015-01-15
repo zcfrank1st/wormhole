@@ -28,7 +28,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 	private static final int HIVE_TABLE_ADD_PARTITION_PARAM_NUMBER = 2;
 	private static final String HIDDEN_FILE_PREFIX = "_";
-	private static final int MAX_LZO_CREATION_TRY_TIMES = 3;
+	private static final int MAX_LZO_CREATION_TRY_TIMES = 10;
 	private static final long LZO_CREATION_TRY_INTERVAL_IN_MILLIS = 10000L;
 
 	private String dir = "";
@@ -145,7 +145,6 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	private void addHiveTablePartition(String dbName, String tableName,
 			String partitionCondition, String location) throws IOException {
 		StringBuffer addParitionCommand = new StringBuffer();
-
 		addParitionCommand.append("hive -e \"");
 		addParitionCommand.append("use " + dbName + ";");
 		addParitionCommand.append(MessageFormat.format(ADD_PARTITION_SQL,
@@ -154,16 +153,23 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 		logger.info(addParitionCommand.toString());
 
-		String[] shellCmd = { "bash", "-c", addParitionCommand.toString() };
-		ShellCommandExecutor shexec = new ShellCommandExecutor(shellCmd);
-		shexec.execute();
-		int exitCode = shexec.getExitCode();
-		if (exitCode != 0) {
-			throw new IOException("process exited with exit code " + exitCode);
-		} else {
-			logger.info("hive table add partion hql executed correctly:"
-					+ addParitionCommand.toString());
-		}
+		int time = 0;
+		do {
+			String[] shellCmd = {"bash", "-c", addParitionCommand.toString()};
+			ShellCommandExecutor shexec = new ShellCommandExecutor(shellCmd);
+			shexec.execute();
+			int exitCode = shexec.getExitCode();
+			if (exitCode != 0) {
+				time++;
+			} else {
+				logger.info("hive table add partion hql executed correctly:"
+						+ addParitionCommand.toString());
+				break;
+			}
+		} while (time < MAX_LZO_CREATION_TRY_TIMES);
+
+		if (time == MAX_LZO_CREATION_TRY_TIMES)
+			throw new IOException("try"+ MAX_LZO_CREATION_TRY_TIMES +" add hdfs partition failed!");
 	}
 
 	// private void createHiveTable(IParam param){
@@ -201,8 +207,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
                     + " times: " + times);
             try {
                 logger.info("lzo index directory => " + directory);
-				ToolRunner.run(new DistributedLzoIndexer(), new String[]{directory});
-				idxCreated = true;
+				idxCreated = ToolRunner.run(new DistributedLzoIndexer(), new String[]{directory}) == 0;
             } catch (Throwable t) {
                 logger.error(String
                         .format("HdfsWriter doPost stage create index %s failed, start to sleep %d millis sec, %s,%s",
