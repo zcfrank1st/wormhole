@@ -28,8 +28,8 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 	private static final Logger logger = Logger.getLogger(HdfsWriter.class);
 	private static volatile boolean compressionTypePrintVirgin = true;
 
-	private static final int WRITE_TRY_TIMES = 10;
-	private static final long WRITE_SLEEP_TIME = 10000L;
+	private static final int WRITE_TRY_TIMES = 5;
+	private static final long WRITE_SLEEP_TIME = 5000L;
 	
 	private FileSystem fs;
 	private Path p = null;
@@ -227,41 +227,45 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 		}
 
 		// retry
-		private void safeWriteCharArray(char[] c){
+		private void safeWrite(char[] c) throws Exception {
 			int times = 0;
-			boolean isWrited = false;
 			do {
 				try {
 					bw.write(c);
-					isWrited = true;
+					break;
 				} catch (Exception e) {
-					logger.error("safe write fail retry "+times,e);
+					if (times == WRITE_TRY_TIMES)
+						throw new Exception("hdfs write retry " + times + " times, fail!");
+					times++;
+					logger.warn("safe write retry " + times, e);
 					try {
 						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
 						ite.printStackTrace(System.err);
 					}
 				}
-			}while(times++ < WRITE_TRY_TIMES && !isWrited);
+			} while(times < WRITE_TRY_TIMES);
 		}
 
 		// retry
-		private void safeWriteChar(char c){
+		private void safeWrite(char c) throws Exception {
 			int times = 0;
-			boolean isWrited = false;
 			do {
 				try {
 					bw.write(c);
-					isWrited = true;
+					break;
 				} catch (Exception e) {
-					logger.error("safe write fail retry "+times,e);
+					if (times == WRITE_TRY_TIMES)
+						throw new Exception("hdfs write retry " + times + " times, fail!");
+					times++;
+					logger.warn("safe write retry "+ times, e);
 					try {
 						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
 						ite.printStackTrace(System.err);
 					}
 				}
-			}while(times++<WRITE_TRY_TIMES && !isWrited);
+			} while(times < WRITE_TRY_TIMES);
 		}
 
 		@Override
@@ -269,7 +273,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 			ILine line;
 			try {
 				while ((line = receiver.receive()) != null) {
-					if(transformer!=null ) {
+					if(transformer != null ) {
 						if(transformerParams != null && !transformerParams.equals("")) {
 							line = transformer.transform(line,transformerParams);
 						} else {
@@ -280,19 +284,20 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					
 					for (int i = 0; i < len; i++) {
 //						bw.write(replaceChars(line.getField(i), replaceCharMap));
-						safeWriteCharArray(replaceChars(line.getField(i), replaceCharMap));
+						safeWrite(replaceChars(line.getField(i), replaceCharMap));
 						if (i < len - 1)
 							//bw.write(fieldSplit);
-							safeWriteChar(fieldSplit);
+							safeWrite(fieldSplit);
 					}
 					//bw.write(lineSplit);
-					safeWriteChar(lineSplit);
+					safeWrite(lineSplit);
 					
 					getMonitor().increaseSuccessLines();
 				}
 				bw.flush();
 			} catch (Exception e) {
 				logger.error(e.toString(),e);
+				System.exit(-1);
 			}
 		}
 	}
