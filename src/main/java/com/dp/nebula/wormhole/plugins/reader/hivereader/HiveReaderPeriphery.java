@@ -14,6 +14,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,6 +26,8 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 			.getLogger(HiveReaderPeriphery.class);
 
 	private static final String INSERT_SQL_PATTERN = "INSERT OVERWRITE DIRECTORY '%s' %s";
+
+	private static final int EXEC_TIME_THREDHOLD = 30; // 设置任务最多执行时间
 
 	private String path = "jdbc:hive://10.1.1.161:10000/default";
 	private String username = "";
@@ -87,20 +90,56 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 				sql = String.format(INSERT_SQL_PATTERN,
 						absolutePath.toString(), sql);
 				sql = sql.replaceAll("`","");
-				List<String> command = new ArrayList<String>();
+				final List<String> command = new ArrayList<String>();
 				command.add("hive");
 				command.add("-e");
 				command.add(sql);
 
-				LOG.info("starting hive -e => " + sql);
-				ProcessBuilder hiveProcessBuilder = new ProcessBuilder(command);
-				Process proc = hiveProcessBuilder.start();
+				LOG.info("start hive -e => " + sql);
 
-				if (proc.waitFor() == 0){
-					LOG.info("hive -e tmp success");
-				} else {
-					throw new Exception("hive -e tmp failed");
-				}
+				final ProcessBuilder hiveProcessBuilder = new ProcessBuilder(command);
+				final Process proc = hiveProcessBuilder.start();
+				LOG.info("hive -e executing...");
+				final DateTime startTime = new DateTime();
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						while(true) {
+							try {
+								if (proc.exitValue() == 0) {
+									LOG.info("hive -e executed => SUCCESS");
+									break;
+								}
+							} catch (IllegalThreadStateException e) {
+								if (new DateTime().minusMinutes(EXEC_TIME_THREDHOLD).isAfter(startTime)) {
+									try {
+										proc.destroy();
+										LOG.warn("first hive -e thread hung a long time, killed, retrying...");
+										Process newProcess = hiveProcessBuilder.start();
+										LOG.info("another hive -e thread start, executing...");
+										if (newProcess.waitFor() == 0) {
+											LOG.info("hive -e execute => SUCCESS");
+											break;
+										} else {
+											LOG.error("hive -e execute => FAIL");
+											throw new Exception("hive execute failed");
+										}
+									} catch (IOException e1) {
+										LOG.error(e.getMessage());
+									} catch (InterruptedException e1) {
+										LOG.error(e.getMessage());
+									} catch (Exception e1) {
+										LOG.error(e.getMessage());
+									}
+								}
+							}
+						}
+					}
+				};
+				LOG.info("hive -e daemon thread starting...");
+				t.start();
+				LOG.info("hive -e daemon thread started => SUCCESS, hive -e still executing...");
+				t.join();
 			} catch (Exception e) {
 				throw new WormholeException(e,
 						JobStatus.READ_FAILED.getStatus());
