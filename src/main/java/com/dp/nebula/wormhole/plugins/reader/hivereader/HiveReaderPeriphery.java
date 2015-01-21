@@ -30,6 +30,7 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 	private static final String INSERT_SQL_PATTERN = "INSERT OVERWRITE DIRECTORY '%s' %s";
 
 	private static final int EXEC_TIME_THREDHOLD = 50; // 设置任务最多执行时间
+	private static final int THREAD_SLEEP_TIME = 30000;
 
 	private String path = "jdbc:hive://10.1.1.161:10000/default";
 	private String username = "";
@@ -123,32 +124,18 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 						}
 					} catch (IllegalThreadStateException e) {
 						if (new DateTime().minusMinutes(EXEC_TIME_THREDHOLD).isAfter(startTime)) {
-							try {
-								proc.destroy();
-								LOG.warn("first hive -e thread hung a long time, killed, retrying...");
-								Process newProcess = hiveProcessBuilder.start();
-								LOG.info("another hive -e thread start, executing...");
-								if (newProcess.waitFor() == 0) {
-									LOG.info("hive -e execute => SUCCESS");
-									break;
-								} else {
-									LOG.error("hive -e execute => FAIL");
-									throw new Exception("hive execute failed " +
-											"\n" + "inputStream => " + newProcess.getInputStream());
-								}
-							} catch (IOException e1) {
-								LOG.error(e.getMessage(), e1);
-							} catch (InterruptedException e1) {
-								LOG.error(e.getMessage(), e1);
-							} catch (Exception e1) {
-								LOG.error(e.getMessage(), e1);
-							}
+							proc.destroy();
+							throw new RuntimeException("hive -e hung => KILL & Exit");
+						}
+						try {
+							Thread.sleep(THREAD_SLEEP_TIME);
+						} catch (InterruptedException e1) {
+							LOG.error(e1.getMessage(), e1);
 						}
 					}
 				}
 			}
 		};
-		LOG.info("hive -e daemon thread starting...");
 		t.start();
 
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -157,7 +144,6 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 			LOG.info(line);
 		}
 		proc.waitFor();
-		t.join();
 	}
 
 
