@@ -122,11 +122,6 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 							throw new RuntimeException("hive execute => FAIL");
 						}
 					} catch (IllegalThreadStateException e) {
-						try {
-							LOG.info(new BufferedReader(new InputStreamReader(proc.getInputStream())).readLine());
-						} catch (IOException e1) {
-							LOG.error(e1.getMessage());
-						}
 						if (new DateTime().minusMinutes(EXEC_TIME_THREDHOLD).isAfter(startTime)) {
 							try {
 								proc.destroy();
@@ -142,11 +137,11 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 											"\n" + "inputStream => " + newProcess.getInputStream());
 								}
 							} catch (IOException e1) {
-								LOG.error(e.getMessage());
+								LOG.error(e.getMessage(), e1);
 							} catch (InterruptedException e1) {
-								LOG.error(e.getMessage());
+								LOG.error(e.getMessage(), e1);
 							} catch (Exception e1) {
-								LOG.error(e.getMessage());
+								LOG.error(e.getMessage(), e1);
 							}
 						}
 					}
@@ -155,9 +150,16 @@ public class HiveReaderPeriphery implements IReaderPeriphery {
 		};
 		LOG.info("hive -e daemon thread starting...");
 		t.start();
-		LOG.info("hive -e daemon thread started => SUCCESS, hive -e still executing...");
+
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+		String line;
+		while ((line = bufferedReader.readLine()) != null) {
+			LOG.info(line);
+		}
+		proc.waitFor();
 		t.join();
 	}
+
 
 	private String createTempDir() throws Exception {
 		conf = DFSUtils.getConf(dataDir, null);
