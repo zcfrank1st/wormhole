@@ -25,8 +25,8 @@ public class WormholeException extends RuntimeException{
 		this.pluginID = pluginID;
 	}
 
-	public WormholeException(Exception e) {
-		super(e);
+	public WormholeException(String info) {
+		super(info);
 	}
 
 	public WormholeException(Exception e, int jobStatus) {
