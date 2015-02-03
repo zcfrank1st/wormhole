@@ -1,17 +1,19 @@
 package com.dp.nebula.wormhole.plugins.writer.mysqlwriter;
 
-import org.apache.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.util.*;
-
 import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
+import org.apache.log4j.Logger;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MysqlLoader extends AbstractPlugin implements IWriter {
 	private static List<String> encodingConfigs = null;
@@ -71,15 +73,17 @@ public class MysqlLoader extends AbstractPlugin implements IWriter {
 				.toLowerCase();
 		analyzeColumns();
 		String operation = getParam().getValue(ParamKey.OPERATION, "").trim();
-		if (!"insert".equalsIgnoreCase(operation)
-				&& !"replace".equalsIgnoreCase(operation)) {
-			throw new WormholeException("operation " + operation
-					+ " not supported when using mysqlloader",
-					JobStatus.WRITE_FAILED.getStatus());
-		}
-
-		this.replace = "replace".equalsIgnoreCase(operation) ? "replace" : "";
-		if (encodingMaps.containsKey(this.encoding)) {
+        if (!operation.equals("")) {
+            if (!"insert".equalsIgnoreCase(operation)
+                    && !"replace".equalsIgnoreCase(operation)) {
+                throw new WormholeException("operation " + operation
+                        + " not supported when using mysqlloader",
+                        JobStatus.WRITE_FAILED.getStatus());
+            }
+        }else {
+            this.replace = this.getParam().getBooleanValue("replace", false)?"replace":"";
+        }
+        if (encodingMaps.containsKey(this.encoding)) {
 			this.encoding = encodingMaps.get(this.encoding);
 		}
 		this.writerID = getParam().getValue(AbstractPlugin.PLUGINID, "");

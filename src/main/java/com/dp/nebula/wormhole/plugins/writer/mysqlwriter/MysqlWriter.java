@@ -1,12 +1,5 @@
 package com.dp.nebula.wormhole.plugins.writer.mysqlwriter;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
-
 import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
@@ -15,6 +8,15 @@ import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author renyuan.sun
@@ -58,6 +60,8 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 
 	private String table = null;
 
+    private boolean replace;
+
 	private String columns = null;
 
 	private String encoding = null;
@@ -96,14 +100,18 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 		this.encoding = getParam().getValue(ParamKey.ENCODING, "UTF8")
 				.toLowerCase();
 		this.operation = getParam().getValue(ParamKey.OPERATION, "").trim();
-		logger.info("current logger => " + this.operation);
-		if (!"insert".equalsIgnoreCase(operation)
-				&& !"replace".equalsIgnoreCase(operation)
-				&& !"update".equalsIgnoreCase(operation)) {
-			throw new WormholeException("operation " + operation
-					+ " not supported when using mysqlwriter",
-					JobStatus.WRITE_FAILED.getStatus());
-		}
+        if (!this.operation.equals("")) {
+            logger.info("current logger => " + this.operation);
+            if (!"insert".equalsIgnoreCase(operation)
+                    && !"replace".equalsIgnoreCase(operation)
+                    && !"update".equalsIgnoreCase(operation)) {
+                throw new WormholeException("operation " + operation
+                        + " not supported when using mysqlwriter",
+                        JobStatus.WRITE_FAILED.getStatus());
+            }
+        } else {
+            this.replace = this.getParam().getBooleanValue("replace", false);
+        }
 
 		this.writerID = getParam().getValue(AbstractPlugin.PLUGINID, "");
 		this.failedLinesThreshold = getParam().getLongValue(
@@ -293,22 +301,30 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 	}
 
 	private void makeLoadSql() {
-		if ("insert".equalsIgnoreCase(operation)) {
-			sql = String.format(INSERT_SQL_PATTERN, table,
-					splitColumns(columns));
-		} else if ("replace".equalsIgnoreCase(operation)) {
-			sql = String.format(REPLACE_SQL_PATTERN, table,
-					splitColumns(columns));
-		} else if ("update".equalsIgnoreCase(operation)) {
-			sql = String.format(INSERT_SQL_PATTERN, table,
-					splitColumns(columns));
-			StringBuilder sb = new StringBuilder(" ON DUPLICATE KEY UPDATE ");
-			for (String col : StringUtils.split(columns, ',')) {
-				col = quoteData(col.trim());
-				sb.append(col).append("=VALUES(").append(col).append("),");
-			}
-			updateOpAppendStr = sb.substring(0, sb.lastIndexOf(","));
-		}
+        if (!this.operation.equals("")) {
+            if ("insert".equalsIgnoreCase(operation)) {
+                sql = String.format(INSERT_SQL_PATTERN, table,
+                        splitColumns(columns));
+            } else if ("replace".equalsIgnoreCase(operation)) {
+                sql = String.format(REPLACE_SQL_PATTERN, table,
+                        splitColumns(columns));
+            } else if ("update".equalsIgnoreCase(operation)) {
+                sql = String.format(INSERT_SQL_PATTERN, table,
+                        splitColumns(columns));
+                StringBuilder sb = new StringBuilder(" ON DUPLICATE KEY UPDATE ");
+                for (String col : StringUtils.split(columns, ',')) {
+                    col = quoteData(col.trim());
+                    sb.append(col).append("=VALUES(").append(col).append("),");
+                }
+                updateOpAppendStr = sb.substring(0, sb.lastIndexOf(","));
+            }
+        } else {
+            if(this.replace) {
+                this.sql = String.format("replace into %s %s values ", new Object[]{this.table, this.splitColumns(this.columns)});
+            } else {
+                this.sql = String.format("insert into %s %s values ", new Object[]{this.table, this.splitColumns(this.columns)});
+            }
+        }
 	}
 
 	private String quoteData(String data) {
