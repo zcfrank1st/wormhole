@@ -92,8 +92,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 						addHiveTablePartition(parts[0].trim(), parts[1].trim(),
 								parCondition, dir);
 					} catch (IOException e) {
-						logger.error("add hive table partition failed:"
-								+ e.getMessage());
+						throw new WormholeException(e.getMessage());
 					}
 				}
 			}
@@ -161,7 +160,12 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 			int exitCode = shexec.getExitCode();
 			if (exitCode != 0) {
 				time++;
-			} else {
+                try {
+                    Thread.sleep(30000L);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage());
+                }
+            } else {
 				logger.info("hive table add partion hql executed correctly:"
 						+ addParitionCommand.toString());
 				break;

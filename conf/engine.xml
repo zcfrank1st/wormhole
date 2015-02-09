@@ -9,7 +9,7 @@
 	<monitorInfoDisplayPeriod>10</monitorInfoDisplayPeriod>
 	<!-- reader or writer wait x ms for each other in a transfer process
 		And the storage will be closed if out of time for $storageDistructLimit times -->
-	<storageWaitTime>600000</storageWaitTime>
+	<storageWaitTime>3600000</storageWaitTime>
 	<writerConsistency>true</writerConsistency>
 	<readerAndWriterPeripheralTimeout>600000</readerAndWriterPeripheralTimeout>
 </engine>
