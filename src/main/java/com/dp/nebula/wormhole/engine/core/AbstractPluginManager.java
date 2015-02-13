@@ -1,28 +1,18 @@
 package com.dp.nebula.wormhole.engine.core;
 
-import java.io.FileInputStream;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import com.dianping.lion.EnvZooKeeperConfig;
 import com.dianping.lion.client.ConfigCache;
-import com.dp.nebula.wormhole.common.utils.StringUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.engine.config.PluginConfParamKey;
 import com.dp.nebula.wormhole.plugins.common.ParamKey;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.List;
+import java.util.concurrent.*;
 
 abstract class AbstractPluginManager {
 	
@@ -137,8 +127,4 @@ abstract class AbstractPluginManager {
             }
         }
 	}
-
-    public static void main(String[] args){
-        System.out.println(StringUtils.lowerCase(null));
-    }
  }

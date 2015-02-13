@@ -1,24 +1,5 @@
 package com.dp.nebula.wormhole.engine.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.LineExchangerFactory;
@@ -32,6 +13,12 @@ import com.dp.nebula.wormhole.engine.monitor.MonitorManager;
 import com.dp.nebula.wormhole.engine.storage.StorageManager;
 import com.dp.nebula.wormhole.engine.utils.JarLoader;
 import com.dp.nebula.wormhole.engine.utils.ReflectionUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.*;
+import java.util.concurrent.*;
 
 final class WriterManager extends AbstractPluginManager {
 
@@ -193,7 +180,7 @@ final class WriterManager extends AbstractPluginManager {
 			for (String writerID : writerPoolMap.keySet()) {
 				ExecutorService es = writerPoolMap.get(writerID);
 				es.shutdownNow();
-				terminate(writerID);
+				terminate(writerID, failedIDs.size());
 			}
 			writerPoolMap.clear();
 			return true;
@@ -203,7 +190,7 @@ final class WriterManager extends AbstractPluginManager {
 		for (String writerID : writerPoolMap.keySet()) {
 			ExecutorService es = writerPoolMap.get(writerID);
 			if (es.isTerminated()) {
-				terminate(writerID);
+				terminate(writerID, failedIDs.size());
 				needToRemoveWriterIDList.add(writerID);
 			} else {
 				result = false;
@@ -241,20 +228,34 @@ final class WriterManager extends AbstractPluginManager {
 		return result;
 	}
 
-	private void terminate(String writerID) {
-		IWriterPeriphery writerPeriphery = writerPeripheryMap.get(writerID);
-		if (writerPeriphery == null) {
-			s_logger.error("can not find any writer periphery for " + writerID);
-			return;
-		}
-		IParam jobParams = writerToJobParamsMap.get(writerID);
-		if (jobParams == null) {
-			s_logger.error("can not find any job parameters for " + writerID);
-			return;
-		}
 
-		writerPeriphery.doPost(jobParams, monitorManager);
-	}
+    private void terminate(String writerID,int faildSize) {
+        IWriterPeriphery writerPeriphery = writerPeripheryMap.get(writerID);
+        if (writerPeriphery == null) {
+            s_logger.error("can not find any writer periphery for " + writerID);
+            return;
+        }
+        IParam jobParams = writerToJobParamsMap.get(writerID);
+        if (jobParams == null) {
+            s_logger.error("can not find any job parameters for " + writerID);
+            return;
+        }
+        writerPeriphery.doPost(jobParams, monitorManager, faildSize);
+    }
+//	private void terminate(String writerID) {
+//		IWriterPeriphery writerPeriphery = writerPeripheryMap.get(writerID);
+//		if (writerPeriphery == null) {
+//			s_logger.error("can not find any writer periphery for " + writerID);
+//			return;
+//		}
+//		IParam jobParams = writerToJobParamsMap.get(writerID);
+//		if (jobParams == null) {
+//			s_logger.error("can not find any job parameters for " + writerID);
+//			return;
+//		}
+//
+//		writerPeriphery.doPost(jobParams, monitorManager);
+//	}
 
 	public void rollbackAll() {
 		for (String writerID : writerPeripheryMap.keySet()) {

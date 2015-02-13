@@ -1,19 +1,5 @@
 package com.dp.nebula.wormhole.engine.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.LineExchangerFactory;
 import com.dp.nebula.wormhole.common.config.JobPluginConf;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
@@ -25,6 +11,13 @@ import com.dp.nebula.wormhole.engine.monitor.MonitorManager;
 import com.dp.nebula.wormhole.engine.storage.StorageManager;
 import com.dp.nebula.wormhole.engine.utils.JarLoader;
 import com.dp.nebula.wormhole.engine.utils.ReflectionUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 final class ReaderManager extends AbstractPluginManager {
 
@@ -158,7 +151,7 @@ final class ReaderManager extends AbstractPluginManager {
 	public boolean terminate() {
 		isSuccess();
 		if (readerPool.isTerminated()) {
-			readerPeriphery.doPost(jobParams, monitorManager);
+			readerPeriphery.doPost(jobParams, monitorManager, 0);
 			return true;
 		}
 		return false;

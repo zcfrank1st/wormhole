@@ -1,20 +1,15 @@
 package com.dp.nebula.wormhole.plugins.writer.sftpwriter;
 
-import java.net.URI;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
 import com.dp.nebula.wormhole.plugins.common.PCInfo;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.net.URI;
 
 public class SftpWriterPeriphery implements IWriterPeriphery {
 	private static final Logger logger = Logger.getLogger(SftpWriterPeriphery.class);
@@ -40,7 +35,7 @@ public class SftpWriterPeriphery implements IWriterPeriphery {
 	}
 
 	@Override
-	public void doPost(IParam param, ITargetCounter counter) {
+	public void doPost(IParam param, ITargetCounter counter, int i) {
 		logger.info("doPost stage do nothing");
 	}
 

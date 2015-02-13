@@ -137,5 +137,20 @@
 		<PeripheryClassName>com.dp.nebula.wormhole.plugins.writer.hbasewriter.HBaseWriterPeriphery</PeripheryClassName>
 		<MaxThreadNumber>10</MaxThreadNumber>
 	</plugin>
-	
+    <plugin>
+        <version>1</version>
+        <name>rediswriter</name>
+        <Path>plugins/writer/rediswriter</Path>
+        <PluginClassName>com.dp.nebula.wormhole.plugins.writer.rediswriter.RedisWriter</PluginClassName>
+        <SplitterClassName>com.dp.nebula.wormhole.plugins.writer.rediswriter.RedisSplitter</SplitterClassName>
+        <MaxThreadNumber>10</MaxThreadNumber>
+    </plugin>
+    <plugin>
+        <version>1</version>
+        <name>memcachewriter</name>
+        <Path>plugins/writer/memcachewriter</Path>
+        <PluginClassName>com.dp.nebula.wormhole.plugins.writer.memcachewriter.MemcacheWriter</PluginClassName>
+        <SplitterClassName>com.dp.nebula.wormhole.plugins.writer.memcachewriter.MemcacheSplitter</SplitterClassName>
+        <MaxThreadNumber>10</MaxThreadNumber>
+    </plugin>
 </plugins>

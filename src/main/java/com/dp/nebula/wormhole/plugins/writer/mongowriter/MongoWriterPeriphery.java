@@ -1,9 +1,5 @@
 package com.dp.nebula.wormhole.plugins.writer.mongowriter;
 
-import java.net.UnknownHostException;
-
-import org.apache.log4j.Logger;
-
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
@@ -13,6 +9,9 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
+import org.apache.log4j.Logger;
+
+import java.net.UnknownHostException;
 
 public class MongoWriterPeriphery implements IWriterPeriphery {
 	private static final Logger log = Logger
@@ -31,7 +30,7 @@ public class MongoWriterPeriphery implements IWriterPeriphery {
 	}
 
 	@Override
-	public void doPost(IParam param, ITargetCounter counter) {
+	public void doPost(IParam param, ITargetCounter counter, int i) {
 		// TODO Auto-generated method stub
 	}
 

@@ -1,9 +1,5 @@
 package com.dp.nebula.wormhole.plugins.reader.mongoreader;
 
-import java.net.UnknownHostException;
-
-import org.apache.log4j.Logger;
-
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.interfaces.IReaderPeriphery;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
@@ -11,6 +7,9 @@ import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
+import org.apache.log4j.Logger;
+
+import java.net.UnknownHostException;
 
 /**
  * @author yukang.chen
@@ -26,7 +25,7 @@ public class MongoReaderPeriphery implements IReaderPeriphery {
 	private String inputLimit = "";
 
 	@Override
-	public void doPost(IParam param, ITargetCounter counter) {
+	public void doPost(IParam param, ITargetCounter counter, int i) {
 		// TODO Auto-generated method stub
 	}
 

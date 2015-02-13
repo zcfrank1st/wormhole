@@ -1,13 +1,5 @@
 package com.dp.nebula.wormhole.plugins.writer.mysqlwriter;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
@@ -17,6 +9,13 @@ import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.Properties;
 
 public class MysqlWriterPeriphery implements IWriterPeriphery{
 	
@@ -99,7 +98,7 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 	}
 
 	@Override
-	public void doPost(IParam param, ITargetCounter counter) {
+	public void doPost(IParam param, ITargetCounter counter, int i) {
 		if(!countSql.isEmpty()){
 			try{
 				conn = DBSource.getConnection(MysqlWriter.class, ip, writerID, dbname);

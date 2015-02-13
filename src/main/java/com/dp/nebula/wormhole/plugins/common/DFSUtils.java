@@ -1,16 +1,5 @@
 package com.dp.nebula.wormhole.plugins.common;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -21,6 +10,12 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 public final class DFSUtils {
 	private static final Logger LOGGER = Logger.getLogger(DFSUtils.class);
@@ -143,7 +138,7 @@ public final class DFSUtils {
             LOGGER.info("hadoop/" + uri.getHost() + "@DIANPING.COM");
 			cfg.set("dfs.namenode.kerberos.principal",
 					"hadoop/" + uri.getHost() + "@DIANPING.COM");
-
+            cfg.set("fs.hdfs.impl","org.apache.hadoop.hdfs.DistributedFileSystem");
 			confs.put(scheme, cfg);
 		}
 		return cfg;
