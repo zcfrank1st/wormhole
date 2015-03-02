@@ -154,4 +154,6 @@ public final class ParamKey {
      * @default: true
      */
     public final static String ignoreNullColumn = "ignoreNullColumn";
+
+    public final static String clusterConfigName = "clusterConfigName";
 }

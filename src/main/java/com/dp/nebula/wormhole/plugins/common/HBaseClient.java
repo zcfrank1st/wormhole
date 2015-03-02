@@ -48,11 +48,10 @@ public final class HBaseClient {
     }
 
     public void initialize(String htable, boolean autoFlush,
-                           int writeBufferSize, boolean writeAheadLog) {
+                           int writeBufferSize, boolean writeAheadLog, String config) {
         this.tableName = htable;
         conf = HBaseConfiguration.create();
-        conf.addResource("hbase-site-nanhui.xml");
-        LOG.info(conf.get("hbase.zookeeper.quorum"));
+        conf.addResource(config);
         try {
             admin = new HBaseAdmin(conf);
             checkStatus(tableName);

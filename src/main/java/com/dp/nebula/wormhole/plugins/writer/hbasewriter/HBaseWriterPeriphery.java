@@ -41,6 +41,7 @@ public class HBaseWriterPeriphery implements IWriterPeriphery {
     private Boolean doPostDeleteDataFromHive;
     private String hiveConnectionUrl;
     private String selectRowkeysQuery;
+    private String clusterConfigName;
 
     @Override
     public void prepare(IParam param, ISourceCounter counter) {
@@ -59,13 +60,18 @@ public class HBaseWriterPeriphery implements IWriterPeriphery {
                 DEFAULT_WRITE_BUFFER_SIZE);
         hiveConnectionUrl = param.getValue(ParamKey.hiveConnectionUrl);
         selectRowkeysQuery = param.getValue(ParamKey.selectRowkeysQuery);
+        clusterConfigName = param.getValue(ParamKey.clusterConfigName);
 
         Preconditions.checkArgument(writebufferSize > 0
                         && writebufferSize <= 32 * 1024 * 1024,
                 "write buffer size must be within 0-32MB");
 
+        if (clusterConfigName == null) {
+            throw new WormholeException("hbase config source is empty! please check job xml");
+        }
+
         client = HBaseClient.getInstance();
-        client.initialize(htable, autoFlush, writebufferSize, writeAheadLog);
+        client.initialize(htable, autoFlush, writebufferSize, writeAheadLog, clusterConfigName);
         deleteTableByMode(deleteMode);
     }
 
