@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <property>
+        <name>lzo.index.jar</name>
+        <value>/data/deploy/chao.zhang/wormhole/lib/hadoop-lzo-0.4.20-20141117.085621-1.jar</value>
+    </property>
+    <property>
+        <name>lzo.index.jar.main</name>
+        <value>com.hadoop.compression.lzo.DistributedLzoIndexer</value>
+    </property>
+</configuration>
