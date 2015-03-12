@@ -16,7 +16,10 @@ import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.util.Shell.ShellCommandExecutor;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -227,8 +230,14 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
                 commands.add(directory);
 
                 ProcessBuilder processBuilder = new ProcessBuilder(commands);
+                processBuilder.redirectErrorStream(true);
                 Process p = processBuilder.start();
-
+                InputStream inputStream = p.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    logger.info(line);
+                }
                 if (p.waitFor() != 0) {
                     throw new Exception();
                 } else {

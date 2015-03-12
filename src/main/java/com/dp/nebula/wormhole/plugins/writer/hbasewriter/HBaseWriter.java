@@ -108,7 +108,7 @@ public class HBaseWriter extends AbstractPlugin implements IWriter {
                 for (int i = rowKeyIndex + 1; i < fieldNum; i++) {
                     if (line.getField(i) == null) {
                         if(!ignoreNullColumn){
-                            client.addColumn(columnFamilies[i], qualifiers[i], null);
+                            client.addColumn(columnFamilies[i - 1], qualifiers[i - 1], null);
                         }
                         continue;
                     }
