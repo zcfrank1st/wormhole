@@ -32,7 +32,15 @@ JAVA_OPTS=" -Xms1024m -Xmx4048m -Xmn256m -Xss2048k"
 #==========================================================================
 
 #start
-RUN_CMD="/usr/local/jdk/bin/java -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
+if [ -n "$JAVA7" ];then
+    echo "use udk7 to run"
+    RUN_CMD="$JAVA7 -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
+else
+    RUN_CMD="/usr/local/jdk/bin/java -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
+fi
+
+#RUN_CMD="/data/home/tianming.mao/jdk/bin/java -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
+
 RUN_CMD="$RUN_CMD $JAVA_OPTS"
 RUN_CMD="$RUN_CMD com.dp.nebula.wormhole.engine.core.Engine $@"
 echo $RUN_CMD

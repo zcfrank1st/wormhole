@@ -153,4 +153,14 @@
         <SplitterClassName>com.dp.nebula.wormhole.plugins.writer.memcachewriter.MemcacheSplitter</SplitterClassName>
         <MaxThreadNumber>10</MaxThreadNumber>
     </plugin>
+
+    <plugin>
+        <version>1</version>
+        <name>eswriter</name>
+        <Path>plugins/writer/eswriter</Path>
+        <PluginClassName>com.dp.nebula.wormhole.plugins.writer.eswriter.ESWriter</PluginClassName>
+        <SplitterClassName>com.dp.nebula.wormhole.plugins.writer.eswriter.ESDirSplitter</SplitterClassName>
+        <PeripheryClassName>com.dp.nebula.wormhole.plugins.writer.eswriter.ESWriterPeriphery</PeripheryClassName>
+        <MaxThreadNumber>10</MaxThreadNumber>
+    </plugin>
 </plugins>

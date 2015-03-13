@@ -291,6 +291,12 @@
             <artifactId>ACLLdapGroupsMapping</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>1.4.2</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
@@ -590,6 +596,14 @@
                                 <copy todir="${plugin.writer.dir}/${redis.writer.name}/"
                                       file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${redis.writer.name}/ParamKey.java" />
 
+                                <property name="es.writer.name" value="eswriter" />
+                                <mkdir dir="${plugin.writer.dir}/${es.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${es.writer.name}/${es.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${es.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${es.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${es.writer.name}/ParamKey.java" />
 
                                 <mkdir dir="${transform.dir}" />
                                 <jar jarfile="${transform.dir}/transformers-0.1.0.jar"
