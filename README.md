@@ -1,9 +1,9 @@
 wormhole
 ========
 
-Wormhole is dianping massive data transfer tool, it currently support data source and destination like hdfs, hive, hbase, mysql, greenplum, sqlserver, mongodb, sftp, salesforce
+Wormhole is dianping massive data transfer tool, it currently support data source and destination like hdfs, hive, hbase, mysql, greenplum, sqlserver, mongodb, sftp, salesforce etc
 
-Project contact: yukang chen (yukang.chen@dianping.com)
+P.S. use jdk7 to compile
 
 
 
