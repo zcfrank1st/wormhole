@@ -228,7 +228,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 		}
 
 		// retry
-		private void safeWrite(char[] c) throws Exception {
+		private void safeWrite(char[] c) {
 			int times = 0;
 			do {
 				try {
@@ -249,7 +249,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 		}
 
 		// retry
-		private void safeWrite(char c) throws Exception {
+		private void safeWrite(char c) {
 			int times = 0;
 			do {
 				try {
@@ -264,7 +264,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					try {
 						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
-						ite.printStackTrace(System.err);
+						logger.warn("safe write retry, thread sleep" + times + "failed!");
 					}
 				}
 			} while(times < WRITE_TRY_TIMES);
@@ -298,8 +298,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				}
 				bw.flush();
 			} catch (Exception e) {
-				logger.error(e.toString(),e);
-				System.exit(-1);
+                throw new WormholeException("wormhole safe write failed!");
 			}
 		}
 	}
