@@ -159,6 +159,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 			logger.error(String.format(
 					"Some errors occurs on starting writing: %s,%s",
 					ex.getMessage(), ex.getCause()));
+            throw new WormholeException("fetal!!! writer failed!");
 		} finally {
 			dfsWriterStrategy.close();
 			closeAll();
@@ -235,10 +236,11 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					bw.write(c);
 					break;
 				} catch (Exception e) {
-					if (times == WRITE_TRY_TIMES)
-						throw new WormholeException("hdfs write retry " + times + " times, fail!");
-					times++;
-					logger.warn("safe write retry " + times, e);
+                    times++;
+                    logger.warn("safe write retry " + times, e);
+					if (times == WRITE_TRY_TIMES) {
+                        throw new RuntimeException();
+                    }
 					try {
 						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
@@ -256,11 +258,10 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					bw.write(c);
 					break;
 				} catch (Exception e) {
+                    times++;
+                    logger.warn("safe write retry "+ times, e);
 					if (times == WRITE_TRY_TIMES)
-						throw new WormholeException("hdfs write retry " + times + " times, fail!");
-					times++;
-					logger.warn("safe write retry "+ times, e);
-                    logger.warn("current output stream is " + out);
+						throw new RuntimeException();
 					try {
 						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
