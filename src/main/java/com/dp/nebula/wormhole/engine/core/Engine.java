@@ -9,6 +9,7 @@ import com.dp.nebula.wormhole.common.utils.Environment;
 import com.dp.nebula.wormhole.common.utils.JobConfGenDriver;
 import com.dp.nebula.wormhole.common.utils.JobDBUtil;
 import com.dp.nebula.wormhole.common.utils.ParseXMLUtil;
+import com.dp.nebula.wormhole.common.utils.confloader.LoadJobConfFromMysql;
 import com.dp.nebula.wormhole.engine.config.EngineConfParamKey;
 import com.dp.nebula.wormhole.engine.monitor.FailedInfo;
 import com.dp.nebula.wormhole.engine.monitor.MonitorManager;
@@ -363,6 +364,10 @@ public class Engine {
 		PropertyConfigurator.configure(Environment.LOG4J_CONF);
 
 		String jobDescriptionXML = null;
+
+        String taskId = "";
+        String time = "";
+        String offset = "";
 		// if no parameters are passed in,
 		// it generates job configure XML first
 		if (args.length < 1) {
@@ -375,10 +380,14 @@ public class Engine {
 			System.exit(JobStatus.SUCCESS.getStatus());
 		} else if (args.length == 1) {
 			jobDescriptionXML = args[0];
-		}
+		} else if (args.length == 3) {
+            taskId = args[0];
+            time = args[1];
+            offset = args[2];
+        }
 		// return usage information
 		else {
-			s_logger.error("Usage: ./wormhole.sh job.xml .");
+			s_logger.error("Usage: ./wormhole.sh job.xml . or ./wormhole.sh [taskid] [time] [offset]");
 			System.exit(JobStatus.FAILED.getStatus());
 		}
 		JobConf jobConf = null;
@@ -386,7 +395,15 @@ public class Engine {
 		Map<String, IParam> pluginConfs = null;
 		try {
 			// read configurations from XML for engine & plugins
-			jobConf = ParseXMLUtil.loadJobConf(jobDescriptionXML);
+            if (jobDescriptionXML != null) {
+                jobConf = ParseXMLUtil.loadJobConf(jobDescriptionXML);
+            } else {
+                LoadJobConfFromMysql loadJobConfFromMysql = new LoadJobConfFromMysql();
+                if (loadJobConfFromMysql.initLoader()) {
+                    jobConf = loadJobConfFromMysql.loadJobConf(taskId, time, offset);
+                    s_logger.info(jobConf.toString());
+                }
+            }
 			engineConf = ParseXMLUtil.loadEngineConfig();
 			pluginConfs = ParseXMLUtil.loadPluginConf();
 			// start data transmission
