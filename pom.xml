@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.dianping.cat</groupId>
             <artifactId>cat-core</artifactId>
-            <version>0.6.2</version>
+            <version>1.1.5</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -362,7 +362,7 @@
         <dependency>
             <groupId>com.dianping.data.query</groupId>
             <artifactId>engine</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.9</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hadoop-core</artifactId>
