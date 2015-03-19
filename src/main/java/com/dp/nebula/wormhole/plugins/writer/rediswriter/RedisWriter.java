@@ -24,7 +24,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
     private final static int JSON_SERIAL = 0;
     private final static int STRING_SERIAL = 1;
 
-    private final static int TWENTY_YEARS = 20 * 365 * 24 * 60 * 60;
+    private final static int ONE_YEARS = 365 * 24 * 60 * 60;
 
     private int keyIndex;
     private String columnsName;
@@ -58,7 +58,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
         separator = getParam().getValue(ParamKey.separator, ",");
         batchSize = getParam().getIntValue(ParamKey.batchSize);
         clearKey = getParam().getBooleanValue(ParamKey.clear_key, false);
-        expireTime = getParam().getIntValue(ParamKey.expire_time, TWENTY_YEARS);
+        expireTime = getParam().getIntValue(ParamKey.expire_time, ONE_YEARS);
 
         columns = StringUtils.split(columnsName, ',');
 
@@ -72,8 +72,13 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
     }
 
     @Override
-    public void connection() {
-        redisClient = new RedisClient(batchSize, table + "." + family);
+    public void connection(){
+        try{
+            redisClient = new RedisClient(batchSize, table + "." + family);
+        }
+        catch(Exception e){
+            
+        }
         Preconditions.checkNotNull(redisClient);
     }
 
@@ -115,7 +120,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
                     if (redisBuffer == null || redisBuffer.toString().isEmpty()) {
                         redisClient.delete(key);
                     } else {
-                        redisClient.setBatch(key, redisBuffer.toString(), expireTime);
+                        redisClient.set(key, redisBuffer.toString(), expireTime);
                     }
                     redisBuffer.clear();
                 } else {
@@ -143,7 +148,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
         try {
             redisClient.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
     }
 

@@ -1,93 +1,91 @@
 package com.dp.nebula.wormhole.plugins.common;
 
-import com.dianping.data.query.redis.RedisKey;
-import com.dianping.data.query.redis.RedisUse;
-import com.dianping.data.query.redis.RedisUseInterface;
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import com.dianping.data.query.redis.RedisTable;
+import com.dianping.data.query.redis.RedisWormhole;
 
 public final class RedisClient {
 	private final static Logger LOG = Logger.getLogger(RedisClient.class);
 
-	private int batchSize;
-	private String redisFamily;
-	
-	private ArrayList<RedisKey> rkList;
-	private ArrayList<String> vList;
+//	private int batchSize;
+//	private String redisFamily;
+//	
+//	private List<RedisKey> rkList;
+//	private List<String> vList;
+	private RedisTable redisTable;
 	
 	// Redis service
-	private static RedisUseInterface redisUse = null;
+	private static RedisWormhole redisWormhole = null;
 	
 	static {
 		try {
-			redisUse = new RedisUse();
+		    redisWormhole = new RedisWormhole();
 			LOG.info("Get RedisUse success");
 		} catch (Exception e) {
-			e.printStackTrace();
+            LOG.error(e.getMessage());
 		}
 	}
 
-	public RedisClient(int batchSize, String redisFamily) {
-		this.batchSize = batchSize; 
-		this.redisFamily = new String(redisFamily);
-		
-		rkList = new ArrayList<RedisKey>();
-		vList = new ArrayList<String>();
+	public RedisClient(int batchSize, String redisFamily) throws Exception{
+//		this.batchSize = batchSize; 
+//		this.redisFamily = redisFamily;
+		this.redisTable = redisWormhole.getRedisTable(redisFamily);
+//		rkList = new ArrayList<RedisKey>();
+//		vList = new ArrayList<String>();
 	}
 
-	public void setExpire(String key, String value, int expireTime) {
+	public void set(String key, String value, int expireTime) {
         try {
-            RedisKey rKey = new RedisKey(redisFamily, key);
-            redisUse.set(rKey, value);
-            redisUse.expire(rKey, expireTime);
+            redisWormhole.set(redisTable, key, value, expireTime);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage());
         }
     }
 
-	public void setBatch(String key, String value, int expireTime) throws IOException {
-        rkList.add(new RedisKey(redisFamily, key));
-        vList.add(value);
-        
-        if (rkList.size() >= batchSize) {
-            while(true){
-                try {
-                    redisUse.mset(rkList, vList, expireTime);
-                    rkList.clear();
-                    vList.clear();
-                    break;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }       
-        }
-    }
+//	public void setBatch(String key, String value, int expireTime) throws IOException {
+//        rkList.add(new RedisKey(redisFamily, key));
+//        vList.add(value);
+//        
+//        if (rkList.size() >= batchSize) {
+//            while(true){
+//                try {
+//                    redisUse.mset(rkList, vList, expireTime);
+//                    rkList.clear();
+//                    vList.clear();
+//                    break;
+//                } catch (Exception e) {
+//                    LOG.error(e.getMessage());
+//                }
+//            }       
+//        }
+//    }
 
-	public void setBatch(String key, String value) throws IOException {
-		rkList.add(new RedisKey(redisFamily, key));
-		vList.add(value);
-		
-		if (rkList.size() >= batchSize) {
-			while(true){
-				try {
-					redisUse.mset(rkList,vList);
-					rkList.clear();
-					vList.clear();
-					break;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}		
-		}
-	}
+//	public void setBatch(String key, String value) throws IOException {
+//		rkList.add(new RedisKey(redisFamily, key));
+//		vList.add(value);
+//		
+//		if (rkList.size() >= batchSize) {
+//			while(true){
+//				try {
+//					redisUse.mset(rkList,vList);
+//					rkList.clear();
+//					vList.clear();
+//					break;
+//				} catch (Exception e) {
+//		            LOG.error(e.getMessage());
+//				}
+//			}		
+//		}
+//	}
 
     public void delete(String key) {
         try {
-            redisUse.del(new RedisKey(redisFamily, key));
-        } catch(Exception ex) {
-            LOG.error(ex);
+            redisWormhole.del(redisTable, key);
+        } catch(Exception e) {
+            LOG.error(e.getMessage());
         }
     }
 
@@ -96,17 +94,5 @@ public final class RedisClient {
 	}
 
 	public void flush() throws IOException {
-		if (rkList.size() > 0) {
-			while (true) {
-				try {
-					redisUse.mset(rkList, vList);
-					rkList.clear();
-					vList.clear();
-					break;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 }
