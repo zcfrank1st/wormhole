@@ -180,7 +180,7 @@ final class WriterManager extends AbstractPluginManager {
 			for (String writerID : writerPoolMap.keySet()) {
 				ExecutorService es = writerPoolMap.get(writerID);
 				es.shutdownNow();
-				terminate(writerID, failedIDs.size());
+				terminate(writerID, Integer.MIN_VALUE);
 			}
 			writerPoolMap.clear();
 			return true;
@@ -190,7 +190,19 @@ final class WriterManager extends AbstractPluginManager {
 		for (String writerID : writerPoolMap.keySet()) {
 			ExecutorService es = writerPoolMap.get(writerID);
 			if (es.isTerminated()) {
-				terminate(writerID, failedIDs.size());
+                long failed = 0L;
+                Map<String, Long> errorMap = monitorManager.getCompletedMonitorInfo().getWriteFailedLinesMap();
+                for (String key : errorMap.keySet()) {
+                    failed += errorMap.get(key);
+                }
+                if (0L == failed) {
+                    s_logger.info("------ SUCCESS ------");
+                    terminate(writerID, failedIDs.size());
+                } else {
+                    s_logger.error("Failed Line Number: " + failed);
+                    s_logger.error("------ FAILED ------");
+                    terminate(writerID, Integer.MIN_VALUE);
+                }
 				needToRemoveWriterIDList.add(writerID);
 			} else {
 				result = false;
@@ -228,8 +240,7 @@ final class WriterManager extends AbstractPluginManager {
 		return result;
 	}
 
-
-    private void terminate(String writerID,int faildSize) {
+    private void terminate(String writerID,int failedSize) {
         IWriterPeriphery writerPeriphery = writerPeripheryMap.get(writerID);
         if (writerPeriphery == null) {
             s_logger.error("can not find any writer periphery for " + writerID);
@@ -240,7 +251,7 @@ final class WriterManager extends AbstractPluginManager {
             s_logger.error("can not find any job parameters for " + writerID);
             return;
         }
-        writerPeriphery.doPost(jobParams, monitorManager, faildSize);
+        writerPeriphery.doPost(jobParams, monitorManager, failedSize);
     }
 //	private void terminate(String writerID) {
 //		IWriterPeriphery writerPeriphery = writerPeripheryMap.get(writerID);

@@ -235,10 +235,12 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				try {
 					bw.write(c);
 					break;
+                    // throw new RuntimeException(); // for debug
 				} catch (Exception e) {
                     times++;
                     logger.warn("safe write retry " + times, e);
 					if (times == WRITE_TRY_TIMES) {
+                        getMonitor().increaseFailedLines();
                         throw new RuntimeException();
                     }
 					try {
@@ -260,8 +262,9 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				} catch (Exception e) {
                     times++;
                     logger.warn("safe write retry "+ times, e);
-					if (times == WRITE_TRY_TIMES)
-						throw new RuntimeException();
+					if (times == WRITE_TRY_TIMES) {
+                        throw new RuntimeException();
+                    }
 					try {
 						Thread.sleep(WRITE_SLEEP_TIME);
 					} catch (InterruptedException ite) {
