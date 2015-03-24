@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<job id="hivereader_to_hbasewriter_job">
+  <reader>
+    <plugin>hivereader</plugin>
+    <!--
+default:jdbc:hive://10.1.1.161:10000/default
+description:hive path ,format like "jdbc:hive://192.168.7.80:10000/default"
+mandatory:true
+name:path
+-->
+    <path>jdbc:hive://10.1.1.161:10000/bi</path>
+    <!--
+description:hive login name
+mandatory:false
+name:username
+-->
+    <username></username>
+    <!--
+description:hive login password
+mandatory:false
+name:password
+-->
+    <password></password>
+    <!--
+default:
+range:
+description:self-defined sql statement
+mandatory:true
+name:sql
+-->
+    <!--<sql>select useridcityid,profiles from bi.dpdm_userprofile_for_tg_hbase  where useridcityid is not null and profiles is not null limit 10</sql> -->
+     <sql>select dpid,train_id,main_add_date,tuan_add_date,ipad_add_date,main_last_visit_date,tuan_last_visit_date,ipad_last_visit_date,main_curr_version,tuan_curr_version,ipad_curr_version,prefer_city_id,most_user_id,last_user_id,main_ptoken,mac,ipad_ptoken,tuan_ptoken,main_download_source,main_download_city_id,tuan_download_source,tuan_download_city_id,ipad_download_source,ipad_download_city_id,phone_model,main_activedays_in_last30,tuan_activedays_in_last30,ipad_activedays_in_last30,main_first_tg_date,main_last_tg_date,tuan_first_tg_date,tuan_last_tg_date,ipad_first_tg_date,ipad_last_tg_date,prefer_city_tier1,os,main_second_visit_date,tuan_second_visit_date,ipad_second_visit_date from bi.dprpt_dpid_profile_service_cdc_snapshot</sql>
+    <!--
+default:READ_FROM_HIVESERVER
+range:READ_FROM_HIVESERVER,READ_FROM_HDFS
+description:query mode, READ_FROM_HIVESERVER: fetch data directly from hive server, READ_FROM_HDFS: insert the data into hdfs directory and fetch data directly from datanode
+mandatory:true
+name:mode
+-->
+    <mode>READ_FROM_HDFS</mode>
+    <!--
+default:hdfs://10.2.6.102/tmp/
+description:the temporary data directory to fetch on hdfs if using mode 2
+mandatory:true
+name:dataDir
+-->
+    <dataDir>hdfs://10.2.6.102/tmp/</dataDir>
+    <!--
+default:-1
+range:1-1000
+description:reduce task number when doing insert query, when it set to -1, hive will automatically computer reduce number
+mandatory:true
+name:reduceNumber
+-->
+    <reduceNumber>-1</reduceNumber>
+    <!--
+default:1
+range:1-10
+description:concurrency of the job
+mandatory:false
+name:concurrency
+-->
+    <concurrency>1</concurrency>
+  </reader>
+  <writer>
+    <plugin>rediswriter</plugin>
+    <table>bi.dprpt_dpid_profile_service</table>
+    <family>dim</family>
+    <keyIndex>0</keyIndex>
+    <columnsName>train_id,main_add_date,tuan_add_date,ipad_add_date,main_last_visit_date,tuan_last_visit_date,ipad_last_visit_date,main_curr_version,tuan_curr_version,ipad_curr_version,prefer_city_id,most_user_id,last_user_id,main_ptoken,mac,ipad_ptoken,tuan_ptoken,main_download_source,main_download_city_id,tuan_download_source,tuan_download_city_id,ipad_download_source,ipad_download_city_id,phone_model,main_activedays_in_last30,tuan_activedays_in_last30,ipad_activedays_in_last30,main_first_tg_date,main_last_tg_date,tuan_first_tg_date,tuan_last_tg_date,ipad_first_tg_date,ipad_last_tg_date,prefer_city_tier1,os,main_second_visit_date,tuan_second_visit_date,ipad_second_visit_date</columnsName>
+    <serialize>0</serialize>
+    <separator>,</separator>
+    <batchSize>300</batchSize>
+    <concurrency>5</concurrency>
+    <write_sleep>true</write_sleep>
+    <wait_time>100</wait_time>
+    <num_to_wait>20000</num_to_wait>
+  </writer>
+</job>

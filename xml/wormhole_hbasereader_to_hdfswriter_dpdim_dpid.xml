@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<job id="hbasereader_to_hdfswriter_job">
+  <reader>
+    <plugin>hbasereader</plugin>
+    <!--
+description:hbase table name
+mandatory:true
+name:htable
+-->
+    <htable>bi.dpdim_dpid</htable>
+    <!--
+description:indicate which CF:qualifier should be write, split by ","
+mandatory:true
+name:columns_key
+-->
+    <columns_key>:row,dim:imei,dim:uuid,dim:openudid,dim:idfa,dim:keychainid,dim:mac,dim:udid,dim:otherid,dim:pcid,dim:add_dt,dim:is_main,dim:is_tuan,dim:is_around,dim:is_shop</columns_key>
+    <!--
+description:range of rowkey
+mandatory:false
+name:rowkey_range, split by ","
+-->
+    <rowkey_range></rowkey_range>
+    <!--
+default:1
+range:1-10
+description:concurrency of the job
+mandatory:false
+name:concurrency
+-->
+    <concurrency>10</concurrency>
+  </reader>
+  <writer>
+    <plugin>hdfswriter</plugin>
+    <!--
+description:hdfs dir，hdfs://ip:port/path
+mandatory:true
+name:dir
+-->
+    <dir>hdfs://10.2.6.102/user/hive/warehouse/bi.db/dpdim_dpid</dir>
+    <!--
+default:prefix
+description:hdfs filename
+mandatory:false
+name:prefixname
+-->
+    <prefix_filename>dpidtmp</prefix_filename>
+    <!--
+default:\t
+range:\t,\001,","
+description:how to seperate fields
+mandatory:false
+name:fieldSplit
+-->
+    <field_split>\005</field_split>
+    <!--
+default:\n
+range:\n
+description:how to seperate fields
+mandatory:false
+name:lineSplit
+-->
+    <line_split>\n</line_split>
+    <!--
+default:UTF-8
+range:UTF-8|GBK|GB2312
+description:encode
+mandatory:false
+name:encoding
+-->
+    <encoding>UTF-8</encoding>
+    <!--
+range:
+description:how to replace null in hdfs
+mandatory:false
+name:nullChar
+-->
+    <nullchar>\N</nullchar>
+    <!--
+range:e.g:\r\n:\001 it means replace \r and \n with \001
+description:replace characters, if this parameter is not set, we will replace \r \n and splitField with ' ' as default
+mandatory:false
+name:replaceChar
+-->
+    <replace_char></replace_char>
+    <!--
+default:com.hadoop.compression.lzo.LzopCodec
+range:com.hadoop.compression.lzo.LzopCodec|org.apache.hadoop.io.compress.BZip2Codec|org.apache.hadoop.io.compress.DefaultCodec|org.apache.hadoop.io.compress.GzipCodec
+description:compress codecs
+mandatory:false
+name:codecClass
+-->
+    <codec_class>com.hadoop.compression.lzo.LzopCodec</codec_class>
+    <!--
+default:4096
+range:[1024-4194304]
+description:how much the buffer size is
+mandatory:false
+name:bufferSize
+-->
+    <buffer_size>2097152</buffer_size>
+    <!--
+default:TXT
+range:TXT|TXT_COMP
+description:TXT->TextFile,TXT_COMP->Compressed TextFile
+mandatory:true
+name:fileType
+-->
+    <file_type>TXT</file_type>
+    <!--
+default:1
+range:1-100
+description:concurrency of the job,,it also equals to split number
+mandatory:false
+name:concurrency
+-->
+    <concurrency>10</concurrency>
+    <!--
+default:false
+range:true,false
+description:hiveTableAddPartitionSwitch switch
+mandatory:false
+name:hiveTableAddPartitionSwitch
+-->
+    <hive_table_add_partition_switch>false</hive_table_add_partition_switch>
+    <!--
+range:e.g:dt='2010-01-01'@sampleDatabase.sampleTable
+description:specify table and partition condition,this parameter is valid only if hiveTableAddPartitionSwitch is set to true
+mandatory:false
+name:hiveTableAddPartitionSwitch
+-->
+    <hive_table_add_partition_condition></hive_table_add_partition_condition>
+    <!--
+default:
+range:
+description:data transformer class path
+mandatory:false
+name:dataTransformClass
+-->
+    <dataTransformClass></dataTransformClass>
+    <!--
+default:
+range:
+description:data transformer paramas
+mandatory:false
+name:dataTransformClass
+-->
+    <dataTransformParams></dataTransformParams>
+    <!--
+default:true
+range:true,false
+description:whether to create lzo index file
+mandatory:false
+name:createLzoIndexFile
+-->
+    <createLzoIndexFile>true</createLzoIndexFile>
+  </writer>
+</job>

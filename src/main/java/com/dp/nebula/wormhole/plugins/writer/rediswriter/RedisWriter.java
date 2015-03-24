@@ -59,7 +59,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
         batchSize = getParam().getIntValue(ParamKey.batchSize);
         clearKey = getParam().getBooleanValue(ParamKey.clear_key, false);
         expireTime = getParam().getIntValue(ParamKey.expire_time, ONE_YEARS);
-
+        LOG.info("table " + table + ", expireTime = " + expireTime);
         columns = StringUtils.split(columnsName, ',');
 
         if (serialize == JSON_SERIAL) {
