@@ -33,6 +33,8 @@ public final class RedisClient {
 //		this.batchSize = batchSize; 
 //		this.redisFamily = redisFamily;
 		this.redisTable = redisWormhole.getRedisTable(redisFamily);
+        LOG.info("tableInfo = " + redisTable);
+
 //		rkList = new ArrayList<RedisKey>();
 //		vList = new ArrayList<String>();
 	}

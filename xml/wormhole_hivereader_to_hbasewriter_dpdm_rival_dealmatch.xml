@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<job id="hivereader_to_hbasewriter_job">
+  <reader>
+    <plugin>hivereader</plugin>
+    <path>jdbc:hive://10.1.1.161:10000/default</path>
+    <username></username>
+    <password></password>
+    <sql>select rival_urlkey, cityid,cityname, shopid, shopname,category,subcategory,dp_urlkey, dp_price, dp_marketprice, siteid, rival_price, rival_marketprice, isvalid from bi.dpdm_rival_dealmatch_hbase where hp_cal_dt ='${cal_dt}'</sql>
+    <mode>READ_FROM_LOCAL</mode>
+    <dataDir>hdfs://10.2.6.102/tmp/</dataDir>
+    <reduceNumber>-1</reduceNumber>
+    <concurrency>1</concurrency>
+  </reader>
+  <writer>
+    <plugin>hbasewriter</plugin>
+    <htable>bi.dpdm_rival_dealmatch</htable>
+    <autoFlush>false</autoFlush>
+    <writebufferSize>1048576</writebufferSize>
+    <writeAheadLog>true</writeAheadLog>
+    <rowKeyIndex>0</rowKeyIndex>
+    <columnsName>dim:cityid,dim:cityname,dim:shopid,dim:shopname,dim:category,dim:subcategory,dim:dp_urlkey,dim:dp_price,dim:dp_marketprice,dim:siteid,dim:rival_price,dim:rival_marketprice,dim:isvalid</columnsName>
+    <deleteMode>0</deleteMode>
+    <rollbackMode>0</rollbackMode>
+    <concurrency>1</concurrency>
+    <write_sleep>true</write_sleep>
+    <wait_time>1000</wait_time>
+    <num_to_wait>5000</num_to_wait>
+    <secondsDecTimeStamp>21600</secondsDecTimeStamp>
+    <isDeleteData>false</isDeleteData>
+    <isMajor_Compact>true</isMajor_Compact>
+    <hiveConnectionUrl>jdbc:hive://10.1.1.161:10000/default</hiveConnectionUrl>
+    <clusterConfigName>hbase-site-nanhui.xml</clusterConfigName>
+  </writer>
+</job>

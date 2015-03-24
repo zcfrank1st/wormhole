@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<job id="hivereader_to_hbasewriter_job">
+  <reader>
+    <plugin>hivereader</plugin>
+    <path>jdbc:hive://10.1.1.161:10000/default</path>
+    <username></username>
+    <password></password>
+    <sql>select user_id,view_shop_cnt from bi.dpmid_dp_user_info where user_id > 0 and view_shop_cnt > 0</sql>
+    <mode>READ_FROM_HDFS</mode>
+    <dataDir>hdfs://10.2.6.102/tmp/</dataDir>
+    <reduceNumber>-1</reduceNumber>
+    <concurrency>1</concurrency>
+  </reader>
+  <writer>
+    <plugin>hbasewriter</plugin>
+    <htable>bi.dprpt_user_profile_service</htable>
+    <autoFlush>false</autoFlush>
+    <writebufferSize>1048576</writebufferSize>
+    <writeAheadLog>true</writeAheadLog>
+    <rowKeyIndex>0</rowKeyIndex>
+    <columnsName>dim:view_shop_cnt</columnsName>
+    <deleteMode>0</deleteMode>
+    <rollbackMode>0</rollbackMode>
+    <concurrency>1</concurrency>
+    <write_sleep>ture</write_sleep>
+    <wait_time>50</wait_time>
+    <num_to_wait>10000</num_to_wait>
+    <secondsDecTimeStamp>21600</secondsDecTimeStamp>
+    <isDeleteData>false</isDeleteData>
+    <ignoreNullColumn>true</ignoreNullColumn>
+    <isMajor_Compact>true</isMajor_Compact>
+    <doPostDeleteDataFromHive>false</doPostDeleteDataFromHive>
+    <hiveConnectionUrl>jdbc:hive://10.1.1.161:10000/default</hiveConnectionUrl>
+    <selectRowkeysQuery></selectRowkeysQuery>
+  </writer>
+</job>
