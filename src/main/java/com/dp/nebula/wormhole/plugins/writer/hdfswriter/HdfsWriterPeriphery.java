@@ -62,52 +62,52 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 	@Override
 	public void doPost(IParam param, ITargetCounter counter, int i) {
-		deleteFilesOnHdfs(this.dir, this.prefixname);
-		// rename temp files, make them visible to hdfs
-		renameFiles();
-
-		if (lzoCompressed
-				&& "true".equalsIgnoreCase(param.getValue(
-						ParamKey.createLzoIndexFile, "true").trim())) {
-			createLzoIndex(dir);
-		}
-
+        if (Integer.MIN_VALUE != i) {
+            deleteFilesOnHdfs(this.dir, this.prefixname);
+            // rename temp files, make them visible to hdfs
+            renameFiles();
+            if (lzoCompressed
+                    && "true".equalsIgnoreCase(param.getValue(
+                    ParamKey.createLzoIndexFile, "true").trim())) {
+                createLzoIndex(dir);
+            }
 		/* add hive table partition if necessary */
-		hiveTableAddPartitionOrNot = param.getValue(
-				ParamKey.hiveTableAddPartitionSwitch, "false").trim();
-		if (hiveTableAddPartitionOrNot.equalsIgnoreCase("true")) {
-			hiveTableAddPartitionCondition = param.getValue(
-					ParamKey.hiveTableAddPartitionCondition,
-					this.hiveTableAddPartitionCondition);
+            hiveTableAddPartitionOrNot = param.getValue(
+                    ParamKey.hiveTableAddPartitionSwitch, "false").trim();
+            if (hiveTableAddPartitionOrNot.equalsIgnoreCase("true")) {
+                hiveTableAddPartitionCondition = param.getValue(
+                        ParamKey.hiveTableAddPartitionCondition,
+                        this.hiveTableAddPartitionCondition);
 
-			if (!StringUtils.isBlank(hiveTableAddPartitionCondition)) {
-				String[] hqlParam = StringUtils.split(
-						hiveTableAddPartitionCondition, '@');
-				if (HIVE_TABLE_ADD_PARTITION_PARAM_NUMBER == hqlParam.length) {
-					String parCondition = hqlParam[0].trim().replace('"', '\'');
-					String uri = hqlParam[1].trim();
-					// split dbname and tablename
-					String[] parts = StringUtils.split(uri, '.');
+                if (!StringUtils.isBlank(hiveTableAddPartitionCondition)) {
+                    String[] hqlParam = StringUtils.split(
+                            hiveTableAddPartitionCondition, '@');
+                    if (HIVE_TABLE_ADD_PARTITION_PARAM_NUMBER == hqlParam.length) {
+                        String parCondition = hqlParam[0].trim().replace('"', '\'');
+                        String uri = hqlParam[1].trim();
+                        // split dbname and tablename
+                        String[] parts = StringUtils.split(uri, '.');
 
-					if (StringUtils.isBlank(parCondition)
-							|| StringUtils.isBlank(uri) || parts.length != 2
-							|| StringUtils.isBlank(parts[0])
-							|| StringUtils.isBlank(parts[1])) {
-						logger.error(ParamKey.hiveTableAddPartitionSwitch
-								+ " param can not be parsed correctly, please check it again");
-						return;
-					}
+                        if (StringUtils.isBlank(parCondition)
+                                || StringUtils.isBlank(uri) || parts.length != 2
+                                || StringUtils.isBlank(parts[0])
+                                || StringUtils.isBlank(parts[1])) {
+                            logger.error(ParamKey.hiveTableAddPartitionSwitch
+                                    + " param can not be parsed correctly, please check it again");
+                            return;
+                        }
 
-					try {
-						addHiveTablePartition(parts[0].trim(), parts[1].trim(),
-								parCondition, dir);
-					} catch (IOException e) {
-						throw new WormholeException(e.getMessage());
-					}
-				}
-			}
-		}
-		return;
+                        try {
+                            addHiveTablePartition(parts[0].trim(), parts[1].trim(),
+                                    parCondition, dir);
+                        } catch (IOException e) {
+                            throw new WormholeException(e.getMessage());
+                        }
+                    }
+                }
+            }
+            return;
+        }
 	}
 
 	private void renameFiles() {
