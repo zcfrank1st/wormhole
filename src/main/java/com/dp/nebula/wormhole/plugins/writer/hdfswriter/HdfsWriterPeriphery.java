@@ -62,10 +62,10 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 	@Override
 	public void doPost(IParam param, ITargetCounter counter, int i) {
-        deleteFilesOnHdfs(this.dir, this.prefixname);
-        // rename temp files, make them visible to hdfs
-        renameFiles();
         if (Integer.MIN_VALUE != i) {
+            deleteFilesOnHdfs(this.dir, this.prefixname);
+            // rename temp files, make them visible to hdfs
+            renameFiles();
             if (lzoCompressed
                     && "true".equalsIgnoreCase(param.getValue(
                     ParamKey.createLzoIndexFile, "true").trim())) {
