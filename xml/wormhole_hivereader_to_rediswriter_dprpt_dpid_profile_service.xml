@@ -30,7 +30,7 @@ mandatory:true
 name:sql
 -->
     <!--<sql>select useridcityid,profiles from bi.dpdm_userprofile_for_tg_hbase  where useridcityid is not null and profiles is not null limit 10</sql> -->
-     <sql>select dpid,train_id,main_add_date,tuan_add_date,ipad_add_date,main_last_visit_date,tuan_last_visit_date,ipad_last_visit_date,main_curr_version,tuan_curr_version,ipad_curr_version,prefer_city_id,most_user_id,last_user_id,main_ptoken,mac,ipad_ptoken,tuan_ptoken,main_download_source,main_download_city_id,tuan_download_source,tuan_download_city_id,ipad_download_source,ipad_download_city_id,phone_model,main_activedays_in_last30,tuan_activedays_in_last30,ipad_activedays_in_last30,main_first_tg_date,main_last_tg_date,tuan_first_tg_date,tuan_last_tg_date,ipad_first_tg_date,ipad_last_tg_date,prefer_city_tier1,os,main_second_visit_date,tuan_second_visit_date,ipad_second_visit_date from bi.dprpt_dpid_profile_service</sql>
+     <sql>select dpid,train_id,main_add_date,tuan_add_date,ipad_add_date,main_last_visit_date,tuan_last_visit_date,ipad_last_visit_date,main_curr_version,tuan_curr_version,ipad_curr_version,prefer_city_id,most_user_id,last_user_id,main_ptoken,mac,ipad_ptoken,tuan_ptoken,main_download_source,main_download_city_id,tuan_download_source,tuan_download_city_id,ipad_download_source,ipad_download_city_id,phone_model,main_activedays_in_last30,tuan_activedays_in_last30,ipad_activedays_in_last30,main_first_tg_date,main_last_tg_date,tuan_first_tg_date,tuan_last_tg_date,ipad_first_tg_date,ipad_last_tg_date,prefer_city_tier1,os,main_second_visit_date,tuan_second_visit_date,ipad_second_visit_date from bi.dprpt_dpid_profile_service_cdc_delta</sql>
     <!--
 default:READ_FROM_HIVESERVER
 range:READ_FROM_HIVESERVER,READ_FROM_HDFS
