@@ -85,7 +85,11 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         // optimize index
         OptimizeRequestBuilder optimizeRequest =
-                client.admin().indices().prepareOptimize(index).setMaxNumSegments(1).setWaitForMerge(true);
+                client.admin().indices().prepareOptimize(index)
+                        .setMaxNumSegments(1)
+                        .setWaitForMerge(true)
+                        .setFlush(true)
+                        .setForce(true);
 
         OptimizeResponse optimizeResponse = optimizeRequest.execute().actionGet();
         LOG.info("optimized " + index);
@@ -100,6 +104,4 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         client.close();
     }
-
-
 }
