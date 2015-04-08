@@ -16,5 +16,7 @@ public final class ParamKey {
 	public static final String username = "username";
 	
 	public static final String password = "password";
+
+	public static final String jdbcRef = "jdbcRef";
 		
 }

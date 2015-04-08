@@ -116,11 +116,9 @@ abstract class AbstractPluginManager {
         if(connectProps != null && lionProject != null){
             try{
                 configCache = ConfigCache.getInstance(EnvZooKeeperConfig.getZKAddress());
-                param.putValue(ParamKey.ip, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.ip));
-                param.putValue(ParamKey.port, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.port));
-                param.putValue(ParamKey.username, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.username));
-                param.putValue(ParamKey.password, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.password));
-                param.putValue(ParamKey.dbname, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.dbname));
+				String jdbcRef = configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.jdbcRef);
+				s_logger.info("current jdbcRef :     " + jdbcRef);
+				param.putValue(ParamKey.jdbcRef, jdbcRef);
             }catch (Exception e){
                 s_logger.error("read connect configuration from lion failure",e);
                 throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
