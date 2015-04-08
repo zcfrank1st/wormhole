@@ -1,7 +1,7 @@
 package com.dp.nebula.wormhole.plugins.writer.eswriter;
 
 /**
- * Created by litora on 15/2/28.
+ * Created by tianming.mao on 15/2/28.
  */
 public final class ParamKey {
     /*
@@ -41,11 +41,20 @@ public final class ParamKey {
     public final static String indexDate = "indexDate";
 
     /*
+	 * @name: indexHour
+	 * @description: es index hour
+	 * @range:
+	 * @mandatory: false
+	 * @default: 2015-03-09
+	 */
+    public final static String indexHour = "indexHour";
+
+    /*
 	 * @name: type
 	 * @description: es type name
 	 * @range:
 	 * @mandatory: true
-	 * @default: docs
+	 * @default: 00
 	 */
     public final static String type = "type";
 
@@ -66,5 +75,12 @@ public final class ParamKey {
     * @default: 10000
     */
     public final static String bulkSize = "bulkSize";
-
+    /*
+          * @name: concurrency
+          * @description: concurrency of the job
+          * @range:1-10
+          * @mandatory: false
+          * @default:1
+          */
+    public final static String concurrency = "concurrency";
 }
