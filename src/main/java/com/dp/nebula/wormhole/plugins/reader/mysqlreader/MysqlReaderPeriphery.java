@@ -7,6 +7,8 @@ import com.dp.nebula.wormhole.common.interfaces.IReaderPeriphery;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
+import com.dp.nebula.wormhole.plugins.common.ZebraPool;
+import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -83,7 +85,7 @@ public class MysqlReaderPeriphery implements IReaderPeriphery{
 		try {
 //			DBSource.register(MysqlReader.class, this.ip, this.port, this.dbname, p);
 //			conn = DBSource.getConnection(MysqlReader.class, ip, port, dbname);
-			conn = ZebraPool.INSTANCE.getPool(jdbcRef).getConnection();
+			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.READ).getConnection();
 		} catch (Exception e) {
 			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + MysqlReader.ERROR_CODE_ADD);
 		}

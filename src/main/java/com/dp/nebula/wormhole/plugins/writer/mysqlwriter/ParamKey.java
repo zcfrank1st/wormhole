@@ -153,5 +153,7 @@ public final  class ParamKey {
 	   * @default: 
 	   */
 	public static final String COUNT_SQL = "countSql";
+
+	public final static String jdbcRef = "jdbcRef";
 }
 

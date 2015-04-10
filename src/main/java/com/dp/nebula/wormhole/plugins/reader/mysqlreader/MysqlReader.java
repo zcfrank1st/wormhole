@@ -7,6 +7,8 @@ import com.dp.nebula.wormhole.common.interfaces.ILineSender;
 import com.dp.nebula.wormhole.common.interfaces.IReader;
 import com.dp.nebula.wormhole.plugins.common.DBResultSetSender;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
+import com.dp.nebula.wormhole.plugins.common.ZebraPool;
+import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,7 +53,7 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 	@Override
 	public void connection() {
 		try {
-			conn = ZebraPool.INSTANCE.getPool(jdbcRef).getConnection();
+			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.READ).getConnection();
 			logger.info("current connection :    " + conn);
 		} catch (SQLException e) {
 			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + ERROR_CODE_ADD);

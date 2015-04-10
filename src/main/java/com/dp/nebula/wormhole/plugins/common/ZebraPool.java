@@ -1,4 +1,4 @@
-package com.dp.nebula.wormhole.plugins.reader.mysqlreader;
+package com.dp.nebula.wormhole.plugins.common;
 
 import com.dianping.zebra.group.jdbc.GroupDataSource;
 import com.dp.nebula.wormhole.common.WormholeException;
@@ -11,7 +11,7 @@ public enum ZebraPool {
 
     public GroupDataSource groupDataSource = null;
 
-    public GroupDataSource getPool(String jdbcRef) {
+    public GroupDataSource getPool(String jdbcRef, ZebraPoolType type) {
         if (groupDataSource != null) {
             return groupDataSource;
         }
@@ -19,6 +19,9 @@ public enum ZebraPool {
             if (!jdbcRef.equals("")) {
                 groupDataSource = new GroupDataSource(jdbcRef);
                 groupDataSource.setMaxPoolSize(4);
+                if (type == ZebraPoolType.READ) {
+                    groupDataSource.setRouterType("load-balance");
+                }
                 groupDataSource.init();
                 return groupDataSource;
             }
