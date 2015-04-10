@@ -81,6 +81,7 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 			logger.debug(sqlItem);
 			ResultSet rs = null;
 			try {
+				// TODO 分段读
 				rs = DBUtils.query(conn, sqlItem);
 				proxy.sendToWriter(rs);
 				proxy.flush();

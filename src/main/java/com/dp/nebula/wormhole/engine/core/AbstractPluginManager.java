@@ -122,14 +122,15 @@ abstract class AbstractPluginManager {
             try{
                 configCache = ConfigCache.getInstance(EnvZooKeeperConfig.getZKAddress());
 				if (connectProps.startsWith(CONNECT_PRIFIX)) {
+					String realDb = connectProps.substring(6); // 去除'mysql_'前缀
 					String specialDbs = configCache.getProperty(lionProject + "." + DAL_SPECIAL_DBS);
 					for (String db : specialDbs.split(DAL_SPECIAL_DBS_LION_SEP)) {
-						if (db.equals(connectProps)) {
-							param.putValue(ParamKey.jdbcRef, connectProps + SPECIAL_SUFFIX);
+						if (db.equals(realDb)) {
+							param.putValue(ParamKey.jdbcRef, realDb + SPECIAL_SUFFIX);
 						}
 					}
 					if (param.getValue(ParamKey.jdbcRef, null) == null)
-						param.putValue(ParamKey.jdbcRef, connectProps);
+						param.putValue(ParamKey.jdbcRef, realDb);
 				} else {
 					param.putValue(ParamKey.ip, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.ip));
 					param.putValue(ParamKey.port, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.port));
