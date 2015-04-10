@@ -18,8 +18,13 @@ abstract class AbstractPluginManager {
 	
 	private static final Log s_logger = LogFactory.getLog(AbstractPluginManager.class);
 	private static final String PARAM_KEY_CURRENCY = "concurrency";
-	private final static String WORMHOLE_CONNECT_FILE = "WORMHOLE_CONNECT_FILE";
-    private final static String LION_PROJECT = "LION_PROJECT";
+//	private static final String WORMHOLE_CONNECT_FILE = "WORMHOLE_CONNECT_FILE";
+    private static final String LION_PROJECT = "LION_PROJECT";
+
+	private static final String CONNECT_PRIFIX = "mysql_";
+	private static final String DAL_SPECIAL_DBS = "special_dbs";
+	private static final String SPECIAL_SUFFIX = ".sdw";
+	private static final String DAL_SPECIAL_DBS_LION_SEP = ";";
 
 
     /**
@@ -116,9 +121,22 @@ abstract class AbstractPluginManager {
         if(connectProps != null && lionProject != null){
             try{
                 configCache = ConfigCache.getInstance(EnvZooKeeperConfig.getZKAddress());
-				String jdbcRef = configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.jdbcRef);
-				s_logger.info("current jdbcRef :     " + jdbcRef);
-				param.putValue(ParamKey.jdbcRef, jdbcRef);
+				if (connectProps.startsWith(CONNECT_PRIFIX)) {
+					String specialDbs = configCache.getProperty(lionProject + "." + DAL_SPECIAL_DBS);
+					for (String db : specialDbs.split(DAL_SPECIAL_DBS_LION_SEP)) {
+						if (db.equals(connectProps)) {
+							param.putValue(ParamKey.jdbcRef, connectProps + SPECIAL_SUFFIX);
+						}
+					}
+					if (param.getValue(ParamKey.jdbcRef, null) == null)
+						param.putValue(ParamKey.jdbcRef, connectProps);
+				} else {
+					param.putValue(ParamKey.ip, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.ip));
+					param.putValue(ParamKey.port, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.port));
+					param.putValue(ParamKey.username, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.username));
+					param.putValue(ParamKey.password, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.password));
+					param.putValue(ParamKey.dbname, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.dbname));
+				}
             }catch (Exception e){
                 s_logger.error("read connect configuration from lion failure",e);
                 throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
