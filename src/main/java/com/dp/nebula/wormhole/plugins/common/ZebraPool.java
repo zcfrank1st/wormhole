@@ -18,10 +18,10 @@ public enum ZebraPool {
         synchronized (this) {
             if (!jdbcRef.equals("")) {
                 groupDataSource = new GroupDataSource(jdbcRef);
-                groupDataSource.setMaxPoolSize(4);
                 if (type == ZebraPoolType.READ) {
                     groupDataSource.setRouterType("load-balance");
                 }
+                groupDataSource.setInitialPoolSize(20);
                 groupDataSource.init();
                 return groupDataSource;
             }

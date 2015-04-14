@@ -33,7 +33,7 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 
 	private String jdbcRef = "";
 
-	private String dbname;
+//	private String dbname;
 	
 	private String sql;
 	
@@ -74,7 +74,7 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 			logger.error("Sql for mysqlReader is empty.");
 			throw new WormholeException("Sql for mysqlReader is empty.",JobStatus.READ_FAILED.getStatus()+ERROR_CODE_ADD);
 		}
-		logger.debug(String.format("MysqlReader start to query %s .", sql));
+		logger.info(String.format("MysqlReader start to query %s .", sql));
 		for(String sqlItem:sql.split(";")){
 			sqlItem = sqlItem.trim();
 			if(sqlItem.isEmpty()) {
@@ -83,8 +83,9 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 			logger.debug(sqlItem);
 			ResultSet rs = null;
 			try {
-				// TODO 分段读
+				logger.info("current running sql: " + sql);
 				rs = DBUtils.query(conn, sqlItem);
+				logger.info("query result : " + rs);
 				proxy.sendToWriter(rs);
 				proxy.flush();
 			} catch (SQLException e) {
