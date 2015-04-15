@@ -125,9 +125,6 @@ abstract class AbstractPluginManager {
 					String realDb = connectProps.substring(6).trim(); // 去除'mysql_'前缀
 					String specialDbs = configCache.getProperty(lionProject + "." + DAL_SPECIAL_DBS);
 					for (String db : specialDbs.split(DAL_SPECIAL_DBS_LION_SEP)) {
-						s_logger.info("special dbs:  !" + db + "!");
-						s_logger.info("special dbs trim:  !" + db.trim() + "!");
-						s_logger.info("real db: !" + realDb.trim() + "!");
 						if (db.trim().equals(realDb)) {
 							param.putValue(ParamKey.jdbcRef, realDb + SPECIAL_SUFFIX);
 						}
