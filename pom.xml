@@ -640,7 +640,12 @@
                                 <!--<copy todir="${hive.security.conf.dir}" file="${conf.dir}/core-site.xml" />-->
 
                                 <mkdir dir="${release.dir}" />
-                                <tar destfile="${release.dir}/nebula-wormhole.tar" basedir="${build.base.dir}" />
+                                <!--<tar destfile="${release.dir}/nebula-wormhole.tar" basedir="${build.base.dir}" />-->
+                                <copy todir="${release.dir}">
+                                    <fileset dir="${build.base.dir}"/>
+                                </copy>
+
+                                <tar destfile="${release.dir}/nebula-wormhole.tar.gz" compression="gzip" basedir="${build.base.dir}" />
                             </target>
                         </configuration>
                         <goals>
