@@ -1,5 +1,11 @@
 package com.dp.nebula.wormhole.plugins.common;
 
+import com.dp.nebula.wormhole.common.interfaces.ILine;
+import com.dp.nebula.wormhole.common.interfaces.ILineSender;
+import com.dp.nebula.wormhole.common.interfaces.IPluginMonitor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -7,13 +13,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.dp.nebula.wormhole.common.interfaces.ILine;
-import com.dp.nebula.wormhole.common.interfaces.ILineSender;
-import com.dp.nebula.wormhole.common.interfaces.IPluginMonitor;
 
 
 public class DBResultSetSender {
@@ -47,6 +46,7 @@ public class DBResultSetSender {
 	}
 
 	public void sendToWriter(ResultSet resultSet) throws SQLException{
+		s_logger.info("**resultset type** :   " + resultSet);
 		String item = null;
 		Timestamp ts = null;
 		setColumnCount(resultSet.getMetaData().getColumnCount());

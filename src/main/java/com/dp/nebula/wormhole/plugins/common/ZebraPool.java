@@ -22,6 +22,7 @@ public enum ZebraPool {
                     groupDataSource.setRouterType("load-balance");
                 }
                 groupDataSource.setInitialPoolSize(20);
+                groupDataSource.setExtraJdbcUrlParams("zeroDateTimeBehavior=convertToNull");
                 groupDataSource.init();
                 return groupDataSource;
             }
