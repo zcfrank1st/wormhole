@@ -59,6 +59,15 @@ public final class ParamKey {
     public final static String type = "type";
 
     /*
+	 * @name: isFirstFieldUsedAsID
+	 * @description: is first field used as es doc id
+	 * @range:
+	 * @mandatory: false
+	 * @default: false
+	 */
+    public final static String isFirstFieldUsedAsID = "isFirstFieldUsedAsID";
+
+    /*
 	 * @name: fields
 	 * @description: fields to es
 	 * @range:
@@ -75,12 +84,13 @@ public final class ParamKey {
     * @default: 10000
     */
     public final static String bulkSize = "bulkSize";
+
     /*
-          * @name: concurrency
-          * @description: concurrency of the job
-          * @range:1-10
-          * @mandatory: false
-          * @default:1
-          */
+    * @name: concurrency
+    * @description: concurrency of the job
+    * @range:1-10
+    * @mandatory: false
+    * @default:1
+    */
     public final static String concurrency = "concurrency";
 }

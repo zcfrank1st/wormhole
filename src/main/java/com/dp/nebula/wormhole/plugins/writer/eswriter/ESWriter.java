@@ -16,6 +16,7 @@ import org.elasticsearch.action.admin.indices.template.get.GetIndexTemplatesRequ
 import org.elasticsearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
@@ -45,6 +46,7 @@ public class ESWriter extends AbstractPlugin implements IWriter {
     private String indexDate = null;
     private String type = null;
     private int bulkSize = -1;
+    private boolean isFirstFieldUsedAsID = false;
     private String[] fieldList = null;
 
     @Override
@@ -59,6 +61,9 @@ public class ESWriter extends AbstractPlugin implements IWriter {
         bulkSize = getParam().getIntValue(ParamKey.bulkSize);
 
         index = indexPrefix + "." + indexDate;
+
+        isFirstFieldUsedAsID = getParam().getBooleanValue(ParamKey.isFirstFieldUsedAsID);
+        LOG.info("isFirstFieldUsedAsID: " + isFirstFieldUsedAsID);
 
         String fields = getParam().getValue(ParamKey.fields);
         if (fields == null) throw new AssertionError();
@@ -98,8 +103,12 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                     jb.field(fieldList[i], line.getField(i));
                 }
                 jb.endObject();
+                String esDocId = null;
+                if (isFirstFieldUsedAsID) {
+                    esDocId = line.getField(0);
+                }
 
-                bulkRequest.add(client.prepareIndex(index, type).setSource(jb));
+                bulkRequest.add(client.prepareIndex(index, type, esDocId).setSource(jb));
                 linesInBulkRequest++;
 
                 if (linesInBulkRequest == bulkSize) {

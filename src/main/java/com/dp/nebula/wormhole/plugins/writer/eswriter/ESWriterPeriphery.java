@@ -91,8 +91,10 @@ public class ESWriterPeriphery implements IWriterPeriphery {
                         .setFlush(true)
                         .setForce(true);
 
+        LOG.info("start optimizing " + index);
+        long timeStartOptimizing = System.currentTimeMillis();
         OptimizeResponse optimizeResponse = optimizeRequest.execute().actionGet();
-        LOG.info("optimized " + index);
+        LOG.info("optimized " + index + ". seconds spent: " + (System.currentTimeMillis() - timeStartOptimizing));
 
         // get another replica shard
         Settings IndexSettings = ImmutableSettings.settingsBuilder()
