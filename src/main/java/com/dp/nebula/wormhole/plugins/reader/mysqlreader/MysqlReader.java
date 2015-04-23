@@ -85,7 +85,7 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 			try {
 //				logger.info("current running sql: " + sql);
 				rs = DBUtils.query(conn, sqlItem);
-				logger.info("query result : " + rs);
+//				logger.info("query result : " + rs);
 				proxy.sendToWriter(rs);
 				proxy.flush();
 			} catch (SQLException e) {
