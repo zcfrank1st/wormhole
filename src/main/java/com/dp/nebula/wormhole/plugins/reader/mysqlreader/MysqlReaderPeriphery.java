@@ -52,7 +52,7 @@ public class MysqlReaderPeriphery implements IReaderPeriphery{
 	
 	private boolean needSplit;
 	
-	private static final String SQL_COUNT_PATTERN = "select count(*) from ({0}) uni_​​alias_name_f" ;
+	private static final String SQL_COUNT_PATTERN = "select max({1}) from ({0}) uni_​​alias_name_f" ;
 	
 	protected static final String DATA_AMOUNT_KEY = "dataamount"; 
 	
@@ -99,7 +99,7 @@ public class MysqlReaderPeriphery implements IReaderPeriphery{
 		}
 		//autoIncKey and tableName is not empty, than use key splitter, do not need count item number
 		if(countSql.isEmpty()&&!sql.isEmpty() && needSplit && (autoIncKey.isEmpty() || tableName.isEmpty())) {
-			countSql = format(SQL_COUNT_PATTERN, sql);
+			countSql = format(SQL_COUNT_PATTERN, sql, autoIncKey);
 		}
 		if(countSql.isEmpty()) {
 			logger.info("Count sql is empty.");
