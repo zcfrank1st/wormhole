@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.dianping.cat</groupId>
             <artifactId>cat-core</artifactId>
-            <version>1.1.5</version>
+            <version>1.2.7</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -343,17 +343,7 @@
             </exclusions>
             <version>2.5.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.dianping.dpsf</groupId>
-            <artifactId>dpsf-net</artifactId>
-            <version>1.8.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>libthrift</artifactId>
-                    <groupId>org.apache</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        
         <dependency>
             <groupId>com.dianping.hawk</groupId>
             <artifactId>hawk-client</artifactId>
@@ -362,7 +352,7 @@
         <dependency>
             <groupId>com.dianping.data.query</groupId>
             <artifactId>engine</artifactId>
-            <version>0.6.9</version>
+            <version>0.7.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hadoop-core</artifactId>
@@ -384,7 +374,7 @@
                     <groupId>org.apache</groupId>
                 </exclusion>
             </exclusions>
-            <version>2.4.1</version>
+            <version>2.6.5</version>
         </dependency>
         <dependency>
             <groupId>commons-dbutils</groupId>

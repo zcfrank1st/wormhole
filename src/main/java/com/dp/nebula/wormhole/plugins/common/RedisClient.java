@@ -1,11 +1,16 @@
 package com.dp.nebula.wormhole.plugins.common;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.dianping.data.query.redis.RedisKey;
+import com.dianping.data.query.redis.RedisStoreKey;
 import com.dianping.data.query.redis.RedisTable;
 import com.dianping.data.query.redis.RedisWormhole;
+import com.dianping.data.query.utils.RedisKeyUtil;
 
 public final class RedisClient {
 	private final static Logger LOG = Logger.getLogger(RedisClient.class);
@@ -42,6 +47,7 @@ public final class RedisClient {
 	public void set(String key, String value, int expireTime) {
         try {
             redisWormhole.set(redisTable, key, value, expireTime);
+            
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
@@ -90,6 +96,43 @@ public final class RedisClient {
             LOG.error(e.getMessage());
         }
     }
+    
+    public void hset(String key, Map<String, String> hashValue, int expireTime){
+        try {
+            RedisStoreKey storeKey = RedisKeyUtil.getRedisKey(redisTable, key);
+            redisWormhole.hset(redisTable, storeKey, null, null, hashValue, expireTime);
+        } catch(Exception e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
+    public void hdel(String key, List<String> columnList){
+        try {
+            int size = columnList.size();
+            if(size == 0){
+                return;
+            }
+            RedisStoreKey storeKey = RedisKeyUtil.getRedisKey(redisTable, key);
+            String[] fields = new String[columnList.size()];
+            for(int i = 0; i < size; i++){
+                fields[i] = columnList.get(i);
+            }
+            redisWormhole.hdel(redisTable, storeKey, fields);
+        } catch(Exception e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
+    public void hdel(String key, String[] fields){
+        try {
+            RedisStoreKey storeKey = RedisKeyUtil.getRedisKey(redisTable, key);
+            redisWormhole.hdel(redisTable, storeKey, fields);
+        } catch(Exception e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
+     
 
 	public void close() throws IOException {
 		

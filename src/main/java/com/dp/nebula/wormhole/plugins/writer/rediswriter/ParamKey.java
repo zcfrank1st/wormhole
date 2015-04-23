@@ -38,7 +38,7 @@ public final class ParamKey {
 	
 	/*
      * @name: serialize
-     * @description: serialize type: 0(json) 1(string)
+     * @description: serialize type: 0(json) 1(string) 2(hash)
      * @range: 
      * @mandatory: true
      * @default:
@@ -105,6 +105,16 @@ public final class ParamKey {
 	 * @default: false
 	 */
 	public final static String clear_key = "clear_key";
+	
+	/**
+	 * 清除掉是null的field
+	 */
+	public final static String deleteNullColumn = "delNullColumn";
+	
+	/**
+	 * 删除特定的column
+	 */
+	public final static String delColumns = "delColumns";
 
 	/*
      * @name: expire_time
@@ -114,4 +124,5 @@ public final class ParamKey {
      * @default: 20 years
      */
     public final static String expire_time = "expire_time";
+    
 }
