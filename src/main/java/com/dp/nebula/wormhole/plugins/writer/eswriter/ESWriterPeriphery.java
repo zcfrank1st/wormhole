@@ -4,6 +4,7 @@ import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
+import com.mchange.util.AssertException;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -35,35 +36,49 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         String clusterName = param.getValue(ParamKey.clusterName);
         String transportAddress = param.getValue(ParamKey.transportAddress);
-        String indexPrefix = param.getValue(ParamKey.indexPrefix);
-        String indexDate = param.getValue(ParamKey.indexDate);
 
-        String index = indexPrefix + "." + indexDate;
+        String topicName = param.getValue(ParamKey.topicName);
+        String topicType = param.getValue(ParamKey.topicType);
 
+        // get client
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName).build();
         TransportClient client = new org.elasticsearch.client.transport.TransportClient(settings)
                 .addTransportAddress(new InetSocketTransportAddress(transportAddress, 9300));
 
         // assert that index template exists
-        String indexTemplateName = indexPrefix + "_template";
+        String indexTemplateName = topicName + "_template";
         GetIndexTemplatesRequestBuilder getIndexTemplatesRequest =
                 client.admin().indices().prepareGetTemplates(indexTemplateName);
         GetIndexTemplatesResponse getIndexTemplatesResponse = getIndexTemplatesRequest.execute().actionGet();
         LOG.info("getIndexTemplatesResponse.getIndexTemplates().size() = " +
                 getIndexTemplatesResponse.getIndexTemplates().size());
         if (getIndexTemplatesResponse.getIndexTemplates().size() != 1)
-            throw new AssertionError(indexTemplateName + " does not exist");
+            throw new AssertException(indexTemplateName + " does not exist");
         LOG.info(indexTemplateName + " exists");
 
-        try {
-            LOG.info("delete index " + index + " if exists");
-            DeleteIndexRequestBuilder deleteIndexRequest = client.admin().indices().prepareDelete(index);
-            DeleteIndexResponse deleteIndexResponse = deleteIndexRequest.execute().actionGet();
-        } catch (IndexMissingException e) {
-            LOG.info(e.getMessage());
+        if (topicType.equalsIgnoreCase("chronic")) {
+            String date = param.getValue(ParamKey.date);
+            if (date == null) {
+                throw new AssertException("parameter 'date' is required when topicType is chronic");
+            }
+
+            String index = topicName + "." + date;
+
+            try {
+                LOG.info("delete index " + index + " if exists");
+                DeleteIndexRequestBuilder deleteIndexRequest = client.admin().indices().prepareDelete(index);
+                DeleteIndexResponse deleteIndexResponse = deleteIndexRequest.execute().actionGet();
+            } catch (IndexMissingException e) {
+                LOG.info(e.getMessage());
+            }
+        } else if (topicType.equalsIgnoreCase("full")) {
+            // nop
+        } else {
+            throw new AssertException("topicType should either be 'chronic' or 'full'");
         }
 
+        // close client
         client.close();
     }
 
@@ -73,10 +88,23 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         String clusterName = param.getValue(ParamKey.clusterName);
         String transportAddress = param.getValue(ParamKey.transportAddress);
-        String indexPrefix = param.getValue(ParamKey.indexPrefix);
-        String indexDate = param.getValue(ParamKey.indexDate);
 
-        String index = indexPrefix + "." + indexDate;
+        String topicName = param.getValue(ParamKey.topicName);
+        String topicType = param.getValue(ParamKey.topicType);
+
+        String index = null;
+
+        if (topicType.equalsIgnoreCase("chronic")) {
+            String date = param.getValue(ParamKey.date);
+            if (date == null) {
+                throw new AssertException("parameter 'date' is required when topicType is chronic");
+            }
+            index = topicName + "." + date;
+        } else if (topicType.equalsIgnoreCase("full")) {
+            index = topicName;
+        } else {
+            throw new AssertException("topicType should either be 'chronic' or 'full'");
+        }
 
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName).build();

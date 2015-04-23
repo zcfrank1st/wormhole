@@ -4,6 +4,7 @@ import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.interfaces.ILine;
 import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
+import com.mchange.util.AssertException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
@@ -42,9 +43,9 @@ public class ESWriter extends AbstractPlugin implements IWriter {
 
     private String clusterName = null;
     private String transportAddress = null;
-    private String indexPrefix = null;
-    private String indexDate = null;
-    private String type = null;
+    private String topicName = null;
+    private String topicType = null;
+    private String estype = null;
     private int bulkSize = -1;
     private boolean isFirstFieldUsedAsID = false;
     private String[] fieldList = null;
@@ -55,12 +56,22 @@ public class ESWriter extends AbstractPlugin implements IWriter {
 
         clusterName = getParam().getValue(ParamKey.clusterName);
         transportAddress = getParam().getValue(ParamKey.transportAddress);
-        indexPrefix = getParam().getValue(ParamKey.indexPrefix);
-        indexDate = getParam().getValue(ParamKey.indexDate);
-        type = getParam().getValue(ParamKey.type);
+        topicName = getParam().getValue(ParamKey.topicName);
+        topicType = getParam().getValue(ParamKey.topicType);
+        estype = getParam().getValue(ParamKey.estype);
         bulkSize = getParam().getIntValue(ParamKey.bulkSize);
 
-        index = indexPrefix + "." + indexDate;
+        if (topicType.equalsIgnoreCase("chronic")) {
+            String date = getParam().getValue(ParamKey.date);
+            if (date == null) {
+                throw new AssertException("parameter 'date' is required when topicType is chronic");
+            }
+            index = topicName + "." + date;
+        } else if (topicType.equalsIgnoreCase("full")) {
+            index = topicName;
+        } else {
+            throw new AssertException("topicType should either be 'chronic' or 'full'");
+        }
 
         isFirstFieldUsedAsID = getParam().getBooleanValue(ParamKey.isFirstFieldUsedAsID);
         LOG.info("isFirstFieldUsedAsID: " + isFirstFieldUsedAsID);
@@ -108,7 +119,7 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                     esDocId = line.getField(0);
                 }
 
-                bulkRequest.add(client.prepareIndex(index, type, esDocId).setSource(jb));
+                bulkRequest.add(client.prepareIndex(index, estype, esDocId).setSource(jb));
                 linesInBulkRequest++;
 
                 if (linesInBulkRequest == bulkSize) {
@@ -130,7 +141,7 @@ public class ESWriter extends AbstractPlugin implements IWriter {
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
         if (bulkResponse.hasFailures()) {
-            LOG.warn("bulk request has errors");
+            LOG.warn("bulk request has errors" + bulkResponse.buildFailureMessage());
         }
 
         getMonitor().increaseSuccessLine(bulkRequest.numberOfActions());
