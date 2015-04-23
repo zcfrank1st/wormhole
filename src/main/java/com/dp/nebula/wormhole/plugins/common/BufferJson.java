@@ -1,5 +1,7 @@
 package com.dp.nebula.wormhole.plugins.common;
 
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +25,8 @@ public class BufferJson implements OutputBufferInterface {
 			}
 		}
 	}
+	
+	
 
 	@Override
 	public String toString(){
@@ -33,5 +37,10 @@ public class BufferJson implements OutputBufferInterface {
 	public void clear() {
 		jsonObject = new JSONObject();
 	}
+
+    @Override
+    public Map<String, String> getHashOutput() {
+        return null;
+    }
 
 }
