@@ -10,7 +10,7 @@ cd `dirname "$0"`/..
 WORMHOLE_HOME=`pwd`
 
 #set JAVA_OPTS
-JAVA_OPTS=" -Xms1024m -Xmx4048m -Xmn256m -Xss2048k"
+JAVA_OPTS=" -Xms1g -Xmx4g -Xmn256m -Xss2048k -XX:PermSize=128m -XX:MaxPermSize=512m"
 
 #performance Options
 #JAVA_OPTS="$JAVA_OPTS -XX:+AggressiveOpts"

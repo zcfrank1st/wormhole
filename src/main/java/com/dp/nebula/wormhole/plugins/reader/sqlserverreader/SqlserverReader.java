@@ -1,15 +1,5 @@
 package com.dp.nebula.wormhole.plugins.reader.sqlserverreader;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
@@ -18,6 +8,15 @@ import com.dp.nebula.wormhole.common.interfaces.IReader;
 import com.dp.nebula.wormhole.plugins.common.DBResultSetSender;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SqlserverReader extends AbstractPlugin implements IReader{
 
@@ -51,6 +50,7 @@ public class SqlserverReader extends AbstractPlugin implements IReader{
 	public void connection() {
 		try {
 			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
+			logger.info("connection: [ip -- " + ip + " ][port -- " + port + " ][dbname -- "+ dbname +" ]");
 		} catch (Exception e) {
 			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + ERROR_CODE_ADD);
 		}
