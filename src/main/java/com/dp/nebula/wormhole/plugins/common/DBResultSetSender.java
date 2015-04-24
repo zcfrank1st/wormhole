@@ -46,7 +46,7 @@ public class DBResultSetSender {
 	}
 
 	public void sendToWriter(ResultSet resultSet) throws SQLException{
-		s_logger.info("**resultset type** :   " + resultSet);
+//		s_logger.info("**resultset type** :   " + resultSet);
 		String item = null;
 		Timestamp ts = null;
 		setColumnCount(resultSet.getMetaData().getColumnCount());
