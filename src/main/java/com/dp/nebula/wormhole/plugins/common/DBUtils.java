@@ -1,5 +1,6 @@
 package com.dp.nebula.wormhole.plugins.common;
 
+import com.dianping.zebra.group.jdbc.GroupStatement;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import org.apache.commons.logging.Log;
@@ -47,7 +48,9 @@ public final class DBUtils {
 
 	public static ResultSet query(Connection conn, String sql) throws SQLException {
 		Statement stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-		stmt.setFetchSize(Integer.MIN_VALUE);
+		if (stmt instanceof GroupStatement) {
+			stmt.setFetchSize(Integer.MIN_VALUE);
+		}
 		return stmt.executeQuery(sql);
 	}
 	
