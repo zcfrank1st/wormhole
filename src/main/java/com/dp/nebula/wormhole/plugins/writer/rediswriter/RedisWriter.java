@@ -137,7 +137,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
                     }
                     for (int i = keyIndex + 1; i < fieldNum; i++) {
                         if (line.getField(i) == null) {
-                            nullColumnList.add(columns[i]);
+                            nullColumnList.add(columns[i - 1]);
                             continue;
                         }
                         redisBuffer.put(columns[i - 1], line.getField(i));
