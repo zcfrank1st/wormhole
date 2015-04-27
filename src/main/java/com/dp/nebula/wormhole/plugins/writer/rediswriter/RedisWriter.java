@@ -117,6 +117,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
 
                 if (StringUtils.isEmpty(key)) {
                     LOG.warn("row key is null, ignore it: " + line.toString(','));
+                    getMonitor().increaseSuccessLines();
                     continue;
                 }
                 if (clearKey) {
