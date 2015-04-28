@@ -35,18 +35,18 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         String clusterName = param.getValue(ParamKey.clusterName);
         String transportAddress = param.getValue(ParamKey.transportAddress);
-        String indexPrefix = param.getValue(ParamKey.indexPrefix);
-        String indexDate = param.getValue(ParamKey.indexDate);
 
-        String index = indexPrefix + "." + indexDate;
+        String topicName = param.getValue(ParamKey.topicName);
+        String topicType = param.getValue(ParamKey.topicType);
 
+        // get client
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName).build();
         TransportClient client = new org.elasticsearch.client.transport.TransportClient(settings)
                 .addTransportAddress(new InetSocketTransportAddress(transportAddress, 9300));
 
         // assert that index template exists
-        String indexTemplateName = indexPrefix + "_template";
+        String indexTemplateName = topicName + "_template";
         GetIndexTemplatesRequestBuilder getIndexTemplatesRequest =
                 client.admin().indices().prepareGetTemplates(indexTemplateName);
         GetIndexTemplatesResponse getIndexTemplatesResponse = getIndexTemplatesRequest.execute().actionGet();
@@ -56,14 +56,28 @@ public class ESWriterPeriphery implements IWriterPeriphery {
             throw new AssertionError(indexTemplateName + " does not exist");
         LOG.info(indexTemplateName + " exists");
 
-        try {
-            LOG.info("delete index " + index + " if exists");
-            DeleteIndexRequestBuilder deleteIndexRequest = client.admin().indices().prepareDelete(index);
-            DeleteIndexResponse deleteIndexResponse = deleteIndexRequest.execute().actionGet();
-        } catch (IndexMissingException e) {
-            LOG.info(e.getMessage());
+        if (topicType.equalsIgnoreCase("append")) {
+            String date = param.getValue(ParamKey.date);
+            if (date == null) {
+                throw new AssertionError("parameter 'date' is required when topicType is append");
+            }
+
+            String index = topicName + "." + date;
+
+            try {
+                LOG.info("delete index " + index + " if exists");
+                DeleteIndexRequestBuilder deleteIndexRequest = client.admin().indices().prepareDelete(index);
+                DeleteIndexResponse deleteIndexResponse = deleteIndexRequest.execute().actionGet();
+            } catch (IndexMissingException e) {
+                LOG.info(e.getMessage());
+            }
+        } else if (topicType.equalsIgnoreCase("full")) {
+            // nop
+        } else {
+            throw new AssertionError("topicType should either be 'append' or 'full'");
         }
 
+        // close client
         client.close();
     }
 
@@ -73,10 +87,23 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         String clusterName = param.getValue(ParamKey.clusterName);
         String transportAddress = param.getValue(ParamKey.transportAddress);
-        String indexPrefix = param.getValue(ParamKey.indexPrefix);
-        String indexDate = param.getValue(ParamKey.indexDate);
 
-        String index = indexPrefix + "." + indexDate;
+        String topicName = param.getValue(ParamKey.topicName);
+        String topicType = param.getValue(ParamKey.topicType);
+
+        String index = null;
+
+        if (topicType.equalsIgnoreCase("append")) {
+            String date = param.getValue(ParamKey.date);
+            if (date == null) {
+                throw new AssertionError("parameter 'date' is required when topicType is append");
+            }
+            index = topicName + "." + date;
+        } else if (topicType.equalsIgnoreCase("full")) {
+            index = topicName;
+        } else {
+            throw new AssertionError("topicType should either be 'append' or 'full'");
+        }
 
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName).build();
@@ -91,8 +118,10 @@ public class ESWriterPeriphery implements IWriterPeriphery {
                         .setFlush(true)
                         .setForce(true);
 
+        LOG.info("start optimizing " + index);
+        long timeStartOptimizing = System.currentTimeMillis();
         OptimizeResponse optimizeResponse = optimizeRequest.execute().actionGet();
-        LOG.info("optimized " + index);
+        LOG.info("optimized " + index + ". milli-seconds spent: " + (System.currentTimeMillis() - timeStartOptimizing));
 
         // get another replica shard
         Settings IndexSettings = ImmutableSettings.settingsBuilder()

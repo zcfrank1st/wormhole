@@ -4,6 +4,7 @@ package com.dp.nebula.wormhole.plugins.writer.eswriter;
  * Created by tianming.mao on 15/2/28.
  */
 public final class ParamKey {
+
     /*
 	 * @name: clusterName
 	 * @description: es cluster name
@@ -23,40 +24,53 @@ public final class ParamKey {
     public final static String transportAddress = "transportAddress";
 
     /*
-	 * @name: indexPrefix
-	 * @description: es index prefix
-	 * @range:
-	 * @mandatory: true
-	 * @default: myindex
-	 */
-    public final static String indexPrefix = "indexPrefix";
+     * @name: topicName
+     * @description: 代表一类数据主题，比如流量、用户画像等
+     * @range:
+     * @mandatory: true
+     * @default: mytopic
+     */
+    public final static String topicName = "topicName";
 
     /*
-	 * @name: indexDate
-	 * @description: es index date
-	 * @range:
-	 * @mandatory: true
-	 * @default: 2015-03-09
-	 */
-    public final static String indexDate = "indexDate";
+     * @name: topicType
+     * @description: 代表数据主题的类型；
+     *               append表示随时间产生的数据，比如流量，每天产生并堆积，历史数据不会修改；
+     *               full表示全量数据，比如用户画像，全量数据很大，但每天会修改小部分数据
+     *               对es来说，append类的topic表现为每天一个index
+     *                        full类的top表现为仅有一个index，每天apply增量
+     * @range:
+     * @mandatory: true
+     * @default: append
+     */
+    public final static String topicType = "topicType";
 
     /*
-	 * @name: indexHour
-	 * @description: es index hour
+	 * @name: date
+	 * @description: es index date; required when topicType is append
 	 * @range:
 	 * @mandatory: false
 	 * @default: 2015-03-09
 	 */
-    public final static String indexHour = "indexHour";
+    public final static String date = "date";
 
     /*
-	 * @name: type
+	 * @name: esType
 	 * @description: es type name
 	 * @range:
 	 * @mandatory: true
-	 * @default: 00
+	 * @default: docs
 	 */
-    public final static String type = "type";
+    public final static String esType = "esType";
+
+    /*
+	 * @name: isFirstFieldUsedAsID
+	 * @description: is first field used as es doc id
+	 * @range:
+	 * @mandatory: false
+	 * @default: false
+	 */
+    public final static String isFirstFieldUsedAsID = "isFirstFieldUsedAsID";
 
     /*
 	 * @name: fields
@@ -68,6 +82,15 @@ public final class ParamKey {
     public final static String fields = "fields";
 
     /*
+     * @name: arrayFields
+     * @description: fields that will be split by '\u0002' and form a list in json when inserted to es
+     * @range:
+     * @mandatory: false
+     * @default:
+     */
+    public final static String arrayFields = "arrayFields";
+
+    /*
     * @name: bulkSize
     * @description: es bulk size
     * @range:
@@ -75,12 +98,13 @@ public final class ParamKey {
     * @default: 10000
     */
     public final static String bulkSize = "bulkSize";
+
     /*
-          * @name: concurrency
-          * @description: concurrency of the job
-          * @range:1-10
-          * @mandatory: false
-          * @default:1
-          */
+    * @name: concurrency
+    * @description: concurrency of the job
+    * @range: 1-10
+    * @mandatory: false
+    * @default: 1
+    */
     public final static String concurrency = "concurrency";
 }
