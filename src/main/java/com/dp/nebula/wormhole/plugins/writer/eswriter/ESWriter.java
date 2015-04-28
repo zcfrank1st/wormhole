@@ -4,29 +4,19 @@ import com.dp.nebula.wormhole.common.AbstractPlugin;
 import com.dp.nebula.wormhole.common.interfaces.ILine;
 import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
-import com.mchange.util.AssertException;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.optimize.OptimizeRequestBuilder;
-import org.elasticsearch.action.admin.indices.optimize.OptimizeResponse;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
-import org.elasticsearch.action.admin.indices.template.get.GetIndexTemplatesRequestBuilder;
-import org.elasticsearch.action.admin.indices.template.get.GetIndexTemplatesResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.node.Node;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
@@ -45,10 +35,11 @@ public class ESWriter extends AbstractPlugin implements IWriter {
     private String transportAddress = null;
     private String topicName = null;
     private String topicType = null;
-    private String estype = null;
+    private String esType = null;
     private int bulkSize = -1;
     private boolean isFirstFieldUsedAsID = false;
     private String[] fieldList = null;
+    private Set<String> arrayFieldsSet = new HashSet<String>();
 
     @Override
     public void init(){
@@ -58,19 +49,19 @@ public class ESWriter extends AbstractPlugin implements IWriter {
         transportAddress = getParam().getValue(ParamKey.transportAddress);
         topicName = getParam().getValue(ParamKey.topicName);
         topicType = getParam().getValue(ParamKey.topicType);
-        estype = getParam().getValue(ParamKey.estype);
+        esType = getParam().getValue(ParamKey.esType);
         bulkSize = getParam().getIntValue(ParamKey.bulkSize);
 
-        if (topicType.equalsIgnoreCase("chronic")) {
+        if (topicType.equalsIgnoreCase("append")) {
             String date = getParam().getValue(ParamKey.date);
             if (date == null) {
-                throw new AssertException("parameter 'date' is required when topicType is chronic");
+                throw new AssertionError("parameter 'date' is required when topicType is append");
             }
             index = topicName + "." + date;
         } else if (topicType.equalsIgnoreCase("full")) {
             index = topicName;
         } else {
-            throw new AssertException("topicType should either be 'chronic' or 'full'");
+            throw new AssertionError("topicType should either be 'append' or 'full'");
         }
 
         isFirstFieldUsedAsID = getParam().getBooleanValue(ParamKey.isFirstFieldUsedAsID);
@@ -87,6 +78,19 @@ public class ESWriter extends AbstractPlugin implements IWriter {
             sb.append("%%").append(fieldList[i]).append("%%\n");
         }
         LOG.info(sb.toString());
+
+        String arrayFieldsValue = getParam().getValue(ParamKey.arrayFields, "");
+        String[] arrayFieldsArray = arrayFieldsValue.split(",");
+        StringBuilder sb2 = new StringBuilder().append("array fields list: \n");
+        for (int i = 0; i < arrayFieldsArray.length; i++) {
+            String trimmedField = arrayFieldsArray[i].trim();
+            if (!trimmedField.isEmpty()) {
+                arrayFieldsSet.add(trimmedField);
+                sb2.append("%%").append(trimmedField).append("%%\n");
+            }
+        }
+        LOG.info(sb2.toString());
+
     }
 
     @Override
@@ -111,7 +115,14 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                 XContentBuilder jb = jsonBuilder();
                 jb.startObject();
                 for (int i = 0; i < fieldList.length; i++) {
-                    jb.field(fieldList[i], line.getField(i));
+                    if (arrayFieldsSet.contains(fieldList[i])) { // array field
+                        // split by '\u0002'
+                        String val = line.getField(i);
+                        String[] elements = val.split("\u0002");
+                        jb.field(fieldList[i], elements);
+                    } else { // normal field
+                        jb.field(fieldList[i], line.getField(i));
+                    }
                 }
                 jb.endObject();
                 String esDocId = null;
@@ -119,7 +130,7 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                     esDocId = line.getField(0);
                 }
 
-                bulkRequest.add(client.prepareIndex(index, estype, esDocId).setSource(jb));
+                bulkRequest.add(client.prepareIndex(index, esType, esDocId).setSource(jb));
                 linesInBulkRequest++;
 
                 if (linesInBulkRequest == bulkSize) {

@@ -4,7 +4,6 @@ import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
-import com.mchange.util.AssertException;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -54,13 +53,13 @@ public class ESWriterPeriphery implements IWriterPeriphery {
         LOG.info("getIndexTemplatesResponse.getIndexTemplates().size() = " +
                 getIndexTemplatesResponse.getIndexTemplates().size());
         if (getIndexTemplatesResponse.getIndexTemplates().size() != 1)
-            throw new AssertException(indexTemplateName + " does not exist");
+            throw new AssertionError(indexTemplateName + " does not exist");
         LOG.info(indexTemplateName + " exists");
 
-        if (topicType.equalsIgnoreCase("chronic")) {
+        if (topicType.equalsIgnoreCase("append")) {
             String date = param.getValue(ParamKey.date);
             if (date == null) {
-                throw new AssertException("parameter 'date' is required when topicType is chronic");
+                throw new AssertionError("parameter 'date' is required when topicType is append");
             }
 
             String index = topicName + "." + date;
@@ -75,7 +74,7 @@ public class ESWriterPeriphery implements IWriterPeriphery {
         } else if (topicType.equalsIgnoreCase("full")) {
             // nop
         } else {
-            throw new AssertException("topicType should either be 'chronic' or 'full'");
+            throw new AssertionError("topicType should either be 'append' or 'full'");
         }
 
         // close client
@@ -94,16 +93,16 @@ public class ESWriterPeriphery implements IWriterPeriphery {
 
         String index = null;
 
-        if (topicType.equalsIgnoreCase("chronic")) {
+        if (topicType.equalsIgnoreCase("append")) {
             String date = param.getValue(ParamKey.date);
             if (date == null) {
-                throw new AssertException("parameter 'date' is required when topicType is chronic");
+                throw new AssertionError("parameter 'date' is required when topicType is append");
             }
             index = topicName + "." + date;
         } else if (topicType.equalsIgnoreCase("full")) {
             index = topicName;
         } else {
-            throw new AssertException("topicType should either be 'chronic' or 'full'");
+            throw new AssertionError("topicType should either be 'append' or 'full'");
         }
 
         Settings settings = ImmutableSettings.settingsBuilder()
@@ -122,7 +121,7 @@ public class ESWriterPeriphery implements IWriterPeriphery {
         LOG.info("start optimizing " + index);
         long timeStartOptimizing = System.currentTimeMillis();
         OptimizeResponse optimizeResponse = optimizeRequest.execute().actionGet();
-        LOG.info("optimized " + index + ". seconds spent: " + (System.currentTimeMillis() - timeStartOptimizing));
+        LOG.info("optimized " + index + ". milli-seconds spent: " + (System.currentTimeMillis() - timeStartOptimizing));
 
         // get another replica shard
         Settings IndexSettings = ImmutableSettings.settingsBuilder()

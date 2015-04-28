@@ -35,19 +35,19 @@ public final class ParamKey {
     /*
      * @name: topicType
      * @description: 代表数据主题的类型；
-     *               chronic表示随时间产生的数据，比如流量，每天产生并堆积，历史数据不会修改；
+     *               append表示随时间产生的数据，比如流量，每天产生并堆积，历史数据不会修改；
      *               full表示全量数据，比如用户画像，全量数据很大，但每天会修改小部分数据
-     *               对es来说，chronic类的topic表现为每天一个index
+     *               对es来说，append类的topic表现为每天一个index
      *                        full类的top表现为仅有一个index，每天apply增量
      * @range:
      * @mandatory: true
-     * @default: chronic
+     * @default: append
      */
     public final static String topicType = "topicType";
 
     /*
 	 * @name: date
-	 * @description: es index date; required when topicType is chronic
+	 * @description: es index date; required when topicType is append
 	 * @range:
 	 * @mandatory: false
 	 * @default: 2015-03-09
@@ -55,13 +55,13 @@ public final class ParamKey {
     public final static String date = "date";
 
     /*
-	 * @name: estype
+	 * @name: esType
 	 * @description: es type name
 	 * @range:
 	 * @mandatory: true
 	 * @default: docs
 	 */
-    public final static String estype = "estype";
+    public final static String esType = "esType";
 
     /*
 	 * @name: isFirstFieldUsedAsID
@@ -80,6 +80,15 @@ public final class ParamKey {
 	 * @default: aaa,bbb
 	 */
     public final static String fields = "fields";
+
+    /*
+     * @name: arrayFields
+     * @description: fields that will be split by '\u0002' and form a list in json when inserted to es
+     * @range:
+     * @mandatory: false
+     * @default:
+     */
+    public final static String arrayFields = "arrayFields";
 
     /*
     * @name: bulkSize
