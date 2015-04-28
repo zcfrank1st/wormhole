@@ -391,6 +391,18 @@
             <artifactId>commons-dbutils</artifactId>
             <version>1.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.dianping.zebra</groupId>
+            <artifactId>zebra-api</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dianping.zebra</groupId>
+            <artifactId>zebra-ds-monitor-client</artifactId>
+            <version>2.7.1</version>
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
@@ -628,7 +640,12 @@
                                 <!--<copy todir="${hive.security.conf.dir}" file="${conf.dir}/core-site.xml" />-->
 
                                 <mkdir dir="${release.dir}" />
-                                <tar destfile="${release.dir}/nebula-wormhole.tar" basedir="${build.base.dir}" />
+                                <!--<tar destfile="${release.dir}/nebula-wormhole.tar" basedir="${build.base.dir}" />-->
+                                <copy todir="${release.dir}">
+                                    <fileset dir="${build.base.dir}"/>
+                                </copy>
+
+                                <tar destfile="${release.dir}/nebula-wormhole.tar.gz" compression="gzip" basedir="${build.base.dir}" />
                             </target>
                         </configuration>
                         <goals>

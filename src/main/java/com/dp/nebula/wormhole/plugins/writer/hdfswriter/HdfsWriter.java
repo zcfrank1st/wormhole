@@ -224,54 +224,28 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 							encoding), bufferSize);
 				}
 			} catch (Exception e) {
+				logger.error("====== namenode error ======");
 				logger.error(e.toString(),e);
 			}
 		}
 
 		// retry
 		private void safeWrite(char[] c) {
-			int times = 0;
-			do {
-				try {
-					bw.write(c);
-					break;
-                    // throw new RuntimeException(); // for debug
-				} catch (Exception e) {
-                    times++;
-                    logger.warn("safe write retry " + times, e);
-					if (times == WRITE_TRY_TIMES) {
-                        getMonitor().increaseFailedLines();
-                        throw new RuntimeException();
-                    }
-					try {
-						Thread.sleep(WRITE_SLEEP_TIME);
-					} catch (InterruptedException ite) {
-						ite.printStackTrace(System.err);
-					}
-				}
-			} while(times < WRITE_TRY_TIMES);
+			try {
+				bw.write(c);
+			} catch (Exception e) {
+				getMonitor().increaseFailedLines();
+				throw new RuntimeException();
+			}
 		}
 
 		// retry
 		private void safeWrite(char c) {
-			int times = 0;
-			do {
-				try {
-					bw.write(c);
-					break;
-				} catch (Exception e) {
-                    times++;
-                    logger.warn("safe write retry "+ times, e);
-					if (times == WRITE_TRY_TIMES) {
-                        throw new RuntimeException();
-                    }
-					try {
-						Thread.sleep(WRITE_SLEEP_TIME);
-					} catch (InterruptedException ite) {
-						logger.warn("safe write retry, thread sleep" + times + "failed!");
-					}
-				}
-			} while(times < WRITE_TRY_TIMES);
+			try {
+				bw.write(c);
+			} catch (Exception e) {
+				throw new RuntimeException();
+			}
 		}
 
 		@Override

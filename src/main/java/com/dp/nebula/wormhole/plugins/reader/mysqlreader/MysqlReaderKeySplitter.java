@@ -1,19 +1,19 @@
 package com.dp.nebula.wormhole.plugins.reader.mysqlreader;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.dp.nebula.wormhole.common.AbstractSplitter;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
-import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
+import com.dp.nebula.wormhole.plugins.common.ZebraPool;
+import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MysqlReaderKeySplitter extends AbstractSplitter{
 	private static final String SPLIT_SQL_WITH_WHERE_PATTEN = "select %s from %s where %s and %s > %d and %s <= %d";
@@ -42,12 +42,14 @@ public class MysqlReaderKeySplitter extends AbstractSplitter{
 	
 	private Connection conn;
 	
-	private String ip;
+//	private String ip;
+//
+//	private String port = "3306";
+//
+//	private String dbname;
 
-	private String port = "3306";
+	private String jdbcRef;
 
-	private String dbname;
-	
 	private int concurrency;
 	
 	private boolean needSplit;
@@ -66,9 +68,10 @@ public class MysqlReaderKeySplitter extends AbstractSplitter{
 		columns = param.getValue(ParamKey.columns, "");
 		where = param.getValue(ParamKey.where,"");
 		blockSize = param.getIntValue(ParamKey.blockSize, DEFAULT_BLOCK_SIZE);
-		ip = param.getValue(ParamKey.ip,"");
-		port = param.getValue(ParamKey.port, this.port);
-		dbname = param.getValue(ParamKey.dbname,"");
+//		ip = param.getValue(ParamKey.ip,"");
+//		port = param.getValue(ParamKey.port, this.port);
+//		dbname = param.getValue(ParamKey.dbname,"");
+		jdbcRef = param.getValue(ParamKey.jdbcRef, "");
 		sql = param.getValue(ParamKey.sql,"");
 		concurrency = param.getIntValue(ParamKey.concurrency,1);
 		needSplit = param.getBooleanValue(ParamKey.needSplit,true);
@@ -97,7 +100,7 @@ public class MysqlReaderKeySplitter extends AbstractSplitter{
 		}
 		logger.info("Mysql reader start to split");
 		try {
-			conn = DBSource.getConnection(MysqlReader.class, ip, port, dbname);
+			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.READ).getConnection();
 		} catch (Exception e) {
 			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + MysqlReader.ERROR_CODE_ADD);
 		}
@@ -108,7 +111,7 @@ public class MysqlReaderKeySplitter extends AbstractSplitter{
 			rangeSql = String.format(RANGE_SQL_WITHOUT_WHERE_PATTERN, autoIncKey,autoIncKey,tableName);
 		}
 		long min=0,max=0;
-		
+		logger.info("range sql:  " + rangeSql);
 		try {
 			logger.debug("RangeSql: " + rangeSql);
 			ResultSet rs = DBUtils.query(conn, rangeSql);
@@ -130,6 +133,7 @@ public class MysqlReaderKeySplitter extends AbstractSplitter{
 			} else {
 				sqlSplitted = String.format(SPLIT_SQL_WITHOUT_WHERE_PATTEN, columns, tableName, autoIncKey, start, autoIncKey,end);
 			}
+			logger.info("splited sql:  " + sqlSplitted);
 			int index = (int) (i%concurrency);
 			if(sqlArray[index] == null){
 				sqlArray[index] =  new StringBuilder();
