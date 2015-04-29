@@ -7,11 +7,13 @@ import com.dp.nebula.wormhole.common.config.JobPluginConf;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.utils.Environment;
 import com.dp.nebula.wormhole.common.utils.JobConfGenDriver;
+import com.dp.nebula.wormhole.common.utils.JobDBUtil;
 import com.dp.nebula.wormhole.common.utils.ParseXMLUtil;
 import com.dp.nebula.wormhole.common.utils.confloader.LoadJobConfFromMysql;
 import com.dp.nebula.wormhole.engine.config.EngineConfParamKey;
 import com.dp.nebula.wormhole.engine.monitor.FailedInfo;
 import com.dp.nebula.wormhole.engine.monitor.MonitorManager;
+import com.dp.nebula.wormhole.engine.monitor.WormHoleJobInfo;
 import com.dp.nebula.wormhole.engine.storage.StorageConf;
 import com.dp.nebula.wormhole.engine.storage.StorageManager;
 import org.apache.commons.logging.Log;
@@ -23,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class Engine {
+	private static String jobDescriptionXML;
 
 	private static final Log s_logger = LogFactory.getLog(Engine.class);
 	private static final int STATUS_CHECK_INTERVAL = 1000;
@@ -218,6 +221,12 @@ public class Engine {
 			}
 
 		} finally {
+			time = new Date().getTime() - now.getTime();
+			if (monitorManager != null) {
+				WormHoleJobInfo jobInfo = monitorManager.getJobInfo(source,
+						target, time / 1000, status.getStatus(), now);
+				JobDBUtil.insertOneJobInfo(jobDescriptionXML, jobInfo);
+			}
 			s_logger.info(monitorManager.finalReport());
 		}
 		if (statusCode != JobStatus.RUNNING.getStatus()) {
@@ -354,8 +363,6 @@ public class Engine {
 
 	public static void main(String[] args) {
 		PropertyConfigurator.configure(Environment.LOG4J_CONF);
-
-		String jobDescriptionXML = null;
 
         String taskId = "";
         String time = "";
