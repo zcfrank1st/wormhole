@@ -20,6 +20,7 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.HashMap;
@@ -30,7 +31,6 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 	private static volatile boolean compressionTypePrintVirgin = true;
 
 	private static final int WRITE_TRY_TIMES = 5;
-	private static final long WRITE_SLEEP_TIME = 5000L;
 	
 	private FileSystem fs;
 	private Path p = null;
@@ -159,12 +159,10 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 			logger.error(String.format(
 					"Some errors occurs on starting writing: %s,%s",
 					ex.getMessage(), ex.getCause()));
-            throw new WormholeException("fetal!!! writer failed!");
 		} finally {
 			dfsWriterStrategy.close();
 			closeAll();
 		}
-
 	}
 
 	public interface DfsWriterStrategy {
@@ -225,33 +223,15 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				}
 			} catch (Exception e) {
 				logger.error("====== namenode error ======");
-				logger.error(e.toString(),e);
-			}
-		}
-
-		// retry
-		private void safeWrite(char[] c) {
-			try {
-				bw.write(c);
-			} catch (Exception e) {
-				getMonitor().increaseFailedLines();
-				throw new RuntimeException();
-			}
-		}
-
-		// retry
-		private void safeWrite(char c) {
-			try {
-				bw.write(c);
-			} catch (Exception e) {
-				throw new RuntimeException();
+				logger.error(e.toString(), e);
 			}
 		}
 
 		@Override
 		public void write(ILineReceiver receiver,ITransformer transformer, String transformerParams) {
-			ILine line;
-			try {
+			ILine line = null;
+			int rewriteTimes = 1;
+			try{
 				while ((line = receiver.receive()) != null) {
 					if(transformer != null ) {
 						if(transformerParams != null && !transformerParams.equals("")) {
@@ -263,21 +243,43 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					int len = line.getFieldNum();
 					
 					for (int i = 0; i < len; i++) {
-//						bw.write(replaceChars(line.getField(i), replaceCharMap));
-						safeWrite(replaceChars(line.getField(i), replaceCharMap));
+						bw.write(replaceChars(line.getField(i), replaceCharMap));
 						if (i < len - 1)
-							//bw.write(fieldSplit);
-							safeWrite(fieldSplit);
+							bw.write(fieldSplit);
 					}
-					//bw.write(lineSplit);
-					safeWrite(lineSplit);
+					bw.write(lineSplit);
 					
 					getMonitor().increaseSuccessLines();
 				}
 				bw.flush();
-			} catch (Exception e) {
-                throw new WormholeException("wormhole safe write failed!");
+			} catch (IOException e) {
+				logger.warn("Write current line failed, starting to rewrite the line...");
+				while (rewriteTimes <= WRITE_TRY_TIMES) {
+					try {
+						rewrite(line);
+						logger.info("The line succeed in rewriting. Continue to write...");
+						break;
+					} catch (IOException e1) {
+						logger.warn("Rewrite current line " + rewriteTimes + " failed, starting to rewrite retry...");
+						rewriteTimes ++;
+						if (rewriteTimes > WRITE_TRY_TIMES) {
+							logger.error("Rewrite exceeded the threshold, totally failed.");
+							throw new WormholeException(e.getMessage());
+						}
+						try {Thread.sleep(3000L);} catch (InterruptedException e2) {logger.warn("3s before retry to rewrite the current line...");} // 休眠重试
+					}
+				}
 			}
+		}
+
+		private void rewrite(ILine line) throws IOException {
+			int len = line.getFieldNum();
+			for (int i = 0; i < len; i++) {
+				bw.write(replaceChars(line.getField(i), replaceCharMap));
+				if (i < len - 1)
+					bw.write(fieldSplit);
+			}
+			bw.write(lineSplit);
 		}
 	}
 	
