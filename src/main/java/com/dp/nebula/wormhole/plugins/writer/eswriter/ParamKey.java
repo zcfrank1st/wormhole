@@ -55,6 +55,14 @@ public final class ParamKey {
     public final static String date = "date";
 
     /*
+     * @description: es index hour; it's optional when topicType is append
+     * @range: 00-23
+     * @mandatory: false
+     * @default:
+     */
+    public final static String hour = "hour";
+
+    /*
 	 * @name: esType
 	 * @description: es type name
 	 * @range:
@@ -64,13 +72,13 @@ public final class ParamKey {
     public final static String esType = "esType";
 
     /*
-	 * @name: isFirstFieldUsedAsID
-	 * @description: is first field used as es doc id
+	 * @name: idField
+	 * @description: field used as es doc id
 	 * @range:
 	 * @mandatory: false
-	 * @default: false
+	 * @default:
 	 */
-    public final static String isFirstFieldUsedAsID = "isFirstFieldUsedAsID";
+    public final static String idField = "idField";
 
     /*
 	 * @name: fields

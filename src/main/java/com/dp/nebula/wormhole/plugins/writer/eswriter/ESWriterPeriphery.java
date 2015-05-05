@@ -63,6 +63,10 @@ public class ESWriterPeriphery implements IWriterPeriphery {
             }
 
             String index = topicName + "." + date;
+            String hour = param.getValue(ParamKey.hour, "");
+            if (!hour.isEmpty()) {
+                index = index + "." + hour;
+            }
 
             try {
                 LOG.info("delete index " + index + " if exists");
@@ -99,6 +103,10 @@ public class ESWriterPeriphery implements IWriterPeriphery {
                 throw new AssertionError("parameter 'date' is required when topicType is append");
             }
             index = topicName + "." + date;
+            String hour = param.getValue(ParamKey.hour, "");
+            if (!hour.isEmpty()) {
+                index = index + "." + hour;
+            }
         } else if (topicType.equalsIgnoreCase("full")) {
             index = topicName;
         } else {

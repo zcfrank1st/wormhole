@@ -37,7 +37,8 @@ public class ESWriter extends AbstractPlugin implements IWriter {
     private String topicType = null;
     private String esType = null;
     private int bulkSize = -1;
-    private boolean isFirstFieldUsedAsID = false;
+    private String idField = null;
+    private int idFieldPos = -1;
     private String[] fieldList = null;
     private Set<String> arrayFieldsSet = new HashSet<String>();
 
@@ -58,14 +59,18 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                 throw new AssertionError("parameter 'date' is required when topicType is append");
             }
             index = topicName + "." + date;
+            String hour = getParam().getValue(ParamKey.hour, "");
+            if (!hour.isEmpty()) {
+                index = index + "." + hour;
+            }
         } else if (topicType.equalsIgnoreCase("full")) {
             index = topicName;
         } else {
             throw new AssertionError("topicType should either be 'append' or 'full'");
         }
 
-        isFirstFieldUsedAsID = getParam().getBooleanValue(ParamKey.isFirstFieldUsedAsID);
-        LOG.info("isFirstFieldUsedAsID: " + isFirstFieldUsedAsID);
+        idField = getParam().getValue(ParamKey.idField, "");
+        LOG.info("idField: " + idField);
 
         String fields = getParam().getValue(ParamKey.fields);
         if (fields == null) throw new AssertionError();
@@ -78,6 +83,18 @@ public class ESWriter extends AbstractPlugin implements IWriter {
             sb.append("%%").append(fieldList[i]).append("%%\n");
         }
         LOG.info(sb.toString());
+
+        if (!idField.isEmpty()) {
+            for (int i = 0; i < fieldList.length; i++) {
+                if (fieldList[i].equals(idField)) {
+                    idFieldPos = i;
+                    break;
+                }
+            }
+            if (idFieldPos < 0) {
+                throw new AssertionError("idField '" + idField + "' doesn't exist in field list");
+            }
+        }
 
         String arrayFieldsValue = getParam().getValue(ParamKey.arrayFields, "");
         String[] arrayFieldsArray = arrayFieldsValue.split(",");
@@ -126,8 +143,8 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                 }
                 jb.endObject();
                 String esDocId = null;
-                if (isFirstFieldUsedAsID) {
-                    esDocId = line.getField(0);
+                if (!idField.isEmpty()) {
+                    esDocId = line.getField(idFieldPos);
                 }
 
                 bulkRequest.add(client.prepareIndex(index, esType, esDocId).setSource(jb));
