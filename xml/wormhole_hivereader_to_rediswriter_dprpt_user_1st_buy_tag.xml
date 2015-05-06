@@ -30,7 +30,7 @@ mandatory:true
 name:sql
 -->
     <!--<sql>select useridcityid,profiles from bi.dpdm_userprofile_for_tg_hbase  where useridcityid is not null and profiles is not null limit 10</sql> -->
-     <sql>select dpid,categories from bi.dpdm_tgnavi_category_userclick_online</sql>
+     <sql>select user_id, site,b1001,b1007,b3001,b1102,b4001,p2 from bi.dprpt_user_1st_buy_tag WHERE hp_cal_month = "2015-03"</sql>
     <!--
 default:READ_FROM_HIVESERVER
 range:READ_FROM_HIVESERVER,READ_FROM_HDFS
@@ -65,17 +65,19 @@ name:concurrency
   </reader>
   <writer>
     <plugin>rediswriter</plugin>
-    <table>bi.dpdm_tgnavi_category_userclick_online</table>
+    <table>bi.dprpt_user_1st_buy_tag</table>
     <family>dim</family>
     <keyIndex>0</keyIndex>
-    <columnsName>categories</columnsName>
-    <serialize>1</serialize>
+    <columnsName>site,b1001,b1007,b3001,b1102,b4001,p2</columnsName>
+    <serialize>2</serialize>
     <separator>,</separator>
-    <batchSize>100</batchSize>
+    <batchSize>300</batchSize>
     <concurrency>5</concurrency>
     <write_sleep>true</write_sleep>
     <wait_time>100</wait_time>
     <num_to_wait>20000</num_to_wait>
-	<expire_time>172800</expire_time>
+	<expire_time>157680000</expire_time>
+	<clear_key>false</clear_key>
+	<delNullColumn>true</delNullColumn>
   </writer>
 </job>

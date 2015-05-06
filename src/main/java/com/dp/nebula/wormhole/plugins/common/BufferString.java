@@ -1,5 +1,7 @@
 package com.dp.nebula.wormhole.plugins.common;
 
+import java.util.Map;
+
 public class BufferString implements OutputBufferInterface {
 
 	private String buffer;
@@ -14,7 +16,6 @@ public class BufferString implements OutputBufferInterface {
 	
 	@Override
 	public void put(String key, String value) {
-		// TODO Auto-generated method stub
 		if(!isBegin)
 		{
 			buffer += separator;
@@ -32,5 +33,10 @@ public class BufferString implements OutputBufferInterface {
 		buffer = "";
 		isBegin = true;
 	}
+	
+    @Override
+    public Map<String, String> getHashOutput() {
+        return null;
+    }
 
 }

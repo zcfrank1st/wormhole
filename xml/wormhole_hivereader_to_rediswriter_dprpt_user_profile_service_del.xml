@@ -30,8 +30,8 @@ mandatory:true
 name:sql
 -->
     <!--<sql>select useridcityid,profiles from bi.dpdm_userprofile_for_tg_hbase  where useridcityid is not null and profiles is not null limit 10</sql> -->
-     <sql>select dpid,categories from bi.dpdm_tgnavi_category_userclick_online</sql>
-    <!--
+    <sql>select user_id,add_date from bi.dprpt_user_profile_service</sql>    
+<!--
 default:READ_FROM_HIVESERVER
 range:READ_FROM_HIVESERVER,READ_FROM_HDFS
 description:query mode, READ_FROM_HIVESERVER: fetch data directly from hive server, READ_FROM_HDFS: insert the data into hdfs directory and fetch data directly from datanode
@@ -65,17 +65,17 @@ name:concurrency
   </reader>
   <writer>
     <plugin>rediswriter</plugin>
-    <table>bi.dpdm_tgnavi_category_userclick_online</table>
+    <table>bi.dprpt_user_profile_service</table>
     <family>dim</family>
     <keyIndex>0</keyIndex>
-    <columnsName>categories</columnsName>
-    <serialize>1</serialize>
+    <columnsName>add_date</columnsName>
+    <serialize>0</serialize>
     <separator>,</separator>
-    <batchSize>100</batchSize>
+    <batchSize>300</batchSize>
     <concurrency>5</concurrency>
-    <write_sleep>true</write_sleep>
+    <write_sleep>false</write_sleep>
     <wait_time>100</wait_time>
     <num_to_wait>20000</num_to_wait>
-	<expire_time>172800</expire_time>
+	<clear_key>true</clear_key>
   </writer>
 </job>

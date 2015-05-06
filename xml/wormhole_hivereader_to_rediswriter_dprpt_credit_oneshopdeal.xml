@@ -29,8 +29,7 @@ description:self-defined sql statement
 mandatory:true
 name:sql
 -->
-    <!--<sql>select useridcityid,profiles from bi.dpdm_userprofile_for_tg_hbase  where useridcityid is not null and profiles is not null limit 10</sql> -->
-     <sql>select dpid,categories from bi.dpdm_tgnavi_category_userclick_online</sql>
+     <sql>select dealgrp_id,shop_id from bi.dprpt_credit_oneshopdeal where hp_statdate ='${cal_dt}'</sql>
     <!--
 default:READ_FROM_HIVESERVER
 range:READ_FROM_HIVESERVER,READ_FROM_HDFS
@@ -65,13 +64,13 @@ name:concurrency
   </reader>
   <writer>
     <plugin>rediswriter</plugin>
-    <table>bi.dpdm_tgnavi_category_userclick_online</table>
+    <table>bi.dprpt_credit_oneshopdeal</table>
     <family>dim</family>
     <keyIndex>0</keyIndex>
-    <columnsName>categories</columnsName>
+    <columnsName>shop_id</columnsName>
     <serialize>1</serialize>
     <separator>,</separator>
-    <batchSize>100</batchSize>
+    <batchSize>300</batchSize>
     <concurrency>5</concurrency>
     <write_sleep>true</write_sleep>
     <wait_time>100</wait_time>

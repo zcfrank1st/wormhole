@@ -30,7 +30,7 @@ mandatory:true
 name:sql
 -->
     <!--<sql>select useridcityid,profiles from bi.dpdm_userprofile_for_tg_hbase  where useridcityid is not null and profiles is not null limit 10</sql> -->
-     <sql>select dpid,categories from bi.dpdm_tgnavi_category_userclick_online</sql>
+     <sql>select dpid, packageinfo from bi.dpdm_dmp_dpid_brandshop_packagetype_service</sql>
     <!--
 default:READ_FROM_HIVESERVER
 range:READ_FROM_HIVESERVER,READ_FROM_HDFS
@@ -65,17 +65,19 @@ name:concurrency
   </reader>
   <writer>
     <plugin>rediswriter</plugin>
-    <table>bi.dpdm_tgnavi_category_userclick_online</table>
+    <table>bi.dpdm_dmp_dpid_brandshop_packagetype_service</table>
     <family>dim</family>
     <keyIndex>0</keyIndex>
-    <columnsName>categories</columnsName>
+    <columnsName>packageinfo</columnsName>
     <serialize>1</serialize>
     <separator>,</separator>
-    <batchSize>100</batchSize>
+    <batchSize>300</batchSize>
     <concurrency>5</concurrency>
     <write_sleep>true</write_sleep>
     <wait_time>100</wait_time>
     <num_to_wait>20000</num_to_wait>
 	<expire_time>172800</expire_time>
+	<clear_key>false</clear_key>
+	<delNullColumn>true</delNullColumn>
   </writer>
 </job>
