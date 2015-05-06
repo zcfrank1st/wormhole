@@ -1,8 +1,8 @@
 package com.dp.nebula.wormhole.engine.monitor;
 
-import java.util.Date;
-
 import com.dp.nebula.common.utils.DateHelper;
+
+import java.util.Date;
 
 public class WormHoleJobInfo {
 	
@@ -76,11 +76,11 @@ public class WormHoleJobInfo {
 	
 	
 	public String getString() {
-		return "(\"" + dataSource + "\",\""
+		return "\"" + dataSource + "\",\""
 				+ dataTarget + "\"," + resultCode + ","
 				+ time + "," + totalBytes + ","
 				+ totalLines + ",\"" + userName +"\",\""
-				+ DateHelper.format(startTime, DateHelper.DATE_FORMAT_PATTERN_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND) + "\")";
+				+ DateHelper.format(startTime, DateHelper.DATE_FORMAT_PATTERN_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND) + "\"";
 	}
 	public WormHoleJobInfo(String userName, String dataSource,
 			String dataTarget, Date startTime, long totalLines,

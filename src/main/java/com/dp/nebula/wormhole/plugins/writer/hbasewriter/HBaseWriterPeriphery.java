@@ -69,10 +69,11 @@ public class HBaseWriterPeriphery implements IWriterPeriphery {
         if (clusterConfigName == null) {
             throw new WormholeException("hbase config source is empty! please check job xml");
         }
-
         client = HBaseClient.getInstance();
         client.initialize(htable, autoFlush, writebufferSize, writeAheadLog, clusterConfigName);
         deleteTableByMode(deleteMode);
+
+        LOG.info("current hbase cluster config:  " + clusterConfigName);
     }
 
     @Override

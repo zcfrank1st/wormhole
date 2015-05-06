@@ -16,12 +16,16 @@ public enum ZebraPool {
             return groupDataSource;
         }
         synchronized (this) {
+            if (groupDataSource != null) {
+                return groupDataSource;
+            }
             if (!jdbcRef.equals("")) {
                 groupDataSource = new GroupDataSource(jdbcRef);
                 if (type == ZebraPoolType.READ) {
                     groupDataSource.setRouterType("load-balance");
                 }
                 groupDataSource.setInitialPoolSize(20);
+                groupDataSource.setMaxPoolSize(40);
                 groupDataSource.setExtraJdbcUrlParams("zeroDateTimeBehavior=convertToNull");
                 groupDataSource.init();
                 return groupDataSource;

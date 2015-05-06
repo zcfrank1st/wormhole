@@ -1,5 +1,9 @@
 package com.dp.nebula.wormhole.common.utils;
 
+import com.dp.nebula.wormhole.engine.monitor.WormHoleJobInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,11 +13,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.dp.nebula.wormhole.engine.monitor.WormHoleJobInfo;
 
 public final class JobDBUtil {
 	
@@ -35,17 +34,11 @@ public final class JobDBUtil {
 		}
 		StringBuilder builder = new StringBuilder();
 		String password = props.getProperty("password");
-		String realPass = "";
-		for(int i = 0; i < password.length(); i ++) {
-			if(i%3!=0) {
-				realPass += (char)(password.charAt(i)+1);
-			}
-		}
 		builder.append("jdbc:mysql://").append(props.getProperty("ip"))
 			.append(":").append(props.getProperty("port"))
 			.append("/").append(props.getProperty("database"))
 			.append("?user=").append(props.getProperty("user"))
-			.append("&password=").append(realPass);
+			.append("&password=").append(password);
 		return builder.toString();
 	}
 	
@@ -67,9 +60,9 @@ public final class JobDBUtil {
 		}
 	}
 	
-	public static void insertOneJobInfo(WormHoleJobInfo value) {
-		String sql = "INSERT INTO Wormhole_Job_Info( DataSource, DataTarget, ResultCode, CostTime, TotalBytes, TotalLines, UserName,StartTime) VALUES "
-			+ value.getString();
+	public static void insertOneJobInfo(String job, WormHoleJobInfo value) {
+		String sql = "INSERT INTO etl_wormhole_job_status( Job, DataSource, DataTarget, ResultCode, CostTime, TotalBytes, TotalLines, UserName, StartTime) VALUES "
+			+ "(\"" + job + "\"," + value.getString() + ")";
 		insert(sql);
 	}
 	

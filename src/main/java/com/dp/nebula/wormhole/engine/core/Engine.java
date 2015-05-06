@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class Engine {
+	private static String jobDescriptionXML;
 
 	private static final Log s_logger = LogFactory.getLog(Engine.class);
 	private static final int STATUS_CHECK_INTERVAL = 1000;
@@ -224,7 +225,7 @@ public class Engine {
 			if (monitorManager != null) {
 				WormHoleJobInfo jobInfo = monitorManager.getJobInfo(source,
 						target, time / 1000, status.getStatus(), now);
-				JobDBUtil.insertOneJobInfo(jobInfo);
+				JobDBUtil.insertOneJobInfo(jobDescriptionXML, jobInfo);
 			}
 			s_logger.info(monitorManager.finalReport());
 		}
@@ -362,8 +363,6 @@ public class Engine {
 
 	public static void main(String[] args) {
 		PropertyConfigurator.configure(Environment.LOG4J_CONF);
-
-		String jobDescriptionXML = null;
 
         String taskId = "";
         String time = "";
