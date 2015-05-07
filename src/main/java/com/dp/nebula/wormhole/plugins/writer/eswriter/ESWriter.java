@@ -135,8 +135,12 @@ public class ESWriter extends AbstractPlugin implements IWriter {
                     if (arrayFieldsSet.contains(fieldList[i])) { // array field
                         // split by '\u0002'
                         String val = line.getField(i);
-                        String[] elements = val.split("\u0002");
-                        jb.field(fieldList[i], elements);
+                        if (val == null) {
+                            jb.field(fieldList[i], val);
+                        } else {
+                            String[] elements = val.split("\u0002");
+                            jb.field(fieldList[i], elements);
+                        }
                     } else { // normal field
                         jb.field(fieldList[i], line.getField(i));
                     }
