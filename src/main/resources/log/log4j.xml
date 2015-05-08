@@ -10,9 +10,12 @@
 		</layout>
 	</appender>
 
-	<root>
-		<level value="INFO" />
-<!-- 		<appender-ref ref="CONSOLE" /> -->
-	</root>
+	<category name="com.dianping.lion">
+		<priority value="fatal" />
+		<appender-ref ref="CONSOLE" />
+	</category>
 
+	<root>
+ 		<appender-ref ref="CONSOLE" />
+	</root>
 </log4j:configuration>

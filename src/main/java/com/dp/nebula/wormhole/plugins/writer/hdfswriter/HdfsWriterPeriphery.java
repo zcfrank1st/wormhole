@@ -101,7 +101,14 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
                             addHiveTablePartition(parts[0].trim(), parts[1].trim(),
                                     parCondition, dir);
                         } catch (IOException e) {
-                            throw new WormholeException(e.getMessage());
+							logger.warn("add partition failed, just retry once");
+							try{
+								addHiveTablePartition(parts[0].trim(), parts[1].trim(),
+										parCondition, dir);
+							} catch (IOException e1) {
+								logger.error("add partition totally failed, exit -1");
+								System.exit(-1);
+							}
                         }
                     }
                 }
