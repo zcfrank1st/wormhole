@@ -351,7 +351,7 @@
         <dependency>
             <groupId>com.dianping.data.query</groupId>
             <artifactId>engine</artifactId>
-            <version>0.7.0</version>
+            <version>0.7.1-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hadoop-core</artifactId>
