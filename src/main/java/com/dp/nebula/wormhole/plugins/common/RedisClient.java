@@ -1,6 +1,6 @@
 package com.dp.nebula.wormhole.plugins.common;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +35,8 @@ public final class RedisClient {
 		this.redisTable = redisWormhole.getRedisTable(redisFamily);
         LOG.info("tableInfo = " + redisTable);
 
-//		rkList = new ArrayList<RedisKey>();
-//		vList = new ArrayList<String>();
+        kList = new ArrayList<String>();
+		vList = new ArrayList<String>();
 	}
 
 	public void setBatch(String key, String value, int expireTime) throws Exception {
