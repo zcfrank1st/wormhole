@@ -341,10 +341,13 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 	private void deleteFilesOnHdfs(String dir, String prefix) {
 		logger.info("delete old files on hdfs, dir: " + dir + " | prefix: " + prefix);
+		String realPrefix = prefix.substring(1);
 		try {
 			fs = DFSUtils.createFileSystem(new URI(dir),
 					DFSUtils.getConf(dir, null));
-			DFSUtils.deleteFiles(fs, new Path(dir + "/" + prefix + "*"),
+			String path = dir + "/*" + realPrefix + "*";
+			logger.info("delete path is: " + path);
+			DFSUtils.deleteFiles(fs, new Path(path),
 						true, true);
 		} catch (Exception e) {
 			logger.error(String.format(
