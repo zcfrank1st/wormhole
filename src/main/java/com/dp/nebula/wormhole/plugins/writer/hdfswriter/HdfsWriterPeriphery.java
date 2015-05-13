@@ -340,6 +340,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	}
 
 	private void deleteFilesOnHdfs(String dir, String prefix) {
+		logger.info("delete old files on hdfs, dir: " + dir + " | prefix: " + prefix);
 		try {
 			fs = DFSUtils.createFileSystem(new URI(dir),
 					DFSUtils.getConf(dir, null));

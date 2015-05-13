@@ -26,6 +26,7 @@ public enum ZebraPool {
                 }
                 groupDataSource.setInitialPoolSize(20);
                 groupDataSource.setMaxPoolSize(40);
+                groupDataSource.setMaxIdleTime(0);
                 groupDataSource.setExtraJdbcUrlParams("zeroDateTimeBehavior=convertToNull");
                 groupDataSource.init();
                 return groupDataSource;
