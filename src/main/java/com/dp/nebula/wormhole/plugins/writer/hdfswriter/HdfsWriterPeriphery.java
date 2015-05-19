@@ -308,6 +308,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 			lzoCompressed = true;
 		}
 		deleteFilesOnHdfs(this.dir, HIDDEN_FILE_PREFIX + this.prefixname);
+		deleteFilesOnHdfs(this.dir, "*" + this.prefixname);
 	}
 
 	private void closeAll() {
@@ -340,10 +341,13 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	}
 
 	private void deleteFilesOnHdfs(String dir, String prefix) {
+		logger.info("delete old files on hdfs, dir: " + dir + " | prefix: " + prefix);
 		try {
 			fs = DFSUtils.createFileSystem(new URI(dir),
 					DFSUtils.getConf(dir, null));
-			DFSUtils.deleteFiles(fs, new Path(dir + "/" + prefix + "*"),
+			String path = dir + "/" + prefix + "*";
+			logger.info("delete path is: " + path);
+			DFSUtils.deleteFiles(fs, new Path(path),
 						true, true);
 		} catch (Exception e) {
 			logger.error(String.format(
