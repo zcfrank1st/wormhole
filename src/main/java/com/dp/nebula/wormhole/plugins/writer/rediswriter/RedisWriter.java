@@ -1,6 +1,5 @@
 package com.dp.nebula.wormhole.plugins.writer.rediswriter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,7 +94,7 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
             redisClient = new RedisClient(batchSize, table + "." + family);
         }
         catch(Exception e){
-            
+        	LOG.error("", e);
         }
         Preconditions.checkNotNull(redisClient);
     }
@@ -147,7 +146,8 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
                     if (redisBuffer == null || redisBuffer.toString().isEmpty()) {
                         redisClient.delete(key);
                     } else if(serialize != HASH_SERIAL){
-                        redisClient.set(key, redisBuffer.toString(), expireTime);
+//                        redisClient.set(key, redisBuffer.toString(), expireTime);
+                        redisClient.setBatch(key, redisBuffer.toString(), expireTime);
                     }
                     else if(serialize == HASH_SERIAL){
                         redisClient.hset(key, redisBuffer.getHashOutput(), expireTime);
@@ -177,8 +177,8 @@ public class RedisWriter extends AbstractPlugin implements IWriter {
     public void commit() {
         try {
             redisClient.flush();
-        } catch (IOException e) {
-            LOG.error(e);
+        } catch (Exception e) {
+            throw new WormholeException(e, JobStatus.WRITE_DATA_EXCEPTION.getStatus());
         }
     }
 
