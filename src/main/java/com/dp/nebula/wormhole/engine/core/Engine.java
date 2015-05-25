@@ -9,7 +9,7 @@ import com.dp.nebula.wormhole.common.utils.Environment;
 import com.dp.nebula.wormhole.common.utils.JobConfGenDriver;
 import com.dp.nebula.wormhole.common.utils.JobDBUtil;
 import com.dp.nebula.wormhole.common.utils.ParseXMLUtil;
-import com.dp.nebula.wormhole.common.utils.confloader.LoadJobConfFromMysql;
+import com.dp.nebula.wormhole.common.utils.confloader.LoadJobConfFromOthers;
 import com.dp.nebula.wormhole.engine.config.EngineConfParamKey;
 import com.dp.nebula.wormhole.engine.monitor.FailedInfo;
 import com.dp.nebula.wormhole.engine.monitor.MonitorManager;
@@ -367,6 +367,7 @@ public class Engine {
         String taskId = "";
         String time = "";
         String offset = "";
+		String updateColumn = "";
 		// if no parameters are passed in,
 		// it generates job configure XML first
 		if (args.length < 1) {
@@ -379,6 +380,11 @@ public class Engine {
 			System.exit(JobStatus.SUCCESS.getStatus());
 		} else if (args.length == 1) {
 			jobDescriptionXML = args[0];
+		} else if (args.length == 4) {
+			taskId = args[0];
+			time = args[1];
+			offset = args[2];
+			updateColumn = args[3];
 		} else if (args.length == 3) {
             taskId = args[0];
             time = args[1];
@@ -396,13 +402,17 @@ public class Engine {
 			// read configurations from XML for engine & plugins
             if (jobDescriptionXML != null) {
                 jobConf = ParseXMLUtil.loadJobConf(jobDescriptionXML);
-            } else {
-                LoadJobConfFromMysql loadJobConfFromMysql = new LoadJobConfFromMysql();
+            } else if (updateColumn.equals("")) {
+                LoadJobConfFromOthers loadJobConfFromMysql = new LoadJobConfFromOthers();
                 if (loadJobConfFromMysql.initLoader()) {
                     jobConf = loadJobConfFromMysql.loadJobConf(taskId, time, offset);
                     s_logger.info(jobConf.toString());
                 }
-            }
+            } else {
+				LoadJobConfFromOthers apiJobConfLoader = new LoadJobConfFromOthers();
+				jobConf = apiJobConfLoader.loadJobConf4UpdatingTransport(taskId, time, offset, updateColumn);
+				s_logger.info(jobConf.toString());
+			}
 			engineConf = ParseXMLUtil.loadEngineConfig();
 			pluginConfs = ParseXMLUtil.loadPluginConf();
 			// start data transmission
