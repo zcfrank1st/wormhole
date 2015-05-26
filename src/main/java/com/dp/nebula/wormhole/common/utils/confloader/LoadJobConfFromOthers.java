@@ -38,6 +38,10 @@ public class LoadJobConfFromOthers implements JobConfLoader{
 
     private static final String WHERE_CLAUSE = "where";
 
+    private static final String PARTITION_CONDITION = "hive_table_add_partition_condition";
+    private static final String DIR = "dir";
+    private static final String PREFIX_FILENAME = "prefix_filename";
+
 
     private static BasicDataSource dataSource = buildDataSource();
 
@@ -113,10 +117,10 @@ public class LoadJobConfFromOthers implements JobConfLoader{
         try {
             conf = getConfFromMysql(taskId);
             String conf0 = (String)conf.get(0); // reader conf
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-            objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-            Map<String,String> readerMap = objectMapper.readValue(conf0, new TypeReference<HashMap<String,String>>(){});
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+            mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+            Map<String,String> readerMap = mapper.readValue(conf0, new TypeReference<HashMap<String,String>>(){});
             String sql = readerMap.get("sql");
             if (sql.toLowerCase().contains(WHERE_CLAUSE)) {
                 sql += " and " + updateColumn + " >= '" + dateTime.minusDays(1).toString("YYYY-MM-dd") + "'";
@@ -125,10 +129,30 @@ public class LoadJobConfFromOthers implements JobConfLoader{
             }
             logger.info("updating transport sql is " + sql);
             readerMap.put("sql", sql);
-            String json = gson.toJson(readerMap);
+            String readerJson = gson.toJson(readerMap);
             conf.remove(0);
-            conf.add(0, json);
-            logger.info("current json is :" + json);
+            conf.add(0, readerJson);
+            logger.info("current json is :" + readerJson);
+
+            // writer conf
+            for (int i = 1; i <= conf.size() - 1; i ++) {
+                Map<String,String> writerMap = mapper.readValue((String) conf.get(i), new TypeReference<HashMap<String,String>>(){});
+                String condition1 = writerMap.get(PARTITION_CONDITION);
+                String condition2 = writerMap.get(DIR);
+                String condition3 = writerMap.get(PREFIX_FILENAME);
+
+                condition1 = condition1.trim() + "_delta";
+                condition2 = condition2.replace(condition3.trim(), condition3.trim() + "_delta");
+                condition3 = condition3.trim() + "_delta";
+
+                writerMap.put(PARTITION_CONDITION, condition1);
+                writerMap.put(DIR, condition2);
+                writerMap.put(PREFIX_FILENAME, condition3);
+
+                String writerJson = gson.toJson(writerMap);
+                conf.remove(i);
+                conf.add(i, writerJson);
+            }
             List<String> transformedConf = replaceTimePattern(conf, Long.parseLong(time), offset);
             return JobConfGenerater(taskId, transformedConf);
         } catch (Exception e) {
