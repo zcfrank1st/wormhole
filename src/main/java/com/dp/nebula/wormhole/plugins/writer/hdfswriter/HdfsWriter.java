@@ -114,7 +114,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 				char[] destChars = items[1].toCharArray();
 				if (destChars.length != 1 || srcChars.length == 0){
 					throw new IllegalArgumentException(String.format(
-							"paramKey replaceChar '%s' are not properly set, pleace check it again", replaceChar));
+							"paramKey replaceChar '%s' are not properly writerPoolset, pleace check it again", replaceChar));
 				}else{
 					for (char srcC : srcChars)
 						replaceCharMap.put(srcC, destChars[0]);
@@ -248,7 +248,6 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 							bw.write(fieldSplit);
 					}
 					bw.write(lineSplit);
-					
 					getMonitor().increaseSuccessLines();
 				}
 				bw.flush();
@@ -258,6 +257,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					try {
 						rewrite(line);
 						logger.info("The line succeed in rewriting. Continue to write...");
+						getMonitor().increaseSuccessLines();
 						break;
 					} catch (IOException e1) {
 						logger.warn("Rewrite current line " + rewriteTimes + " failed, starting to rewrite retry...");

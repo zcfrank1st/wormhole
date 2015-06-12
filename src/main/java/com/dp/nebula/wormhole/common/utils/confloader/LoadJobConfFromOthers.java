@@ -116,7 +116,7 @@ public class LoadJobConfFromOthers implements JobConfLoader{
         Gson gson = new Gson();
         try {
             conf = getConfFromMysql(taskId);
-            String conf0 = (String)conf.get(0); // reader conf
+            String conf0 = ((String)conf.get(0)).replace(":null", ":\"\""); // reader conf
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
             mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
@@ -136,7 +136,7 @@ public class LoadJobConfFromOthers implements JobConfLoader{
 
             // writer conf
             for (int i = 1; i <= conf.size() - 1; i ++) {
-                Map<String,String> writerMap = mapper.readValue((String) conf.get(i), new TypeReference<HashMap<String,String>>(){});
+                Map<String,String> writerMap = mapper.readValue(((String)conf.get(i)).replace(":null", ":\"\""), new TypeReference<HashMap<String,String>>(){});
                 String condition1 = writerMap.get(PARTITION_CONDITION);
                 String condition2 = writerMap.get(DIR);
                 String condition3 = writerMap.get(PREFIX_FILENAME);

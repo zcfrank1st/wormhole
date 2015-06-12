@@ -1,12 +1,15 @@
 package com.dp.nebula.wormhole.engine.monitor;
 
+import com.dp.nebula.wormhole.engine.storage.Statistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dp.nebula.wormhole.engine.storage.Statistics;
-
 public class RealtimeMonitorInfo {
-	
+	private static final Logger logger = LoggerFactory.getLogger(RealtimeMonitorInfo.class);
+
 	private long readSuccessLines;
 	private long readFailedLines;
 	
@@ -46,6 +49,7 @@ public class RealtimeMonitorInfo {
 	}
 	
 	public void addwriteFailedLines(String name, long number){
+		logger.info("======> failed line: " + number);
 		writeFailedLinesMap.put(name, number);
 	}
 
