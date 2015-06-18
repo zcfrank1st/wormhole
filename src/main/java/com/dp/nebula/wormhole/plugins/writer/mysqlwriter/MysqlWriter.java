@@ -6,9 +6,11 @@ import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.ILine;
 import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
+import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
 import com.dp.nebula.wormhole.plugins.common.ZebraPool;
 import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
+import com.dp.nebula.wormhole.plugins.reader.mysqlreader.MysqlReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -53,13 +55,15 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 
 	private Connection conn;
 
-//	private String ip = "";
+	private String ip = "";
 
 	private String sql = "";
 
-//	private String dbname = null;
+	private String port = "3306";
 
-	private String jdbcRef = "";
+	private String dbname = null;
+
+//	private String jdbcRef = "";
 
 	private String table = null;
 
@@ -96,9 +100,9 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 			loader.init();
 			return;
 		}
-//		this.ip = getParam().getValue(ParamKey.IP, "");
-//		this.dbname = getParam().getValue(ParamKey.DBNAME, "");
-		this.jdbcRef = getParam().getValue(ParamKey.jdbcRef, "");
+		this.ip = getParam().getValue(ParamKey.IP, "");
+		this.dbname = getParam().getValue(ParamKey.DBNAME, "");
+//		this.jdbcRef = getParam().getValue(ParamKey.jdbcRef, "");
 		this.table = getParam().getValue(ParamKey.TABLE, "");
 		this.columns = getParam().getValue(ParamKey.COLUMNS, "");
 		this.encoding = getParam().getValue(ParamKey.ENCODING, "UTF8")
@@ -136,7 +140,8 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 			return;
 		}
 		try {
-			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
+			conn = DBSource.getConnection(MysqlReader.class, ip, port, dbname);
+//			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
 		} catch (Exception e) {
 			throw new WormholeException(e,
 					JobStatus.WRITE_CONNECTION_FAILED.getStatus()

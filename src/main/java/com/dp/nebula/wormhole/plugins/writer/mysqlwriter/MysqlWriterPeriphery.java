@@ -7,9 +7,9 @@ import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.common.interfaces.ISourceCounter;
 import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
+import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
-import com.dp.nebula.wormhole.plugins.common.ZebraPool;
-import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
+import com.dp.nebula.wormhole.plugins.reader.mysqlreader.MysqlReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,15 +22,15 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 	
 	private Connection conn;
 	
-//	private String username;
-//
-//	private String password;
-//
-//	private String ip;
-//
-//	private String port = "3306";
-//
-//	private String dbname;
+	private String username;
+
+	private String password;
+
+	private String ip;
+
+	private String port = "3306";
+
+	private String dbname;
 
 	private String jdbcRef = "";
 
@@ -59,7 +59,8 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 			return;
 		}
 		try{
-			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
+			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
+//			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
 			String[] sqlArray = pre.split(";");
 			for(String sql:sqlArray){
 				sql = sql.trim();
@@ -82,7 +83,8 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 			return;
 		}
 		try{
-			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
+			//conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
+			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
 			String[] sqlArray = rollback.split(";");
 			for(String sql:sqlArray){
 				sql = sql.trim();
@@ -102,7 +104,8 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 	public void doPost(IParam param, ITargetCounter counter, int i) {
 		if(!countSql.isEmpty()){
 			try{
-				conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
+				conn = DBSource.getConnection(MysqlReader.class, ip, port, dbname);
+				//conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
 				ResultSet rs = DBUtils.query(conn, countSql);
 				rs.next();
 				int lines = rs.getInt(1);
@@ -115,7 +118,8 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 		}
 		if(!post.isEmpty()){
 			try{
-				conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
+				conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
+//				conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
 				String[] sqlArray = post.split(";");
 				for(String sql:sqlArray){
 					sql = sql.trim();

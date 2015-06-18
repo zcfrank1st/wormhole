@@ -6,9 +6,8 @@ import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.ILineSender;
 import com.dp.nebula.wormhole.common.interfaces.IReader;
 import com.dp.nebula.wormhole.plugins.common.DBResultSetSender;
+import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
-import com.dp.nebula.wormhole.plugins.common.ZebraPool;
-import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,13 +26,13 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 	
 	private Connection conn;
 
-//	private String ip = "";
-//
-//	private String port = "3306";
+	private String ip = "";
+
+	private String port = "3306";
 
 	private String jdbcRef = "";
 
-//	private String dbname;
+	private String dbname;
 	
 	private String sql;
 	
@@ -43,26 +42,26 @@ public class MysqlReader extends AbstractPlugin implements IReader{
 	@Override
 	public void init() {
 		/* for database connection */
-//		this.ip = getParam().getValue(ParamKey.ip,"");
-//		this.port = getParam().getValue(ParamKey.port, this.port);
-		this.jdbcRef = getParam().getValue(ParamKey.jdbcRef, "");
-//		this.dbname = getParam().getValue(ParamKey.dbname,"");
+		this.ip = getParam().getValue(ParamKey.ip,"");
+		this.port = getParam().getValue(ParamKey.port, this.port);
+		//this.jdbcRef = getParam().getValue(ParamKey.jdbcRef, "");
+		this.dbname = getParam().getValue(ParamKey.dbname,"");
 		this.sql = getParam().getValue(ParamKey.sql, "").trim();
 	}
 
 	@Override
 	public void connection() {
-		try {
-			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.READ).getConnection();
-			logger.info("current connection :    " + conn);
-		} catch (SQLException e) {
-			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + ERROR_CODE_ADD);
-		}
 //		try {
-//			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
-//		} catch (Exception e) {
+//			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.READ).getConnection();
+//			logger.info("current connection :    " + conn);
+//		} catch (SQLException e) {
 //			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + ERROR_CODE_ADD);
 //		}
+		try {
+			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
+		} catch (Exception e) {
+			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + ERROR_CODE_ADD);
+		}
 	}
 
 	@Override

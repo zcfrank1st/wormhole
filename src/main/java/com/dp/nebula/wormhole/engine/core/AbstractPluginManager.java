@@ -1,24 +1,23 @@
 package com.dp.nebula.wormhole.engine.core;
 
-import com.dianping.lion.EnvZooKeeperConfig;
-import com.dianping.lion.client.ConfigCache;
 import com.dp.nebula.wormhole.common.JobStatus;
 import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.engine.config.PluginConfParamKey;
 import com.dp.nebula.wormhole.plugins.common.ParamKey;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.FileInputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.*;
 
 abstract class AbstractPluginManager {
 	
 	private static final Log s_logger = LogFactory.getLog(AbstractPluginManager.class);
 	private static final String PARAM_KEY_CURRENCY = "concurrency";
-//	private static final String WORMHOLE_CONNECT_FILE = "WORMHOLE_CONNECT_FILE";
+	private static final String WORMHOLE_CONNECT_FILE = "WORMHOLE_CONNECT_FILE";
     private static final String LION_PROJECT = "LION_PROJECT";
 
 	private static final String CONNECT_PRIFIX = "mysql_";
@@ -98,52 +97,52 @@ abstract class AbstractPluginManager {
 	}
 	
 	public static void regDataSourceProp(IParam param) {
-//		String fileName = System.getenv(WORMHOLE_CONNECT_FILE);
-//		String connectProps = param.getValue(ParamKey.connectProps,null);
-//		if (fileName != null && connectProps != null) {
-//			Properties props = new Properties();
-//			try {
-//				props.load(new FileInputStream(fileName));
-//				param.putValue(ParamKey.ip, props.getProperty(connectProps + "." + ParamKey.ip).trim());
-//				param.putValue(ParamKey.port, props.getProperty(connectProps + "." + ParamKey.port).trim());
-//				param.putValue(ParamKey.username, props.getProperty(connectProps + "." + ParamKey.username).trim());
-//				param.putValue(ParamKey.password, props.getProperty(connectProps + "." + ParamKey.password).trim());
-//				param.putValue(ParamKey.dbname, props.getProperty(connectProps + "." + ParamKey.dbname).trim());
-//			} catch (Exception e) {
-//				s_logger.error(e.getMessage(),e);
-//				throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
-//			}
-//		}
-        ConfigCache configCache = null;
-        String lionProject = System.getenv(LION_PROJECT);
-        String connectProps = StringUtils.lowerCase(param.getValue(ParamKey.connectProps,null));
-        s_logger.info("connectProp :\t"+connectProps);
-        if(connectProps != null && lionProject != null){
-            try{
-                configCache = ConfigCache.getInstance(EnvZooKeeperConfig.getZKAddress());
-				if (connectProps.startsWith(CONNECT_PRIFIX)) {
-					String realDb = connectProps.substring(6).trim(); // 去除'mysql_'前缀
-					String specialDbs = configCache.getProperty(lionProject + "." + DAL_SPECIAL_DBS);
-					for (String db : specialDbs.split(DAL_SPECIAL_DBS_LION_SEP)) {
-						if (db.trim().equals(realDb)) {
-							param.putValue(ParamKey.jdbcRef, realDb + SPECIAL_SUFFIX);
-						}
-					}
-					if (param.getValue(ParamKey.jdbcRef, null) == null)
-						param.putValue(ParamKey.jdbcRef, realDb);
-
-					s_logger.info("real jdbc ref is:  " + param.getValue(ParamKey.jdbcRef));
-				} else {
-					param.putValue(ParamKey.ip, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.ip));
-					param.putValue(ParamKey.port, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.port));
-					param.putValue(ParamKey.username, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.username));
-					param.putValue(ParamKey.password, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.password));
-					param.putValue(ParamKey.dbname, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.dbname));
-				}
-            }catch (Exception e){
-                s_logger.error("read connect configuration from lion failure",e);
-                throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
-            }
-        }
+		String fileName = System.getenv(WORMHOLE_CONNECT_FILE);
+		String connectProps = param.getValue(ParamKey.connectProps,null);
+		if (fileName != null && connectProps != null) {
+			Properties props = new Properties();
+			try {
+				props.load(new FileInputStream(fileName));
+				param.putValue(ParamKey.ip, props.getProperty(connectProps + "." + ParamKey.ip).trim());
+				param.putValue(ParamKey.port, props.getProperty(connectProps + "." + ParamKey.port).trim());
+				param.putValue(ParamKey.username, props.getProperty(connectProps + "." + ParamKey.username).trim());
+				param.putValue(ParamKey.password, props.getProperty(connectProps + "." + ParamKey.password).trim());
+				param.putValue(ParamKey.dbname, props.getProperty(connectProps + "." + ParamKey.dbname).trim());
+			} catch (Exception e) {
+				s_logger.error(e.getMessage(),e);
+				throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
+			}
+		}
+//        ConfigCache configCache = null;
+//        String lionProject = System.getenv(LION_PROJECT);
+//        String connectProps = StringUtils.lowerCase(param.getValue(ParamKey.connectProps,null));
+//        s_logger.info("connectProp :\t"+connectProps);
+//        if(connectProps != null && lionProject != null){
+//            try{
+//                configCache = ConfigCache.getInstance(EnvZooKeeperConfig.getZKAddress());
+//				if (connectProps.startsWith(CONNECT_PRIFIX)) {
+//					String realDb = connectProps.substring(6).trim(); // 去除'mysql_'前缀
+//					String specialDbs = configCache.getProperty(lionProject + "." + DAL_SPECIAL_DBS);
+//					for (String db : specialDbs.split(DAL_SPECIAL_DBS_LION_SEP)) {
+//						if (db.trim().equals(realDb)) {
+//							param.putValue(ParamKey.jdbcRef, realDb + SPECIAL_SUFFIX);
+//						}
+//					}
+//					if (param.getValue(ParamKey.jdbcRef, null) == null)
+//						param.putValue(ParamKey.jdbcRef, realDb);
+//
+//					s_logger.info("real jdbc ref is:  " + param.getValue(ParamKey.jdbcRef));
+//				} else {
+//					param.putValue(ParamKey.ip, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.ip));
+//					param.putValue(ParamKey.port, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.port));
+//					param.putValue(ParamKey.username, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.username));
+//					param.putValue(ParamKey.password, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.password));
+//					param.putValue(ParamKey.dbname, configCache.getProperty(lionProject + "." + connectProps + "." + ParamKey.dbname));
+//				}
+//            }catch (Exception e){
+//                s_logger.error("read connect configuration from lion failure",e);
+//                throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
+//            }
+//        }
 	}
  }
