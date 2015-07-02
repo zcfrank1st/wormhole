@@ -4,26 +4,26 @@
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>nebula-wormhole</artifactId>
-    <groupId>com.dianping</groupId>
+    <artifactId>nebula-wormhole-super</artifactId>
+    <groupId>com.fanli</groupId>
     <version>0.2.0-SNAPSHOT</version>
-    <name>nebula-wormhole</name>
+    <name>nebula-wormhole-super</name>
     <properties>
         <env>dev</env>
     </properties>
 
-    <distributionManagement>
-        <repository>
-            <id>dianping.repo</id>
-            <name>internal corporate repository</name>
-            <url>${repo.internal.releases.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>dianping.repo.snapshots</id>
-            <name>internal corporate snapshots repository</name>
-            <url>${repo.internal.snapshots.url}</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>dianping.repo</id>-->
+            <!--<name>internal corporate repository</name>-->
+            <!--<url>${repo.internal.releases.url}</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>dianping.repo.snapshots</id>-->
+            <!--<name>internal corporate snapshots repository</name>-->
+            <!--<url>${repo.internal.snapshots.url}</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
 
     <repositories>
         <repository>
@@ -92,28 +92,28 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.dianping.cat</groupId>
-            <artifactId>cat-core</artifactId>
-            <version>1.3.4</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>google-collections</artifactId>
-                    <groupId>com.google.collections</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianping.cat</groupId>-->
+            <!--<artifactId>cat-core</artifactId>-->
+            <!--<version>1.3.4</version>-->
+            <!--<scope>provided</scope>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>google-collections</artifactId>-->
+                    <!--<groupId>com.google.collections</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>2.5.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.dp.nebula</groupId>
-            <artifactId>nebula-common</artifactId>
-            <version>1.1.2</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dp.nebula</groupId>-->
+            <!--<artifactId>nebula-common</artifactId>-->
+            <!--<version>1.1.2</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
@@ -226,11 +226,11 @@
             <artifactId>hadoop-lzo</artifactId>
             <version>0.4.20-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.dianping.lion</groupId>
-            <artifactId>lion-client</artifactId>
-            <version>0.4.8</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianping.lion</groupId>-->
+            <!--<artifactId>lion-client</artifactId>-->
+            <!--<version>0.4.8</version>-->
+        <!--</dependency>-->
 
         <!--<dependency>-->
             <!--<groupId>com.dp.cosmos</groupId>-->
@@ -247,7 +247,7 @@
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-jdbc</artifactId>
-            <version>0.11.0-dp-5</version>
+            <version>0.13.1</version>
         </dependency>
 
         <dependency>
@@ -299,17 +299,17 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
-            <version>0.94.13-dp-hadoop2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.thrift</groupId>
-                    <artifactId>libthrift</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>0.94.13</version>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.google.protobuf</groupId>-->
+                    <!--<artifactId>protobuf-java</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.apache.thrift</groupId>-->
+                    <!--<artifactId>libthrift</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -343,55 +343,55 @@
             <version>2.5.2</version>
         </dependency>
         
-        <dependency>
-            <groupId>com.dianping.hawk</groupId>
-            <artifactId>hawk-client</artifactId>
-            <version>0.6.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianping.data.query</groupId>
-            <artifactId>engine</artifactId>
-            <version>0.7.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>hadoop-core</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianping.hawk</groupId>-->
+            <!--<artifactId>hawk-client</artifactId>-->
+            <!--<version>0.6.7</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.dianping.data.query</groupId>-->
+            <!--<artifactId>engine</artifactId>-->
+            <!--<version>0.7.1-SNAPSHOT</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>hadoop-core</artifactId>-->
+                    <!--<groupId>org.apache.hadoop</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.dianping</groupId>
-            <artifactId>avatar-cache</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>libthrift</artifactId>
-                    <groupId>org.apache</groupId>
-                </exclusion>
-            </exclusions>
-            <version>2.6.5</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianping</groupId>-->
+            <!--<artifactId>avatar-cache</artifactId>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>slf4j-log4j12</artifactId>-->
+                    <!--<groupId>org.slf4j</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>libthrift</artifactId>-->
+                    <!--<groupId>org.apache</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+            <!--<version>2.6.5</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
             <version>1.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.dianping.zebra</groupId>
-            <artifactId>zebra-api</artifactId>
-            <version>2.7.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianping.zebra</groupId>-->
+            <!--<artifactId>zebra-api</artifactId>-->
+            <!--<version>2.7.1</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.dianping.zebra</groupId>
-            <artifactId>zebra-ds-monitor-client</artifactId>
-            <version>2.7.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianping.zebra</groupId>-->
+            <!--<artifactId>zebra-ds-monitor-client</artifactId>-->
+            <!--<version>2.7.1</version>-->
+        <!--</dependency>-->
     </dependencies>
     <reporting>
         <plugins>

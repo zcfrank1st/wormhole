@@ -1,7 +1,6 @@
 package com.dp.nebula.wormhole.engine.monitor;
 
-import com.dp.nebula.common.utils.DateHelper;
-
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class WormHoleJobInfo {
@@ -94,5 +93,13 @@ public class WormHoleJobInfo {
 		this.totalBytes = totalBytes;
 		this.time = time;
 		this.resultCode = resultCode;
+	}
+
+	static class DateHelper {
+		public static String DATE_FORMAT_PATTERN_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND = "yyyy-MM-dd HH:mm:ss";
+
+		public static String format (Date startTime, String Pattern) {
+            return new SimpleDateFormat(Pattern).format(startTime);
+		}
 	}
 }

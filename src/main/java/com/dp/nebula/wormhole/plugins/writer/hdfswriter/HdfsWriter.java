@@ -220,6 +220,7 @@ public class HdfsWriter extends AbstractPlugin implements IWriter {
 					out = fs.create(p, false, bufferSize);
 					bw = new BufferedWriter(new OutputStreamWriter(out,
 							encoding), bufferSize);
+
 				}
 			} catch (Exception e) {
 				logger.error("====== namenode error ======");

@@ -8,8 +8,6 @@ import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
-import com.dp.nebula.wormhole.plugins.common.ZebraPool;
-import com.dp.nebula.wormhole.plugins.common.ZebraPoolType;
 import com.dp.nebula.wormhole.plugins.reader.mysqlreader.MysqlReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
