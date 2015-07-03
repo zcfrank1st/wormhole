@@ -1,52 +1,56 @@
-<!--<?xml version="1.0"?>-->
-<!--<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>-->
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-<!--&lt;!&ndash; Put site-specific property overrides in this file. &ndash;&gt;-->
+    http://www.apache.org/licenses/LICENSE-2.0
 
-<!--<configuration>-->
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
 
-	<!--<property>-->
-		<!--<name>hadoop.security.authentication</name>-->
-		<!--<value>kerberos</value>-->
-	<!--</property>-->
+<!-- Put site-specific property overrides in this file. -->
 
-	<!--<property>-->
-		<!--<name>hadoop.security.authorization</name>-->
-		<!--<value>true</value>-->
-	<!--</property>-->
-
-    <!--<property>-->
-        <!--<name>fs.file.impl</name>-->
-        <!--<value>org.apache.hadoop.fs.LocalFileSystem</value>-->
-        <!--<description>The FileSystem for file: uris.</description>-->
-    <!--</property>-->
-    <!--<property>-->
-        <!--<name>fs.hdfs.impl</name>-->
-        <!--<value>org.apache.hadoop.hdfs.DistributedFileSystem</value>-->
-        <!--<description>The FileSystem for hdfs: uris.</description>-->
-    <!--</property>-->
-    <!--<property>-->
-        <!--<name>hadoop.security.group.mapping</name>-->
-        <!--<value>org.apache.hadoop.security.ACLLdapGroupsMapping</value>-->
-    <!--</property>-->
-
-    <!--<property>-->
-        <!--<name>hadoop.security.group.mapping.ldap.url</name>-->
-        <!--<value>ldap://10.2.6.103:389 ldap://10.2.6.152:389</value>-->
-    <!--</property>-->
-
-    <!--<property>-->
-        <!--<name>hadoop.security.group.mapping.ldap.base</name>-->
-        <!--<value>ou=hadoop,ou=auth,dc=dianping,dc=com</value>-->
-    <!--</property>-->
-
-    <!--<property>-->
-        <!--<name>dfs.namenode.kerberos.principal</name>-->
-        <!--<value>hadoop/10.2.6.102@DIANPING.COM</value>-->
-    <!--</property>-->
-
-    <!--<property>-->
-        <!--<name>io.compression.codecs</name>-->
-        <!--<value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec,org.apache.hadoop.io.compress.SnappyCodec</value>-->
-    <!--</property>-->
-<!--</configuration>-->
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://namenode171:54310</value>
+  </property>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/data1/hdfs/tmp</value>
+  </property>
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+  </property>
+  <property>
+    <name>io.bytes.per.checksum</name>
+    <value>1024</value>
+  </property>
+  <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.domain.socket.path</name>
+    <value>/var/lib/hadoop-hdfs/dn_socket</value>
+  </property>
+  <property>  
+    <name>fs.trash.interval</name>  
+    <value>1440</value>  
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hue.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.hue.groups</name>
+    <value>*</value>
+  </property>
+</configuration>

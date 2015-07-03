@@ -10,11 +10,13 @@ import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
 import com.dp.nebula.wormhole.plugins.reader.mysqlreader.MysqlReader;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.Properties;
 
 public class MysqlWriterPeriphery implements IWriterPeriphery{
 	
@@ -59,7 +61,7 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 			return;
 		}
 		try{
-			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
+			conn = DBSource.getConnection(MysqlWriter.class, ip, port, dbname);
 //			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
 			String[] sqlArray = pre.split(";");
 			for(String sql:sqlArray){
@@ -138,11 +140,11 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 	
 	private void init(IParam param){
 		/* for database connection */
-//		this.username 	  = param.getValue(ParamKey.USER_NAME,"");
-//		this.password 	  = param.getValue(ParamKey.PASSWORD,"");
-//		this.ip 		  = param.getValue(ParamKey.IP,"");
-//		this.port 		  = param.getValue(ParamKey.PORT, this.port);
-//		this.dbname 	  = param.getValue(ParamKey.DBNAME,"");
+		this.username 	  = param.getValue(ParamKey.USER_NAME,"");
+		this.password 	  = param.getValue(ParamKey.PASSWORD,"");
+		this.ip 		  = param.getValue(ParamKey.IP,"");
+		this.port 		  = param.getValue(ParamKey.PORT, this.port);
+		this.dbname 	  = param.getValue(ParamKey.DBNAME,"");
 		this.jdbcRef      = param.getValue(ParamKey.jdbcRef, "");
 		this.encode       = param.getValue(ParamKey.ENCODING, "");
 		this.mysqlParams  = param.getValue(ParamKey.MYSQL_PRAMAS,"");
@@ -157,45 +159,47 @@ public class MysqlWriterPeriphery implements IWriterPeriphery{
 	private void register(IParam param) {
 		init(param);
 		/* for connection session */
-//		Properties p = createProperties();
-//		try {
-//			DBSource.register(MysqlWriter.class, this.ip, this.writerID, this.dbname, p);
-//		} catch (Exception e) {
-//			throw new WormholeException(e, JobStatus.WRITE_CONNECTION_FAILED.getStatus() + errorCodeAdd);
-//		}
+		Properties p = createProperties();
+		try {
+			DBSource.register(MysqlWriter.class, this.ip, this.port, this.dbname, p);
+		} catch (Exception e) {
+			throw new WormholeException(e, JobStatus.WRITE_CONNECTION_FAILED.getStatus() + errorCodeAdd);
+		}
 		
 	}
 		
-//	private Properties createProperties() {
-//		Properties p = new Properties();
-//
-//		String encodeDetail = "";
-//
-//		if(!StringUtils.isBlank(this.encode)){
-//			encodeDetail = "useUnicode=true&characterEncoding="	+ this.encode + "&";
-//		}
-//		String url = "jdbc:mysql://" + this.ip + ":" + this.port + "/"
-//				+ this.dbname + "?" + encodeDetail
-//				+ "yearIsDateType=false&zeroDateTimeBehavior=convertToNull"
-//				+ "&defaultFetchSize=" + String.valueOf(Integer.MIN_VALUE);
-//		if (!StringUtils.isBlank(this.mysqlParams)) {
-//			url = url + "&" + this.mysqlParams;
-//		}
-//
-//		p.setProperty("driverClassName", "com.mysql.jdbc.Driver");
-//		p.setProperty("url", url);
-//		p.setProperty("username", username);
-//		p.setProperty("password", password);
-//		p.setProperty("maxActive", String.valueOf(concurrency + 2));
-//		//don't set initialSize, otherwise accessToUnderlyingConnectionAllowed will not be set successfully
-//		//p.setProperty("initialSize", String.valueOf(concurrency + 2));
-//		p.setProperty("maxIdle", "1");
-//		p.setProperty("maxWait", "1000");
-//		p.setProperty("defaultReadOnly", "false");
-//		p.setProperty("testOnBorrow", "true");
-//		p.setProperty("validationQuery", "select 1 from dual");
-//
-//		logger.debug(String.format("Mysql try connection: %s .", url));
-//		return p;
-//	}
+	private Properties createProperties() {
+		Properties p = new Properties();
+
+		String encodeDetail = "";
+
+		if(!StringUtils.isBlank(this.encode)){
+			encodeDetail = "useUnicode=true&characterEncoding="	+ this.encode + "&";
+		}
+		String url = "jdbc:mysql://" + this.ip + ":" + this.port + "/"
+				+ this.dbname + "?" + encodeDetail
+				+ "yearIsDateType=false&zeroDateTimeBehavior=convertToNull"
+				+ "&defaultFetchSize=" + String.valueOf(Integer.MIN_VALUE);
+		if (!StringUtils.isBlank(this.mysqlParams)) {
+			url = url + "&" + this.mysqlParams;
+		}
+
+		logger.info("jdbc connection: " + url);
+
+		p.setProperty("driverClassName", "com.mysql.jdbc.Driver");
+		p.setProperty("url", url);
+		p.setProperty("username", username);
+		p.setProperty("password", password);
+		p.setProperty("maxActive", String.valueOf(concurrency + 2));
+		//don't set initialSize, otherwise accessToUnderlyingConnectionAllowed will not be set successfully
+		//p.setProperty("initialSize", String.valueOf(concurrency + 2));
+		p.setProperty("maxIdle", "1");
+		p.setProperty("maxWait", "1000");
+		p.setProperty("defaultReadOnly", "false");
+		p.setProperty("testOnBorrow", "true");
+		p.setProperty("validationQuery", "select 1 from dual");
+
+		logger.debug(String.format("Mysql try connection: %s .", url));
+		return p;
+	}
 }

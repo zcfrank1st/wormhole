@@ -8,7 +8,6 @@ import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
 import com.dp.nebula.wormhole.plugins.common.DBUtils;
-import com.dp.nebula.wormhole.plugins.reader.mysqlreader.MysqlReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -138,7 +137,12 @@ public class MysqlWriter extends AbstractPlugin implements IWriter {
 			return;
 		}
 		try {
-			conn = DBSource.getConnection(MysqlReader.class, ip, port, dbname);
+			logger.info("[ IP -- " + ip + "]");
+			logger.info("[ PORT -- " + port + "]");
+			logger.info("[ DBNAME -- " + dbname + "]");
+
+			conn = DBSource.getConnection(MysqlWriter.class, ip, port, dbname);
+//			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
 //			conn = ZebraPool.INSTANCE.getPool(jdbcRef, ZebraPoolType.WRITE).getConnection();
 		} catch (Exception e) {
 			throw new WormholeException(e,

@@ -445,8 +445,8 @@
                                 </copy>
                                 <chmod file="${bin.dir}/wormhole.sh" perm="755" />
 
-                                <jar jarfile="${lib.dir}/nebula-wormhole-0.1.0.jar" basedir="${classes.dir}"
-                                     excludes="com/dp/nebula/wormhole/plugins/reader/**,com/dp/nebula/wormhole/plugins/writer/**,com/dp/nebula/wormhole/transform/impls/**">
+                                <jar jarfile="${lib.dir}/nebula-wormhole-0.1.0.jar" basedir="${classes.dir}">
+                                     <!--excludes="com/dp/nebula/wormhole/plugins/reader/**,com/dp/nebula/wormhole/plugins/writer/**,com/dp/nebula/wormhole/transform/impls/**">-->
                                 </jar>
 
                                 <property name="hdfs.writer.name" value="hdfswriter" />
