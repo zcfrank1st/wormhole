@@ -1,0 +1,26 @@
+package com.fanli.nebula.wormhole.common;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fanli.nebula.wormhole.common.interfaces.IParam;
+import com.fanli.nebula.wormhole.common.interfaces.ISplitter;
+
+public abstract class AbstractSplitter implements ISplitter{
+	
+	protected IParam param;
+	
+	@Override
+	public void init(IParam jobParams){
+		param = jobParams;
+	}
+	
+	@Override
+	public List<IParam> split(){
+		List<IParam> result = new ArrayList<IParam>();
+		result.add(param);
+		return result;
+	}
+
+
+}
