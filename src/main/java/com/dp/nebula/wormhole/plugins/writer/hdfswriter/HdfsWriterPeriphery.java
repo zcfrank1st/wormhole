@@ -8,7 +8,6 @@ import com.dp.nebula.wormhole.common.interfaces.ITargetCounter;
 import com.dp.nebula.wormhole.common.interfaces.IWriterPeriphery;
 import com.dp.nebula.wormhole.plugins.common.DFSUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -16,14 +15,9 @@ import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.util.Shell.ShellCommandExecutor;
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HdfsWriterPeriphery implements IWriterPeriphery {
 
@@ -49,11 +43,11 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 
 	private FileSystem fs;
 
-    private static final Configuration lzoIndexConfig;
-    static {
-        lzoIndexConfig = new Configuration();
-        lzoIndexConfig.addResource("lzo-index-site.xml");
-    }
+//    private static final Configuration lzoIndexConfig;
+//    static {
+//        lzoIndexConfig = new Configuration();
+//        lzoIndexConfig.addResource("lzo-index-site.xml");
+//    }
 
 	@Override
 	public void rollback(IParam param) {
@@ -69,7 +63,7 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
             if (lzoCompressed
                     && "true".equalsIgnoreCase(param.getValue(
                     ParamKey.createLzoIndexFile, "true").trim())) {
-                createLzoIndex(dir);
+//                createLzoIndex(dir);
             }
 		/* add hive table partition if necessary */
             hiveTableAddPartitionOrNot = param.getValue(
@@ -220,67 +214,67 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	// }
 	// }
 
-	private void createLzoIndex(final String directory) {
-		int times = 1;
-//		boolean idxCreated = false;
-		do {
-            logger.info("start to create lzo index file on " + directory
-                    + " times: " + times);
-            try {
-                logger.info("lzo index directory => " + directory);
-//				idxCreated = ToolRunner.run(lzoIndexConfig, new DistributedLzoIndexer(), new String[]{directory}) == 0;
-                List<String> commands = new ArrayList<String>();
-                commands.add("hadoop");
-                commands.add("jar");
-                commands.add(lzoIndexConfig.get("lzo.index.jar"));
-                commands.add(lzoIndexConfig.get("lzo.index.jar.main"));
-                commands.add(directory);
-
-                ProcessBuilder processBuilder = new ProcessBuilder(commands);
-                processBuilder.redirectErrorStream(true);
-                Process p = processBuilder.start();
-                InputStream inputStream = p.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    logger.info(line);
-                }
-                if (p.waitFor() != 0) {
-                    throw new Exception();
-                } else {
-                    logger.info("create lzo index info is => " + org.apache.commons.io.IOUtils.toString(p.getErrorStream()));
-                    break;
-                }
-            } catch (Throwable t) {
-                logger.error(String
-                        .format("HdfsWriter doPost stage create index %s failed, start to sleep %d millis sec, %s,%s",
-								directory,
-								LZO_CREATION_TRY_INTERVAL_IN_MILLIS,
-								t.getMessage(), t.getCause()));
-                try {
-                    Thread.sleep(LZO_CREATION_TRY_INTERVAL_IN_MILLIS);
-                } catch (InterruptedException ite) {
-                    ite.printStackTrace(System.err);
-                }
-            }
-        } while (times++ <= MAX_LZO_CREATION_TRY_TIMES);
-
-		if (times > MAX_LZO_CREATION_TRY_TIMES) {
-            throw new WormholeException(
-                    "lzo index creation failed after try "
-                            + MAX_LZO_CREATION_TRY_TIMES + " times",
-                    JobStatus.POST_WRITE_FAILED.getStatus());
-        }
-
-		if (existIncompleteFile(dir)) {
-            logger.error(String.format(
-                    "HdfsWriter doPost stage create index %s failed:",
-                    directory));
-            throw new WormholeException(
-                    "dfsWriter doPost stage create index failed",
-                    JobStatus.POST_WRITE_FAILED.getStatus());
-        }
-	}
+//	private void createLzoIndex(final String directory) {
+//		int times = 1;
+////		boolean idxCreated = false;
+//		do {
+//            logger.info("start to create lzo index file on " + directory
+//                    + " times: " + times);
+//            try {
+//                logger.info("lzo index directory => " + directory);
+////				idxCreated = ToolRunner.run(lzoIndexConfig, new DistributedLzoIndexer(), new String[]{directory}) == 0;
+//                List<String> commands = new ArrayList<String>();
+//                commands.add("hadoop");
+//                commands.add("jar");
+//                commands.add(lzoIndexConfig.get("lzo.index.jar"));
+//                commands.add(lzoIndexConfig.get("lzo.index.jar.main"));
+//                commands.add(directory);
+//
+//                ProcessBuilder processBuilder = new ProcessBuilder(commands);
+//                processBuilder.redirectErrorStream(true);
+//                Process p = processBuilder.start();
+//                InputStream inputStream = p.getInputStream();
+//                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                String line;
+//                while ((line = bufferedReader.readLine()) != null) {
+//                    logger.info(line);
+//                }
+//                if (p.waitFor() != 0) {
+//                    throw new Exception();
+//                } else {
+//                    logger.info("create lzo index info is => " + org.apache.commons.io.IOUtils.toString(p.getErrorStream()));
+//                    break;
+//                }
+//            } catch (Throwable t) {
+//                logger.error(String
+//                        .format("HdfsWriter doPost stage create index %s failed, start to sleep %d millis sec, %s,%s",
+//								directory,
+//								LZO_CREATION_TRY_INTERVAL_IN_MILLIS,
+//								t.getMessage(), t.getCause()));
+//                try {
+//                    Thread.sleep(LZO_CREATION_TRY_INTERVAL_IN_MILLIS);
+//                } catch (InterruptedException ite) {
+//                    ite.printStackTrace(System.err);
+//                }
+//            }
+//        } while (times++ <= MAX_LZO_CREATION_TRY_TIMES);
+//
+//		if (times > MAX_LZO_CREATION_TRY_TIMES) {
+//            throw new WormholeException(
+//                    "lzo index creation failed after try "
+//                            + MAX_LZO_CREATION_TRY_TIMES + " times",
+//                    JobStatus.POST_WRITE_FAILED.getStatus());
+//        }
+//
+//		if (existIncompleteFile(dir)) {
+//            logger.error(String.format(
+//                    "HdfsWriter doPost stage create index %s failed:",
+//                    directory));
+//            throw new WormholeException(
+//                    "dfsWriter doPost stage create index failed",
+//                    JobStatus.POST_WRITE_FAILED.getStatus());
+//        }
+//	}
 
 	@Override
 	public void prepare(IParam param, ISourceCounter counter) {

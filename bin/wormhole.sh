@@ -36,7 +36,7 @@ if [ -n "$JAVA7" ];then
     echo "use udk7 to run"
     RUN_CMD="$JAVA7 -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
 else
-    RUN_CMD="/usr/local/jdk/bin/java -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
+    RUN_CMD="/usr/java/default/bin/java -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
 fi
 
 #RUN_CMD="/data/home/tianming.mao/jdk/bin/java -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""

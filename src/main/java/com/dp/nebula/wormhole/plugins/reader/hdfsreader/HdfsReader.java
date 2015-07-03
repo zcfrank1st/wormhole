@@ -1,12 +1,11 @@
 package com.dp.nebula.wormhole.plugins.reader.hdfsreader;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.dp.nebula.wormhole.common.AbstractPlugin;
+import com.dp.nebula.wormhole.common.interfaces.ILine;
+import com.dp.nebula.wormhole.common.interfaces.ILineSender;
+import com.dp.nebula.wormhole.common.interfaces.IReader;
+import com.dp.nebula.wormhole.plugins.common.DFSUtils;
+import com.dp.nebula.wormhole.plugins.common.DFSUtils.HdfsFileType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -18,12 +17,12 @@ import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.io.compress.CompressionInputStream;
 import org.apache.log4j.Logger;
 
-import com.dp.nebula.wormhole.common.AbstractPlugin;
-import com.dp.nebula.wormhole.common.interfaces.ILine;
-import com.dp.nebula.wormhole.common.interfaces.ILineSender;
-import com.dp.nebula.wormhole.common.interfaces.IReader;
-import com.dp.nebula.wormhole.plugins.common.DFSUtils;
-import com.dp.nebula.wormhole.plugins.common.DFSUtils.HdfsFileType;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HdfsReader extends AbstractPlugin implements IReader {
 	private static final Logger logger = Logger.getLogger(HdfsReader.class);

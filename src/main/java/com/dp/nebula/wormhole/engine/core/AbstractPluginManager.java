@@ -1,16 +1,12 @@
 package com.dp.nebula.wormhole.engine.core;
 
 import com.dp.nebula.wormhole.common.JobStatus;
-import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
 import com.dp.nebula.wormhole.engine.config.PluginConfParamKey;
-import com.dp.nebula.wormhole.plugins.common.ParamKey;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.FileInputStream;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.*;
 
 abstract class AbstractPluginManager {
@@ -97,22 +93,25 @@ abstract class AbstractPluginManager {
 	}
 	
 	public static void regDataSourceProp(IParam param) {
-		String fileName = System.getenv(WORMHOLE_CONNECT_FILE);
-		String connectProps = param.getValue(ParamKey.connectProps,null);
-		if (fileName != null && connectProps != null) {
-			Properties props = new Properties();
-			try {
-				props.load(new FileInputStream(fileName));
-				param.putValue(ParamKey.ip, props.getProperty(connectProps + "." + ParamKey.ip).trim());
-				param.putValue(ParamKey.port, props.getProperty(connectProps + "." + ParamKey.port).trim());
-				param.putValue(ParamKey.username, props.getProperty(connectProps + "." + ParamKey.username).trim());
-				param.putValue(ParamKey.password, props.getProperty(connectProps + "." + ParamKey.password).trim());
-				param.putValue(ParamKey.dbname, props.getProperty(connectProps + "." + ParamKey.dbname).trim());
-			} catch (Exception e) {
-				s_logger.error(e.getMessage(),e);
-				throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
-			}
-		}
+		//file
+//		String fileName = System.getenv(WORMHOLE_CONNECT_FILE);
+//		String connectProps = param.getValue(ParamKey.connectProps,null);
+//		if (fileName != null && connectProps != null) {
+//			Properties props = new Properties();
+//			try {
+//				props.load(new FileInputStream(fileName));
+//				param.putValue(ParamKey.ip, props.getProperty(connectProps + "." + ParamKey.ip).trim());
+//				param.putValue(ParamKey.port, props.getProperty(connectProps + "." + ParamKey.port).trim());
+//				param.putValue(ParamKey.username, props.getProperty(connectProps + "." + ParamKey.username).trim());
+//				param.putValue(ParamKey.password, props.getProperty(connectProps + "." + ParamKey.password).trim());
+//				param.putValue(ParamKey.dbname, props.getProperty(connectProps + "." + ParamKey.dbname).trim());
+//			} catch (Exception e) {
+//				s_logger.error(e.getMessage(),e);
+//				throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
+//			}
+//		}
+
+		//zk
 //        ConfigCache configCache = null;
 //        String lionProject = System.getenv(LION_PROJECT);
 //        String connectProps = StringUtils.lowerCase(param.getValue(ParamKey.connectProps,null));

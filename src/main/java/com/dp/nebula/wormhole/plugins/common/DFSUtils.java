@@ -134,10 +134,6 @@ public final class DFSUtils {
 							+ "org.apache.hadoop.io.compress.BZip2Codec");
 
 			cfg.set("fs." + scheme + ".impl.disable.cache", "true");
-			cfg.set("hadoop.security.authentication", "kerberos");
-            LOGGER.info("hadoop/" + uri.getHost() + "@DIANPING.COM");
-			cfg.set("dfs.namenode.kerberos.principal",
-					"hadoop/" + uri.getHost() + "@DIANPING.COM");
             cfg.set("fs.hdfs.impl","org.apache.hadoop.hdfs.DistributedFileSystem");
 			confs.put(scheme, cfg);
 		}
