@@ -60,8 +60,9 @@ public class TimeMachine {
         }
         in.close();
 
-        System.out.println(content);
         replaceOriginFile(pathname, content);
+
+        // TODO 优化不用每次替换文件
     }
 
     private static void replaceOriginFile(String path, String content) throws FileNotFoundException {
