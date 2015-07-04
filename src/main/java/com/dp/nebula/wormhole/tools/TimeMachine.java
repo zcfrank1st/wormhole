@@ -18,7 +18,7 @@ public class TimeMachine {
     private static String HOUR_PATTERN_NOW = "(##\\{HH\\})";
 
     public static void main(String[] args) throws IOException {
-        replaceTimePattern(args[0]);
+        replaceTimePattern("/Users/zcfrank1st/Downloads/wormhole_sqlserverreader_to_hdfswriter_1,435,811,052,029.xml");
     }
 
     private static void replaceTimePattern(String pathname) throws IOException {
@@ -42,27 +42,30 @@ public class TimeMachine {
         Matcher commonDateMatcher = commonDatePattern.matcher(content);
         Matcher nowMatcher = nowPattern.matcher(content);
         Matcher commonHourMatcher = commonHourPattern.matcher(content);
+
+        nowDateMatcher.find();
+        String newContent = content.replaceFirst(DATE_PATTERN_NOW, new DateTime().toString("yyyy-MM-dd"));
+
         while (nowDateMatcher.find()) {
-            content = content.replaceFirst(DATE_PATTERN_NOW, new DateTime().toString("yyyy-MM-dd"));
+            newContent = newContent.replaceFirst(DATE_PATTERN_NOW, new DateTime().toString("yyyy-MM-dd"));
         }
         while (commonDateMatcher.find()) {
             int preDay = Integer.parseInt(commonDateMatcher.group(2));
-            content = content.replaceFirst(DATE_PATTERN_COMMON ,new DateTime().minusDays(preDay).toString("yyyy-MM-dd"));
+            newContent = newContent.replaceFirst(DATE_PATTERN_COMMON ,new DateTime().minusDays(preDay).toString("yyyy-MM-dd"));
         }
 
         while (nowMatcher.find()) {
-            content = content.replaceFirst(HOUR_PATTERN_NOW, new DateTime().toString("yyyy-MM-dd:::hh").split(":::")[1]);
+            newContent = newContent.replaceFirst(HOUR_PATTERN_NOW, new DateTime().toString("yyyy-MM-dd:::hh").split(":::")[1]);
         }
 
         while (commonHourMatcher.find()) {
             int preHour = Integer.parseInt(commonHourMatcher.group(2));
-            content = content.replaceFirst(HOUR_PATTERN_COMMON, new DateTime().minusHours(preHour).toString("yyyy-MM-dd:::hh").split(":::")[1]);
+            newContent = newContent.replaceFirst(HOUR_PATTERN_COMMON, new DateTime().minusHours(preHour).toString("yyyy-MM-dd:::hh").split(":::")[1]);
         }
         in.close();
-
-        replaceOriginFile(pathname, content);
-
-        // TODO 优化不用每次替换文件
+        
+        if (!newContent.equals(content))
+            replaceOriginFile(pathname, newContent);
     }
 
     private static void replaceOriginFile(String path, String content) throws FileNotFoundException {
