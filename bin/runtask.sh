@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # usage $1 absolute path
 
-CMD="sh ./timemachine.sh $1"
-CMD="$CMD;sh ./wormhole.sh $1"
+CURR_DIR=`pwd`
+cd `dirname "$0"`/..
+WORMHOLE_HOME=`pwd`
 
+CMD="sh ${WORMHOLE_HOME}/bin/timemachine.sh $1"
+CMD="$CMD;sh ${WORMHOLE_HOME}/bin/wormhole.sh $1"
 echo $CMD
 eval $CMD
