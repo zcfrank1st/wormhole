@@ -461,172 +461,172 @@
                                      <!--excludes="com/dp/nebula/wormhole/plugins/reader/**,com/dp/nebula/wormhole/plugins/writer/**,com/dp/nebula/wormhole/transform/impls/**">-->
                                 </jar>
 
-                                <!--<property name="hdfs.writer.name" value="hdfswriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${hdfs.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${hdfs.writer.name}/${hdfs.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${hdfs.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${hdfs.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${hdfs.writer.name}/ParamKey.java" />-->
+                                <property name="hdfs.writer.name" value="hdfswriter" />
+                                <mkdir dir="${plugin.writer.dir}/${hdfs.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${hdfs.writer.name}/${hdfs.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${hdfs.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${hdfs.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${hdfs.writer.name}/ParamKey.java" />
 
-                                <!--<property name="mysql.writer.name" value="mysqlwriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${mysql.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${mysql.writer.name}/${mysql.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${mysql.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${mysql.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${mysql.writer.name}/ParamKey.java" />-->
+                                <property name="mysql.writer.name" value="mysqlwriter" />
+                                <mkdir dir="${plugin.writer.dir}/${mysql.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${mysql.writer.name}/${mysql.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${mysql.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${mysql.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${mysql.writer.name}/ParamKey.java" />
 
-                                <!--<property name="greenplum.writer.name" value="greenplumwriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${greenplum.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${greenplum.writer.name}/${greenplum.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${greenplum.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${greenplum.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${greenplum.writer.name}/ParamKey.java" />-->
+                                <property name="greenplum.writer.name" value="greenplumwriter" />
+                                <mkdir dir="${plugin.writer.dir}/${greenplum.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${greenplum.writer.name}/${greenplum.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${greenplum.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${greenplum.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${greenplum.writer.name}/ParamKey.java" />
 
-                                <!--<property name="sftp.writer.name" value="sftpwriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${sftp.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${sftp.writer.name}/${sftp.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${sftp.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${sftp.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${sftp.writer.name}/ParamKey.java" />-->
+                                <property name="sftp.writer.name" value="sftpwriter" />
+                                <mkdir dir="${plugin.writer.dir}/${sftp.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${sftp.writer.name}/${sftp.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${sftp.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${sftp.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${sftp.writer.name}/ParamKey.java" />
 
-                                <!--<property name="mongo.writer.name" value="mongowriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${mongo.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${mongo.writer.name}/${mongo.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${mongo.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${mongo.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${mongo.writer.name}/ParamKey.java" />-->
+                                <property name="mongo.writer.name" value="mongowriter" />
+                                <mkdir dir="${plugin.writer.dir}/${mongo.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${mongo.writer.name}/${mongo.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${mongo.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${mongo.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${mongo.writer.name}/ParamKey.java" />
 
-                                <!--<property name="memcache.writer.name" value="memcachewriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${memcache.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${memcache.writer.name}/${memcache.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${memcache.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${memcache.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${memcache.writer.name}/ParamKey.java" />-->
+                                <property name="memcache.writer.name" value="memcachewriter" />
+                                <mkdir dir="${plugin.writer.dir}/${memcache.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${memcache.writer.name}/${memcache.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${memcache.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${memcache.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${memcache.writer.name}/ParamKey.java" />
 
-                                <!--<property name="hdfs.reader.name" value="hdfsreader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${hdfs.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${hdfs.reader.name}/${hdfs.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${hdfs.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${hdfs.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${hdfs.reader.name}/ParamKey.java" />-->
+                                <property name="hdfs.reader.name" value="hdfsreader" />
+                                <mkdir dir="${plugin.reader.dir}/${hdfs.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${hdfs.reader.name}/${hdfs.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${hdfs.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${hdfs.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${hdfs.reader.name}/ParamKey.java" />
 
 
-                                <!--<property name="mysql.reader.name" value="mysqlreader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${mysql.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${mysql.reader.name}/${mysql.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${mysql.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${mysql.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${mysql.reader.name}/ParamKey.java" />-->
+                                <property name="mysql.reader.name" value="mysqlreader" />
+                                <mkdir dir="${plugin.reader.dir}/${mysql.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${mysql.reader.name}/${mysql.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${mysql.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${mysql.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${mysql.reader.name}/ParamKey.java" />
 
-                                <!--<property name="greenplum.reader.name" value="greenplumreader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${greenplum.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${greenplum.reader.name}/${greenplum.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${greenplum.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${greenplum.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${greenplum.reader.name}/ParamKey.java" />-->
+                                <property name="greenplum.reader.name" value="greenplumreader" />
+                                <mkdir dir="${plugin.reader.dir}/${greenplum.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${greenplum.reader.name}/${greenplum.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${greenplum.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${greenplum.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${greenplum.reader.name}/ParamKey.java" />
 
-                                <!--<property name="sftp.reader.name" value="sftpreader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${sftp.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${sftp.reader.name}/${sftp.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${sftp.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${sftp.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${sftp.reader.name}/ParamKey.java" />-->
+                                <property name="sftp.reader.name" value="sftpreader" />
+                                <mkdir dir="${plugin.reader.dir}/${sftp.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${sftp.reader.name}/${sftp.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${sftp.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${sftp.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${sftp.reader.name}/ParamKey.java" />
 
-                                <!--<property name="mongo.reader.name" value="mongoreader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${mongo.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${mongo.reader.name}/${mongo.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${mongo.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${mongo.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${mongo.reader.name}/ParamKey.java" />-->
+                                <property name="mongo.reader.name" value="mongoreader" />
+                                <mkdir dir="${plugin.reader.dir}/${mongo.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${mongo.reader.name}/${mongo.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${mongo.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${mongo.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${mongo.reader.name}/ParamKey.java" />
 
-                                <!--<property name="sqlserver.reader.name" value="sqlserverreader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${sqlserver.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${sqlserver.reader.name}/${sqlserver.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${sqlserver.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${sqlserver.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${sqlserver.reader.name}/ParamKey.java" />-->
+                                <property name="sqlserver.reader.name" value="sqlserverreader" />
+                                <mkdir dir="${plugin.reader.dir}/${sqlserver.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${sqlserver.reader.name}/${sqlserver.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${sqlserver.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${sqlserver.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${sqlserver.reader.name}/ParamKey.java" />
 
-                                <!--<property name="hive.reader.name" value="hivereader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${hive.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${hive.reader.name}/${hive.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${hive.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${hive.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${hive.reader.name}/ParamKey.java" />-->
+                                <property name="hive.reader.name" value="hivereader" />
+                                <mkdir dir="${plugin.reader.dir}/${hive.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${hive.reader.name}/${hive.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${hive.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${hive.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${hive.reader.name}/ParamKey.java" />
 
-                                <!--<property name="salesforce.reader.name" value="salesforcereader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${salesforce.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${salesforce.reader.name}/${salesforce.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${salesforce.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${salesforce.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${salesforce.reader.name}/ParamKey.java" />-->
+                                <property name="salesforce.reader.name" value="salesforcereader" />
+                                <mkdir dir="${plugin.reader.dir}/${salesforce.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${salesforce.reader.name}/${salesforce.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${salesforce.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${salesforce.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${salesforce.reader.name}/ParamKey.java" />
 
-                                <!--<property name="hbase.reader.name" value="hbasereader" />-->
-                                <!--<mkdir dir="${plugin.reader.dir}/${hbase.reader.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.reader.dir}/${hbase.reader.name}/${hbase.reader.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${hbase.reader.name}/**" />-->
-                                <!--<copy todir="${plugin.reader.dir}/${hbase.reader.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${hbase.reader.name}/ParamKey.java" />-->
+                                <property name="hbase.reader.name" value="hbasereader" />
+                                <mkdir dir="${plugin.reader.dir}/${hbase.reader.name}" />
+                                <jar
+                                        jarfile="${plugin.reader.dir}/${hbase.reader.name}/${hbase.reader.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${hbase.reader.name}/**" />
+                                <copy todir="${plugin.reader.dir}/${hbase.reader.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/reader/${hbase.reader.name}/ParamKey.java" />
 
-                                <!--<property name="hbase.writer.name" value="hbasewriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${hbase.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${hbase.writer.name}/${hbase.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${hbase.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${hbase.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${hbase.writer.name}/ParamKey.java" />-->
+                                <property name="hbase.writer.name" value="hbasewriter" />
+                                <mkdir dir="${plugin.writer.dir}/${hbase.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${hbase.writer.name}/${hbase.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${hbase.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${hbase.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${hbase.writer.name}/ParamKey.java" />
 
-                                <!--<property name="redis.writer.name" value="rediswriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${redis.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${redis.writer.name}/${redis.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${redis.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${redis.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${redis.writer.name}/ParamKey.java" />-->
+                                <property name="redis.writer.name" value="rediswriter" />
+                                <mkdir dir="${plugin.writer.dir}/${redis.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${redis.writer.name}/${redis.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${redis.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${redis.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${redis.writer.name}/ParamKey.java" />
 
-                                <!--<property name="es.writer.name" value="eswriter" />-->
-                                <!--<mkdir dir="${plugin.writer.dir}/${es.writer.name}" />-->
-                                <!--<jar-->
-                                        <!--jarfile="${plugin.writer.dir}/${es.writer.name}/${es.writer.name}-0.1.0.jar"-->
-                                        <!--basedir="${classes.dir}"-->
-                                        <!--includes="com/dp/nebula/wormhole/plugins/**/${es.writer.name}/**" />-->
-                                <!--<copy todir="${plugin.writer.dir}/${es.writer.name}/"-->
-                                      <!--file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${es.writer.name}/ParamKey.java" />-->
+                                <property name="es.writer.name" value="eswriter" />
+                                <mkdir dir="${plugin.writer.dir}/${es.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${es.writer.name}/${es.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${es.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${es.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${es.writer.name}/ParamKey.java" />
 
-                                <!--<mkdir dir="${transform.dir}" />-->
-                                <!--<jar jarfile="${transform.dir}/transformers-0.1.0.jar"-->
-                                     <!--basedir="${classes.dir}" includes="com/dp/nebula/wormhole/transform/impls/**" />-->
+                                <mkdir dir="${transform.dir}" />
+                                <jar jarfile="${transform.dir}/transformers-0.1.0.jar"
+                                     basedir="${classes.dir}" includes="com/dp/nebula/wormhole/transform/impls/**" />
 
                                 <mkdir dir="${lib.dir}" />
                                 <dependencyfilesets prefix="nebula-wormhole." />

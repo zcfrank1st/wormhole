@@ -36,7 +36,7 @@ JAVA_BIN=`which java`
 #start
 RUN_CMD="$JAVA_BIN -classpath \"${WORMHOLE_HOME}/lib/*:${WORMHOLE_HOME}/conf/\""
 RUN_CMD="$RUN_CMD $JAVA_OPTS"
-RUN_CMD="$RUN_CMD com.dp.nebula.wormhole.engine.core.Engine ${WORMHOLE_HOME}/tasks/$@"
+RUN_CMD="$RUN_CMD com.dp.nebula.wormhole.engine.core.Engine $@"
 
 echo $RUN_CMD
 eval $RUN_CMD

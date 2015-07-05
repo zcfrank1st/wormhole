@@ -1,19 +1,5 @@
 package com.dp.nebula.wormhole.common.utils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -23,6 +9,14 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class JobConfGenDriver {
 	private static final Log logger = LogFactory.getLog(JobConfGenDriver.class.getName());
@@ -41,7 +35,7 @@ public final class JobConfGenDriver {
 	}
 	
 	public static void showCopyRight() {
-		System.out.println("Welcome to using DianPing WormHole Version 0.1");
+		System.out.println("Welcome to using Fanli WormHole Version 0.1");
 	}
 	
 	public static List<String> getPluginDirAsList(String pluginsDirName) {
