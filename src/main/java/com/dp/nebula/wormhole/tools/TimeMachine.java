@@ -18,7 +18,7 @@ public class TimeMachine {
     private static String HOUR_PATTERN_NOW = "(##\\{HH\\})";
 
     public static void main(String[] args) throws IOException {
-        replaceTimePattern("/Users/zcfrank1st/Downloads/wormhole_sqlserverreader_to_hdfswriter_1,435,811,052,029.xml");
+        replaceTimePattern(args[0]);
     }
 
     private static void replaceTimePattern(String pathname) throws IOException {
@@ -63,7 +63,7 @@ public class TimeMachine {
             newContent = newContent.replaceFirst(HOUR_PATTERN_COMMON, new DateTime().minusHours(preHour).toString("yyyy-MM-dd:::hh").split(":::")[1]);
         }
         in.close();
-        
+
         if (!newContent.equals(content))
             replaceOriginFile(pathname, newContent);
     }
