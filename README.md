@@ -1,7 +1,7 @@
 wormhole
 ========
 
-A data transport tool for data exchange.
+A common data transport tool for data exchange which using memory to store medium data.
 
 
 
