@@ -624,6 +624,15 @@
                                 <copy todir="${plugin.writer.dir}/${es.writer.name}/"
                                       file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${es.writer.name}/ParamKey.java" />
 
+                                <property name="sqlserver.writer.name" value="sqlserverwriter" />
+                                <mkdir dir="${plugin.writer.dir}/${sqlserver.writer.name}" />
+                                <jar
+                                        jarfile="${plugin.writer.dir}/${sqlserver.writer.name}/${sqlserver.writer.name}-0.1.0.jar"
+                                        basedir="${classes.dir}"
+                                        includes="com/dp/nebula/wormhole/plugins/**/${sqlserver.writer.name}/**" />
+                                <copy todir="${plugin.writer.dir}/${sqlserver.writer.name}/"
+                                      file="${src.dir}/main/java/com/dp/nebula/wormhole/plugins/writer/${sqlserver.writer.name}/ParamKey.java" />
+
                                 <mkdir dir="${transform.dir}" />
                                 <jar jarfile="${transform.dir}/transformers-0.1.0.jar"
                                      basedir="${classes.dir}" includes="com/dp/nebula/wormhole/transform/impls/**" />
