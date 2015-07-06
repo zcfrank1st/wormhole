@@ -65,39 +65,6 @@ public class ParamKey {
     public final static String encoding = "encoding";
 
     /*
-        * @name: SqlServer.params
-        * @description: SqlServer driver params
-        * @range:
-        * @mandatory: false
-        * @default:
-        */
-    public final static String sqlServerParams = "params";
-
-    /*
-       * @name: preCheck
-       * @description: the front check sql, if this sql return 0 ,then the job will not go on and return an errorCode 4
-       * @range:
-       * @mandatory: false
-       * @default:
-       */
-    public final static String preCheck = "preCheck";
-    /*
-       * @name: sql
-       * @description: self-defined sql statement
-       * @range:
-       * @mandatory: false
-       * @default:
-       */
-    public final static String sql = "sql";
-    /*
-     * @name: needSplit
-     * @description: if the sql need to be split
-     * @range:
-     * @mandatory: true
-     * @default: true
-     */
-    public final static String needSplit = "needSplit";
-    /*
       * @name: concurrency
       * @description: concurrency of the job
       * @range: 1-10
@@ -105,15 +72,6 @@ public class ParamKey {
       * @default: 1
       */
     public final static String concurrency = "concurrency";
-
-    /*
-      * @name: blockSize
-      * @description: the block size in which the SqlServer data is read
-      * @range:
-      * @mandatory: false
-      * @default: 1000
-      */
-    public final static String blockSize = "blockSize";
 
 		/*
 	       * @name: tableName
@@ -126,15 +84,6 @@ public class ParamKey {
     public final static String tableName = "tableName";
 
     /*
-      * @name: autoIncKey
-      * @description: auto-increasing key of the table, use when split sql by SqlServerReaderKeySplitter
-      * @range:
-      * @mandatory: false
-      * @default:
-      */
-    public final static String autoIncKey = "autoIncKey";
-
-    /*
        * @name: columns
        * @description: columns to be selected, default is *
        * @range:
@@ -143,21 +92,8 @@ public class ParamKey {
        */
     public final static String columns = "columns";
 
-    /*
-       * @name: where
-       * @description: where clause, like 'modified_time > sysdate'
-       * @range: eg start_time > '2012-04-01' and start_time < '2012-04-10'
-       * @mandatory: false
-       * @default:
-       */
-    public final static String where = "where";
+    public final static String sqlserverParams = "sqlserverParams";
 
-    /*
-     * @name: countSql
-     * @description: if use complicated sql, you'd better fill this field
-     * @range:
-     * @mandatory: false
-     * @default:
-     */
-    public final static String countSql = "countSql";
+    // 前置操作 danger
+    public final static String pre = "pre";
 }

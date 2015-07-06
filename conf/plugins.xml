@@ -163,4 +163,14 @@
         <PeripheryClassName>com.dp.nebula.wormhole.plugins.writer.eswriter.ESWriterPeriphery</PeripheryClassName>
         <MaxThreadNumber>10</MaxThreadNumber>
     </plugin>
+
+	<plugin>
+		<version>1</version>
+		<name>sqlserverwriter</name>
+		<Path>plugins/writer/sqlserverwriter</Path>
+		<PluginClassName>com.dp.nebula.wormhole.plugins.writer.sqlserverwriter.SqlserverWriter</PluginClassName>
+		<SplitterClassName>com.dp.nebula.wormhole.plugins.writer.sqlserverwriter.SqlserverWriterSplitter</SplitterClassName>
+		<PeripheryClassName>com.dp.nebula.wormhole.plugins.writer.sqlserverwriter.SqlserverWriterPeriphery</PeripheryClassName>
+		<MaxThreadNumber>10</MaxThreadNumber>
+	</plugin>
 </plugins>

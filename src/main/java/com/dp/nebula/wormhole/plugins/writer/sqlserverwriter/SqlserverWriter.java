@@ -7,48 +7,45 @@ import com.dp.nebula.wormhole.common.interfaces.ILine;
 import com.dp.nebula.wormhole.common.interfaces.ILineReceiver;
 import com.dp.nebula.wormhole.common.interfaces.IWriter;
 import com.dp.nebula.wormhole.plugins.common.DBSource;
-import org.apache.log4j.Logger;
+import org.apache.commons.dbutils.QueryRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Created by zcfrank1st on 7/5/15.
  */
 public class SqlserverWriter extends AbstractPlugin implements IWriter {
 	private Connection conn;
-
-	private String ip = "";
-
-	private String dbname = null;
-
-	private String sql;
-
-	private String table;
-
+	private String ip;
+	private String dbname;
+	private String port;
+	private String username;
+	private String password;
+	private String tableName;
 	private String columns;
+	private String encoding;
 
-	private String encoding = "UTF8";
-
-    private ILine line = null;
-
-	private String writerID;
-
-	private Logger logger = Logger.getLogger(SqlserverWriter.class);
+	private Logger logger = LoggerFactory.getLogger(SqlserverWriter.class);
 
 	@Override
 	public void init() {
 		this.ip = getParam().getValue(ParamKey.ip,"");
 		this.dbname = getParam().getValue(ParamKey.dbname,"");
-		this.table = getParam().getValue(ParamKey.tableName,"");
-		this.columns = getParam().getValue(ParamKey.columns,"");
+		this.port = getParam().getValue(ParamKey.port,"");
+		this.username = getParam().getValue(ParamKey.username,"");
+		this.password = getParam().getValue(ParamKey.password,"");
+		this.tableName = getParam().getValue(ParamKey.tableName,"");
+		this.columns = getParam().getValue(ParamKey.columns, "");
 		this.encoding = getParam().getValue(ParamKey.encoding, "UTF8").toLowerCase();
-		this.writerID	 = getParam().getValue(AbstractPlugin.PLUGINID, "");
 	}
 
 	@Override
 	public void connection() {
 		try {
-			conn = DBSource.getConnection(SqlserverWriter.class, ip, writerID, dbname);
+			conn = DBSource.getConnection(SqlserverWriter.class, ip, port, dbname);
 		} catch (Exception e) {
 			throw new WormholeException(e, JobStatus.WRITE_CONNECTION_FAILED.getStatus());
 		}
@@ -56,12 +53,44 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 
 	@Override
 	public void write(ILineReceiver receiver) {
-		logger.info(writerID + ": insert SQL - " + sql);
-		// TODO 写入数据
+		String runningSQL = buildWriteSql(receiver);
+		logger.info("Insert SQL - " + runningSQL);
+		try {
+			QueryRunner qr = new QueryRunner();
+			qr.update(conn, runningSQL);
+		} catch (SQLException e) {
+			throw new WormholeException(e.getMessage());
+		}
 	}
 
 	@Override
 	public void commit() {
+	}
+
+	private String buildWriteSql (ILineReceiver receiver) {
+		ILine line;
+		String lineInit = "( ";
+		String lineEnd = " )";
+		String lineCollections = "";
+		while ((line = receiver.receive()) != null) {
+			int len = line.getFieldNum();
+			String valueLine = "";
+			for (int i = 0; i < len; i++) {
+				if (i == len - 1) {
+					valueLine = valueLine + "'" + line.getField(i) + "'" + lineEnd;
+					break;
+				}
+				if (i == 0) {
+					valueLine = lineInit + "'" + line.getField(i) + "', ";
+				} else {
+					valueLine = valueLine + "'" + line.getField(i) + "', ";
+				}
+			}
+			lineCollections = lineCollections + valueLine + ", ";
+			getMonitor().increaseSuccessLines();
+		}
+
+		return "INSERT INTO " + tableName + " (" + columns + ") " + "values " + lineCollections.substring(0, lineCollections.length() - 2);
 	}
 
 }

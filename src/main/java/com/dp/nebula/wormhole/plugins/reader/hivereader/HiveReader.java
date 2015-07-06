@@ -13,9 +13,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.io.compress.CompressionCodecFactory;
-import org.apache.hadoop.io.compress.CompressionInputStream;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -73,27 +70,32 @@ public class HiveReader extends AbstractPlugin implements IReader {
 
 
 	private void readFromHdfs(ILineSender lineSender) {
+		// TODO  不进行压缩
 		FSDataInputStream in = null;
-		CompressionCodecFactory factory;
-		CompressionCodec codec;
-		CompressionInputStream cin = null;
+//		CompressionCodecFactory factory;
+//		CompressionCodec codec;
+//		CompressionInputStream cin = null;
 		LineIterator itr = null;
 		try {
 			conf = DFSUtils.getConf(filePath, null);
 			fs = DFSUtils.createFileSystem(new URI(filePath), conf);
 			in = fs.open(new Path(filePath));
-			factory = new CompressionCodecFactory(conf);
-			codec = factory.getCodec(new Path(filePath));
-			if (codec == null) {
-				LOG.info("codec not found, using text file reader");
-				itr = new LineIterator(new BufferedReader(
+//			factory = new CompressionCodecFactory(conf);
+//			codec = factory.getCodec(new Path(filePath));
+//			if (codec == null) {
+//				LOG.info("codec not found, using text file reader");
+//				itr = new LineIterator(new BufferedReader(
+//						new InputStreamReader(in)));
+//			} else {
+//				LOG.info("found code " + codec.getClass());
+//				cin = codec.createInputStream(in);
+//				itr = new LineIterator(new BufferedReader(
+//						new InputStreamReader(cin)));
+//			}
+			// 粗暴
+			itr = new LineIterator(new BufferedReader(
 						new InputStreamReader(in)));
-			} else {
-				LOG.info("found code " + codec.getClass());
-				cin = codec.createInputStream(in);
-				itr = new LineIterator(new BufferedReader(
-						new InputStreamReader(cin)));
-			}
+
 			while (itr.hasNext()) {
 				ILine oneLine = lineSender.createNewLine();
 				String line = itr.nextLine();
@@ -126,9 +128,9 @@ public class HiveReader extends AbstractPlugin implements IReader {
 				itr.close();
 			}
 			try {
-				if (cin != null) {
-					cin.close();
-				}
+//				if (cin != null) {
+//					cin.close();
+//				}
 				if (in != null) {
 					in.close();
 				}
