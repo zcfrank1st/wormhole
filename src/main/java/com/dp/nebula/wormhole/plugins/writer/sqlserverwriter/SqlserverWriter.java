@@ -54,7 +54,7 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 	@Override
 	public void write(ILineReceiver receiver) {
 		String runningSQL = buildWriteSql(receiver);
-		logger.info("Insert SQL - " + runningSQL);
+		logger.info("Insert SQL - " + runningSQL + "\n");
 		try {
 			QueryRunner qr = new QueryRunner();
 			qr.update(conn, runningSQL);
