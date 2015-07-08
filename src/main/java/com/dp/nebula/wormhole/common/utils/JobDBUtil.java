@@ -47,6 +47,7 @@ public final class JobDBUtil {
 		Connection conn;
 		Statement stmt;
 		try {
+			s_logger.info("jdbc url is: " + url);
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(url);
 			stmt = conn.createStatement();
