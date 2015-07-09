@@ -17,8 +17,31 @@ public class TimeMachine {
     private static String HOUR_PATTERN_COMMON = "(##\\{HH_P)(\\d+)(H\\})";
     private static String HOUR_PATTERN_NOW = "(##\\{HH\\})";
 
+
+    private static String DATE_HOLDER = "${date}";
+
     public static void main(String[] args) throws IOException {
-        replaceTimePattern(args[0]);
+        if(args.length == 1) {
+            replaceTimePattern(args[0]);
+        } else {
+            //path, date
+            replaceHolder(args[0], args[1]);
+        }
+    }
+
+    private static void replaceHolder (String pathname, String date) throws IOException {
+        File f = new File(pathname);
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+        StringBuilder buffer = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null){
+            buffer.append(line);
+            buffer.append("\n");
+        }
+        String content = buffer.toString();
+
+        String newContent = content.replace(DATE_HOLDER, date);
+        replaceOriginFile(pathname, newContent);
     }
 
     private static void replaceTimePattern(String pathname) throws IOException {
