@@ -11,16 +11,16 @@ then
 else
     TIMEMACHINE="sh ${WORMHOLE_HOME}/bin/timemachine.sh $1"
     echo $TIMEMACHINE
-    eval $TIMEMACHINE
     echo "starting to run timemachine..."
+    eval $TIMEMACHINE
     if [ "$?" -ne 0 ];then
         echo "timemachine exec --- failed!"
         exit
     fi
     WORMHOLE="sh ${WORMHOLE_HOME}/bin/wormhole.sh $1"
     echo $WORMHOLE
-    eval $WORMHOLE
     echo "starting to run wormhole..."
+    eval $WORMHOLE
     if [ "$?" -ne 0 ];then
         echo "wormhole exec --- failed!"
         exit

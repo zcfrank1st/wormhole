@@ -28,6 +28,8 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 	private String columns;
 	private String encoding;
 
+	private static final int MAX_LINE = 1000;
+
 	private Logger logger = LoggerFactory.getLogger(SqlserverWriter.class);
 
 	@Override
@@ -57,7 +59,10 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 		logger.info("Insert SQL - " + runningSQL + "\n");
 		try {
 			QueryRunner qr = new QueryRunner();
-			qr.update(conn, runningSQL);
+			String[] sqls = runningSQL.split("##");
+			for (String sql: sqls) {
+				qr.update(conn, sql);
+			}
 		} catch (SQLException e) {
 			throw new WormholeException(e.getMessage());
 		}
@@ -86,11 +91,40 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 					valueLine = valueLine + "'" + line.getField(i) + "', ";
 				}
 			}
-			lineCollections = lineCollections + valueLine + ", ";
+			lineCollections = lineCollections + valueLine + "|";
 			getMonitor().increaseSuccessLines();
 		}
+		String totalValues = lineCollections.substring(0, lineCollections.length() - 1);
+		String[] totalSegments = totalValues.split("\\|");
+		int segmentCount = totalSegments.length;
 
-		return "INSERT INTO " + tableName + " (" + columns + ") " + "values " + lineCollections.substring(0, lineCollections.length() - 2);
+		// 分组
+		int group = (int)Math.ceil((double) segmentCount / MAX_LINE);
+		logger.info("group number is: "+ group);
+		int currentEle = 0;
+		String multiSql = "";
+
+		if ( group > 1) {
+			for (int i = 1; i <= group; i++) {
+				String groupValues = "";
+				for(int j = 0; j < MAX_LINE;) {
+					groupValues += totalSegments[currentEle] + ", ";
+					if (currentEle == segmentCount -1) {
+						multiSql += "INSERT INTO " + tableName + " (" + columns + ") " + "values " + groupValues.substring(0, groupValues.length() - 2);
+						break;
+					}
+					j ++;
+					currentEle ++;
+					if (j == MAX_LINE) {
+						multiSql += "INSERT INTO " + tableName + " (" + columns + ") " + "values " + groupValues.substring(0, groupValues.length() - 2) + "##";
+						break;
+					}
+				}
+			}
+			return multiSql;
+		} else {
+			return "INSERT INTO " + tableName + " (" + columns + ") " + "values " + totalValues.replace("|", ",");
+		}
 	}
 
 }
