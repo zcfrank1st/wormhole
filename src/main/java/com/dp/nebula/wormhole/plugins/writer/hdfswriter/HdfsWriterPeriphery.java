@@ -39,7 +39,9 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 	private String hiveTableAddPartitionOrNot = "false";
 	private String hiveTableAddPartitionCondition = "";
 
-	private final String ADD_PARTITION_SQL = "alter table {0} add if not exists partition({1}) location ''{2}'';";
+//	private final String ADD_PARTITION_SQL = "alter table {0} add if not exists partition({1}) location ''{2}'';";
+
+	private final String ADD_PARTITION = "alter table {0} add if not exists partition({1})";
 
 	private FileSystem fs;
 
@@ -66,47 +68,69 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 //                createLzoIndex(dir);
             }
 		/* add hive table partition if necessary */
-            hiveTableAddPartitionOrNot = param.getValue(
+			hiveTableAddPartitionOrNot = param.getValue(
                     ParamKey.hiveTableAddPartitionSwitch, "false").trim();
-            if (hiveTableAddPartitionOrNot.equalsIgnoreCase("true")) {
+			if (hiveTableAddPartitionOrNot.equalsIgnoreCase("true")) {
                 hiveTableAddPartitionCondition = param.getValue(
                         ParamKey.hiveTableAddPartitionCondition,
                         this.hiveTableAddPartitionCondition);
 
                 if (!StringUtils.isBlank(hiveTableAddPartitionCondition)) {
                     String[] hqlParam = StringUtils.split(
-                            hiveTableAddPartitionCondition, '@');
+                            hiveTableAddPartitionCondition, '@'); // dt='2015-07-01',hour='03'@test.tmpdb
                     if (HIVE_TABLE_ADD_PARTITION_PARAM_NUMBER == hqlParam.length) {
-                        String parCondition = hqlParam[0].trim().replace('"', '\'');
-                        String uri = hqlParam[1].trim();
-                        // split dbname and tablename
-                        String[] parts = StringUtils.split(uri, '.');
-
-                        if (StringUtils.isBlank(parCondition)
-                                || StringUtils.isBlank(uri) || parts.length != 2
-                                || StringUtils.isBlank(parts[0])
-                                || StringUtils.isBlank(parts[1])) {
-                            logger.error(ParamKey.hiveTableAddPartitionSwitch
-                                    + " param can not be parsed correctly, please check it again");
-                            return;
-                        }
+						logger.info("add partition config is: "+ hiveTableAddPartitionCondition);
+                        String tableAndDbName = hqlParam[1].trim();
+						String[] tableAndDb = tableAndDbName.split("\\.");
+                        String partitions = hqlParam[0].trim();
+						logger.info("hive partition condition: " + partitions);
+						logger.info("tablename and dbname: " + tableAndDbName);
 
                         try {
-                            addHiveTablePartition(parts[0].trim(), parts[1].trim(),
-                                    parCondition, dir);
+							addHiveTablePartition(tableAndDb[1], tableAndDb[0], partitions, "");
                         } catch (IOException e) {
-							logger.warn("add partition failed, just retry once");
-							try{
-								addHiveTablePartition(parts[0].trim(), parts[1].trim(),
-										parCondition, dir);
-							} catch (IOException e1) {
-								logger.error("add partition totally failed, exit -1");
-								System.exit(-1);
-							}
+							logger.error("add partition failed, exit -1");
+							System.exit(-1);
                         }
                     }
                 }
             }
+
+//            hiveTableAddPartitionOrNot = param.getValue(
+//                    ParamKey.hiveTableAddPartitionSwitch, "false").trim();
+//            if (hiveTableAddPartitionOrNot.equalsIgnoreCase("true")) {
+//                hiveTableAddPartitionCondition = param.getValue(
+//                        ParamKey.hiveTableAddPartitionCondition,
+//                        this.hiveTableAddPartitionCondition);
+//
+//                if (!StringUtils.isBlank(hiveTableAddPartitionCondition)) {
+//                    String[] hqlParam = StringUtils.split(
+//                            hiveTableAddPartitionCondition, '@');
+//                    if (HIVE_TABLE_ADD_PARTITION_PARAM_NUMBER == hqlParam.length) {
+//                        String parCondition = hqlParam[0].trim().replace('"', '\'');
+//                        String uri = hqlParam[1].trim();
+//                        // split dbname and tablename
+//                        String[] parts = StringUtils.split(uri, '.');
+//
+//                        if (StringUtils.isBlank(parCondition)
+//                                || StringUtils.isBlank(uri) || parts.length != 2
+//                                || StringUtils.isBlank(parts[0])
+//                                || StringUtils.isBlank(parts[1])) {
+//                            logger.error(ParamKey.hiveTableAddPartitionSwitch
+//                                    + " param can not be parsed correctly, please check it again");
+//                            return;
+//                        }
+//
+//                        try {
+//							addHiveTablePartition(parts[0].trim(), parts[1].trim(),
+//									parCondition, dir);
+//                        } catch (IOException e) {
+//							logger.error("add partition failed, exit -1");
+//							System.exit(-1);
+//                        }
+//                    }
+//                }
+//            }
             return;
         }
 	}
@@ -157,8 +181,10 @@ public class HdfsWriterPeriphery implements IWriterPeriphery {
 		StringBuffer addParitionCommand = new StringBuffer();
 		addParitionCommand.append("hive -e \"");
 		addParitionCommand.append("use " + dbName + ";");
-		addParitionCommand.append(MessageFormat.format(ADD_PARTITION_SQL,
-				tableName, partitionCondition, location));
+//		addParitionCommand.append(MessageFormat.format(ADD_PARTITION_SQL,
+//				tableName, partitionCondition, location));
+		addParitionCommand.append(MessageFormat.format(ADD_PARTITION,
+				tableName, partitionCondition));
 		addParitionCommand.append("\"");
 
 		logger.info(addParitionCommand.toString());
