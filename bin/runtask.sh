@@ -9,7 +9,7 @@ if [ -z "$1" ]
 then
     echo "usage: sh runtask.sh [path : file absolute path]"
 else
-    TIMEMACHINE="sh ${WORMHOLE_HOME}/bin/timemachine.sh $1"
+    TIMEMACHINE="sh ${WORMHOLE_HOME}/bin/timemachine.sh $1 $2"
     echo $TIMEMACHINE
     echo "starting to run timemachine..."
     eval $TIMEMACHINE
