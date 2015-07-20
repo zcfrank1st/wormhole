@@ -53,7 +53,7 @@ public class MysqlReaderPeriphery implements IReaderPeriphery{
 	
 	private boolean needSplit;
 	
-	private static final String SQL_COUNT_PATTERN = "select max({1}) from ({0}) uni_​​alias_name_f" ;
+	private static final String SQL_COUNT_PATTERN = "select max({1}) from ({0}) unit" ;
 	
 	protected static final String DATA_AMOUNT_KEY = "dataamount"; 
 	

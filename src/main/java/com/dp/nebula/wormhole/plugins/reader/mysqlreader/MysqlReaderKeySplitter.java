@@ -99,7 +99,7 @@ public class MysqlReaderKeySplitter extends AbstractSplitter{
 		}
 		logger.info("Mysql reader start to split");
 		try {
-			conn = DBSource.getConnection(this.getClass(), ip, port, dbname);
+			conn = DBSource.getConnection(MysqlReader.class, ip, port, dbname);
 		} catch (Exception e) {
 			throw new WormholeException(e, JobStatus.READ_CONNECTION_FAILED.getStatus() + MysqlReader.ERROR_CODE_ADD);
 		}
