@@ -1,20 +1,27 @@
 package com.dp.nebula.wormhole.engine.core;
 
 import com.dp.nebula.wormhole.common.JobStatus;
+import com.dp.nebula.wormhole.common.WormholeException;
 import com.dp.nebula.wormhole.common.interfaces.IParam;
+import com.dp.nebula.wormhole.common.utils.Environment;
 import com.dp.nebula.wormhole.engine.config.PluginConfParamKey;
+import com.dp.nebula.wormhole.plugins.common.ParamKey;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.*;
 
 abstract class AbstractPluginManager {
 	
 	private static final Log s_logger = LogFactory.getLog(AbstractPluginManager.class);
 	private static final String PARAM_KEY_CURRENCY = "concurrency";
-	private static final String WORMHOLE_CONNECT_FILE = "WORMHOLE_CONNECT_FILE";
-    private static final String LION_PROJECT = "LION_PROJECT";
+	//private static final String WORMHOLE_CONNECT_FILE = "WORMHOLE_CONNECT_FILE";
+	//private static final String LION_PROJECT = "LION_PROJECT";
+
 
 	private static final String CONNECT_PRIFIX = "mysql_";
 	private static final String DAL_SPECIAL_DBS = "special_dbs";
@@ -93,23 +100,23 @@ abstract class AbstractPluginManager {
 	}
 	
 	public static void regDataSourceProp(IParam param) {
-		//file
-//		String fileName = System.getenv(WORMHOLE_CONNECT_FILE);
-//		String connectProps = param.getValue(ParamKey.connectProps,null);
-//		if (fileName != null && connectProps != null) {
-//			Properties props = new Properties();
-//			try {
-//				props.load(new FileInputStream(fileName));
-//				param.putValue(ParamKey.ip, props.getProperty(connectProps + "." + ParamKey.ip).trim());
-//				param.putValue(ParamKey.port, props.getProperty(connectProps + "." + ParamKey.port).trim());
-//				param.putValue(ParamKey.username, props.getProperty(connectProps + "." + ParamKey.username).trim());
-//				param.putValue(ParamKey.password, props.getProperty(connectProps + "." + ParamKey.password).trim());
+		File fileName = new File(Environment.CONNECTION_FILE);
+		// String fileName = System.getenv(WORMHOLE_CONNECT_FILE);
+		String connectProps = param.getValue(ParamKey.connectProps, null);
+		if (connectProps != null) {
+			Properties props = new Properties();
+			try {
+				props.load(new FileInputStream(fileName));
+				param.putValue(ParamKey.ip, props.getProperty(connectProps + "." + ParamKey.ip).trim());
+				param.putValue(ParamKey.port, props.getProperty(connectProps + "." + ParamKey.port).trim());
+				param.putValue(ParamKey.username, props.getProperty(connectProps + "." + ParamKey.username).trim());
+				param.putValue(ParamKey.password, props.getProperty(connectProps + "." + ParamKey.password).trim());
 //				param.putValue(ParamKey.dbname, props.getProperty(connectProps + "." + ParamKey.dbname).trim());
-//			} catch (Exception e) {
-//				s_logger.error(e.getMessage(),e);
-//				throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
-//			}
-//		}
+			} catch (Exception e) {
+				s_logger.error(e.getMessage(),e);
+				throw new WormholeException(e,JobStatus.CONF_FAILED.getStatus());
+			}
+		}
 
 		//zk
 //        ConfigCache configCache = null;

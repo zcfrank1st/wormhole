@@ -11,4 +11,6 @@ public abstract class Environment {
 	public static final String READER_PLUGINS_DIR = String.format("%s/plugins/reader", USER_DIR);
 	public static final String WRITER_PLUGINS_DIR = String.format("%s/plugins/writer", USER_DIR);
 
+	public static final String CONNECTION_FILE = String.format("%s/conf/connection.properties", USER_DIR);
+
 }
