@@ -31,9 +31,9 @@ public class LoadJobConfFromOthers implements JobConfLoader{
     private static final Logger logger = LoggerFactory.getLogger(LoadJobConfFromOthers.class);
 
     private static final String driver = "com.mysql.jdbc.Driver";
-    private static final String url = "jdbc:mysql://10.1.1.220:3306/DianPingDW?autoReconnect=true&amp;autoReconnectForPools=true&amp;useUnicode=true&amp;characterEncoding=utf-8S";
-    private static final String user = "DianPingDW";
-    private static final String password = "Diand32adjl3dvDW";
+    private static final String url = "jdbc:mysql://192.168.10.20:3306/ctl_logdb?autoReconnect=true&amp;autoReconnectForPools=true&amp;useUnicode=true&amp;characterEncoding=utf-8";
+    private static final String user = "kettle_etl";
+    private static final String password = "kettle_etl123";
     private static final String sql = "select parameter_map from etl_load_cfg where task_id = ? order by type";
 
     private static final String WHERE_CLAUSE = "where";
@@ -79,7 +79,7 @@ public class LoadJobConfFromOthers implements JobConfLoader{
             List<String> transformedConf = replaceTimePattern(conf, Long.parseLong(time), offset);
             return JobConfGenerater(taskId, transformedConf);
         } catch (Exception e) {
-            throw new WormholeException("load job conf failed");
+            throw new WormholeException("root: " + e.getMessage() + " simple: load job conf failed");
         }
     }
 
