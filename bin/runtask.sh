@@ -9,7 +9,9 @@ if [ -z "$1" ]
 then
     echo "usage: sh runtask.sh [path : file absolute path]"
 else
-    TIMEMACHINE="sh ${WORMHOLE_HOME}/bin/timemachine.sh $1 $2"
+    CURRENT_FILE=$1_`date "+%Y%m%d"`
+    cp $1 $CURRENT_FILE
+    TIMEMACHINE="sh ${WORMHOLE_HOME}/bin/timemachine.sh $CURRENT_FILE $2"
     echo $TIMEMACHINE
     echo "starting to run timemachine..."
     eval $TIMEMACHINE
@@ -17,7 +19,7 @@ else
         echo "timemachine exec --- failed!"
         exit
     fi
-    WORMHOLE="sh ${WORMHOLE_HOME}/bin/wormhole.sh $1"
+    WORMHOLE="sh ${WORMHOLE_HOME}/bin/wormhole.sh $CURRENT_FILE"
     echo $WORMHOLE
     echo "starting to run wormhole..."
     eval $WORMHOLE
