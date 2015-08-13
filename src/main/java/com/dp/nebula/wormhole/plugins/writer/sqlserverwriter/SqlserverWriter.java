@@ -56,7 +56,7 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 	@Override
 	public void write(ILineReceiver receiver) {
 		String runningSQL = buildWriteSql(receiver);
-		logger.info("Insert SQL - " + runningSQL + "\n");
+//		logger.info("Insert SQL - " + runningSQL + "\n");
 		try {
 			QueryRunner qr = new QueryRunner();
 			String[] sqls = runningSQL.split("##");
@@ -82,13 +82,25 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 			String valueLine = "";
 			for (int i = 0; i < len; i++) {
 				if (i == len - 1) {
-					valueLine = valueLine + "'" + line.getField(i) + "'" + lineEnd;
+					if (line.getField(i) == null) {
+						valueLine = valueLine  + line.getField(i)  + lineEnd;
+					} else {
+						valueLine = valueLine + "'" + line.getField(i) + "'" + lineEnd;
+					}
 					break;
 				}
 				if (i == 0) {
-					valueLine = lineInit + "'" + line.getField(i) + "', ";
+					if (line.getField(i) == null) {
+						valueLine = lineInit  + line.getField(i)  + ", ";
+					} else {
+						valueLine = lineInit + "'" + line.getField(i) + "', ";
+					}
 				} else {
-					valueLine = valueLine + "'" + line.getField(i) + "', ";
+					if (line.getField(i) == null) {
+						valueLine = valueLine  + line.getField(i)  + ", ";
+					} else {
+						valueLine = valueLine + "'" + line.getField(i) + "', ";
+					}
 				}
 			}
 			lineCollections = lineCollections + valueLine + "|";
@@ -100,7 +112,7 @@ public class SqlserverWriter extends AbstractPlugin implements IWriter {
 
 		// 分组
 		int group = (int)Math.ceil((double) segmentCount / MAX_LINE);
-		logger.info("group number is: "+ group);
+//		logger.info("group number is: "+ group);
 		int currentEle = 0;
 		String multiSql = "";
 

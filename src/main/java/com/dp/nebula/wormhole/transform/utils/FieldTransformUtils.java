@@ -14,5 +14,4 @@ public final class FieldTransformUtils {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return dateFormat.format(dateTime);
 	}
-	
 }
